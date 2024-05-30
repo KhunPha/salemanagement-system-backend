@@ -3,32 +3,16 @@ import { ApolloServer, gql } from "apollo-server-express"
 import cors from "cors"
 import dotenv from "dotenv"
 import bodyParser from "body-parser"
+import { typeDefs, resolvers } from "./src/graphql"
 const app: any = express()
 
 dotenv.config()
+require("./src/util/db")
 
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({extended: true}))
 
 const PORT = process.env.PORT || 3000
-
-const typeDefs = gql`
-    type Query {
-        helloworld: String
-    }
-`
-
-const resolvers = {
-    Query: {
-        helloworld: () => "Bye World"
-    }
-}
-
-app.use("/", (req: Request, res: Response) => {
-    res.json({
-        message: "Welcome to graphql API"
-    })
-})
 
 app.use((req: Request, res: Response, next: NextFunction) => {
     const clientIp = req.ip || req.socket.remoteAddress || '127.0.0.1';

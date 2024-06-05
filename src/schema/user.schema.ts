@@ -4,7 +4,9 @@ export interface IUser extends Document {
     firstname: string,
     lastname: string,
     username: string,
-    password: string
+    password: string,
+    roles: object,
+    image: string
 }
 
 const user = new Schema<IUser>({
@@ -24,6 +26,15 @@ const user = new Schema<IUser>({
     password: {
         type: String,
         required: true
+    },
+    roles: {
+        type: mongoose.Types.ObjectId,
+        ref: "Role",
+        required: true
+    },
+    image: {
+        type: String,
+        default: ""
     }
 }, {timestamps: true})
 

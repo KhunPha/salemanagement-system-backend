@@ -4,7 +4,16 @@ import cors from "cors"
 import dotenv from "dotenv"
 import bodyParser from "body-parser"
 import { typeDefs, resolvers } from "./src/graphql"
+const os = require("os")
 const app: any = express()
+
+var ip_address: any;
+
+if(os.networkInterfaces()['Ethernet']){
+    ip_address = os.networkInterfaces()['Ethernet'][1]['address']
+}else{
+    ip_address = os.networkInterfaces()['Wi-Fi'][1]['address']
+}
 
 dotenv.config()
 require("./src/util/db")
@@ -30,7 +39,7 @@ const startServer = async () => {
         apolloServer.applyMiddleware({app, cors: true})
     
         app.listen(PORT, () => {
-            console.log(`Server running on http://localhost:${PORT}${apolloServer.graphqlPath}`)
+            console.log(`Server running on http://${ip_address}:${PORT}${apolloServer.graphqlPath}`)
         })
     } catch (error: any) {
         console.log(error.message)

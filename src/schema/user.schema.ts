@@ -6,7 +6,8 @@ export interface IUser extends Document {
     username: string,
     password: string,
     roles: object,
-    image: string
+    image: string,
+    token: string
 }
 
 const user = new Schema<IUser>({
@@ -35,6 +36,9 @@ const user = new Schema<IUser>({
     image: {
         type: String,
         default: ""
+    },
+    token: {
+        type: String
     }
 }, {timestamps: true})
 

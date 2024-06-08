@@ -3,7 +3,7 @@ import mongoose, {Schema, Document} from "mongoose";
 export interface iSalePayments extends Document {
     customer_type: string,
     sale_details: object,
-    type_of_pay: string,
+    bank_details: object
 }
 
 const salepayment = new Schema<iSalePayments>({
@@ -14,9 +14,10 @@ const salepayment = new Schema<iSalePayments>({
         type: mongoose.Types.ObjectId,
         ref: "Sale"
     },
-    type_of_pay: {
-        type: String
-    }
+    bank_details: {
+        type: mongoose.Types. ObjectId,
+        ref: "Bank"
+    },
 }, {timestamps: true})
 
 const salepayments = mongoose.model<iSalePayments>("SalePayment", salepayment, "SalePayments")

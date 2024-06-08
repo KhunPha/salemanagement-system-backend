@@ -6,12 +6,22 @@ const user = gql`
         firstname: String!
         lastname: String
         username: String
-        password: String
+        password: String,
+        roles: String,
+        image: String,
+        token: String
     }
 
     input UserInput {
         firstname: String
         lastname: String
+        username: String
+        password: String,
+        roles: String
+        image: String
+    }
+
+    input Login {
         username: String
         password: String
     }
@@ -22,6 +32,7 @@ const user = gql`
 
     type Mutation {
         createUser(data: UserInput!): User
+        login(data: Login): User
     }
 `
 

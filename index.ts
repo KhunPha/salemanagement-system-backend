@@ -5,6 +5,7 @@ import dotenv from "dotenv"
 import bodyParser from "body-parser"
 import { typeDefs, resolvers } from "./src/graphql"
 const os = require("os")
+const {success, error} = require("consola")
 const app: any = express()
 
 var ip_address: any;
@@ -39,10 +40,17 @@ const startServer = async () => {
         apolloServer.applyMiddleware({app, cors: true})
     
         app.listen(PORT, () => {
-            console.log(`Server running on http://${ip_address}:${PORT}${apolloServer.graphqlPath}`)
+            success({
+                badge: true,
+                message: `Server running on http://${ip_address}:${PORT}${apolloServer.graphqlPath}`
+            })
         })
+
     } catch (error: any) {
-        console.log(error.message)
+        error({
+            badge: true,
+            message: error.message
+        })
     }
 }
 

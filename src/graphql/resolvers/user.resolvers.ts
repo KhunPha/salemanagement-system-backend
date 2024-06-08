@@ -1,7 +1,7 @@
 import { ApolloError } from "apollo-server-express"
 import UserShcema from "../../schema/user.schema"
 import bcrypt from "bcrypt"
-import { getToken } from "../../function/getToken"
+import { getToken } from "../../function"
 
 const user = {
     Query: {

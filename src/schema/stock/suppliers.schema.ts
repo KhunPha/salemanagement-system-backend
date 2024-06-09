@@ -26,6 +26,6 @@ const supplier = new Schema<ISuppliers>({
     }
 }, {timestamps: true})
 
-const suppliers = mongoose.model<ISuppliers>("Supplier", supplier, "Suppliers")
+const SupplierSchema = mongoose.model<ISuppliers>("Supplier", supplier, "Suppliers")
 
-export default suppliers
+export default SupplierSchema

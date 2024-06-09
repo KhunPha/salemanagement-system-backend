@@ -1,12 +1,12 @@
 import mongoose, {Schema, Document} from "mongoose"
 
 export interface IBank extends Document {
-    banks: string,
+    bank_name: string,
     remark: string
 }
 
 const bank = new Schema<IBank>({
-    banks: {
+    bank_name: {
         type: String,
         require: true
     },
@@ -15,6 +15,6 @@ const bank = new Schema<IBank>({
     }
 }, {timestamps: true})
 
-const banks = mongoose.model<IBank>("Bank", bank, "Banks")
+const BankSchema = mongoose.model<IBank>("Bank", bank, "Banks")
 
-export default banks
+export default BankSchema

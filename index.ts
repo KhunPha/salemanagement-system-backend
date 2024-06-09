@@ -1,11 +1,10 @@
 import express, { Request, Response, NextFunction } from "express"
-import { ApolloServer, gql } from "apollo-server-express"
-import cors from "cors"
+import { ApolloServer } from "apollo-server-express"
+const {success, error} = require("consola")
 import dotenv from "dotenv"
 import bodyParser from "body-parser"
 import { typeDefs, resolvers } from "./src/graphql"
 const os = require("os")
-const {success, error} = require("consola")
 const app: any = express()
 
 var ip_address: any;
@@ -47,10 +46,7 @@ const startServer = async () => {
         })
 
     } catch (error: any) {
-        error({
-            badge: true,
-            message: error.message
-        })
+        console.log(error.message)
     }
 }
 

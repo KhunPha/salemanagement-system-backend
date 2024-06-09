@@ -14,6 +14,6 @@ const exchange = new Schema<IExchange>({
     }
 }, {timestamps: true})
 
-const exchanges = mongoose.model<IExchange>("Exchange", exchange, "Exchanges")
+const ExchangeRateSchema = mongoose.model<IExchange>("Exchange", exchange, "Exchanges")
 
-export default exchanges
+export default ExchangeRateSchema

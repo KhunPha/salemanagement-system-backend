@@ -22,6 +22,6 @@ const color = new Schema<IColor>({
     }
 }, {timestamps: true})
 
-const colors = mongoose.model<IColor>("Color", color, "Colors")
+const ColorSchema = mongoose.model<IColor>("Color", color, "Colors")
 
-export default colors
+export default ColorSchema

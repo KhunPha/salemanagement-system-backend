@@ -27,6 +27,6 @@ const customer = new Schema<ICustomer>({
     }
 }, {timestamps: true})
 
-const customers = mongoose.model<ICustomer>("Customer", customer, "Customers")
+const CustomerSchema = mongoose.model<ICustomer>("Customer", customer, "Customers")
 
-export default customers
+export default CustomerSchema

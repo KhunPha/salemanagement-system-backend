@@ -26,6 +26,6 @@ const shop = new Schema<IShop>({
     }
 }, {timestamps: true})
 
-const shops = mongoose.model<IShop>("Shop", shop, "Shops")
+const ShopInformationSchema = mongoose.model<IShop>("Shop", shop, "Shops")
 
-export default shops
+export default ShopInformationSchema

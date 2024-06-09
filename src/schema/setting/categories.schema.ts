@@ -15,6 +15,6 @@ const cate = new Schema<ICate>({
     }
 }, {timestamps: true})
 
-const cates = mongoose.model<ICate>("Category", cate, "Categories")
+const CategoriesSchema = mongoose.model<ICate>("Category", cate, "Categories")
 
-export default cates
+export default CategoriesSchema

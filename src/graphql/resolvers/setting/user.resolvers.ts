@@ -1,7 +1,7 @@
 import { ApolloError } from "apollo-server-express"
-import UserShcema from "../../schema/user.schema"
+import UserShcema from "../../../schema/setting/user.schema"
 import bcrypt from "bcrypt"
-import { getToken } from "../../function"
+import { getToken } from "../../../function"
 
 const user = {
     Query: {
@@ -12,7 +12,7 @@ const user = {
 
     Mutation: {
         createUser: async (parent: any, args: any) => {
-            const {firstname, lastname, username, password, roles, image} = args.data
+            const { firstname, lastname, username, password, roles, image } = args.data
 
             const salt = await bcrypt.genSaltSync()
             const hashpassword = await bcrypt.hashSync(password, salt)
@@ -32,24 +32,24 @@ const user = {
         },
         login: async (parent: any, args: any) => {
             try {
-                const {username, password} = await args.data
-    
-                const userfound = await UserShcema.findOne({username})
-    
-                if(!userfound){
+                const { username, password } = await args.data
+
+                const userfound = await UserShcema.findOne({ username })
+
+                if (!userfound) {
                     throw new ApolloError("User not found!")
                 }
 
                 const passTrue = await bcrypt.compareSync(password, userfound.password)
 
-                if(!passTrue){
+                if (!passTrue) {
                     throw new ApolloError("Incorrect password!")
                 }
 
                 userfound.token = await getToken(userfound)
 
                 return userfound
-                
+
             } catch (error: any) {
                 return error.message
             }

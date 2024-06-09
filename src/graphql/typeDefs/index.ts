@@ -1,4 +1,4 @@
-import user from "./user.typeDefs";
+import user from "./setting/user.typeDefs";
 
 const typeDefs = [
     user

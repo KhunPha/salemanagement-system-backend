@@ -1,4 +1,4 @@
-import user from "./user.resolvers";
+import user from "./setting/user.resolvers";
 
 const resolvers = [
     user

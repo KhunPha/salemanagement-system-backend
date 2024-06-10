@@ -45,8 +45,11 @@ const startServer = async () => {
             })
         })
 
-    } catch (error: any) {
-        console.log(error.message)
+    } catch (err: any) {
+        error({
+            badge: true,
+            message: err.message
+        })
     }
 }
 

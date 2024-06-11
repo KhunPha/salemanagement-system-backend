@@ -4,7 +4,6 @@ import CustomerSchema from "../../../schema/marketing/customers.schema";
 const customer = {
     Query: {
         getCustomers: async (parent: any, args: any, context: any) => {
-            console.log(context.user)
             return await CustomerSchema.find()
         }
     },

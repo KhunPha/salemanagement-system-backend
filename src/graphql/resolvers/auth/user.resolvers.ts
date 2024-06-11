@@ -1,5 +1,5 @@
 import { ApolloError } from "apollo-server-express"
-import UserShcema from "../../../schema/setting/user.schema"
+import UserShcema from "../../../schema/auth/user.schema"
 import bcrypt from "bcrypt"
 import { getToken } from "../../../function"
 

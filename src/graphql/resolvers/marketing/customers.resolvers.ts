@@ -3,7 +3,10 @@ import CustomerSchema from "../../../schema/marketing/customers.schema";
 
 const customer = {
     Query: {
-        getCustomers: async () => await CustomerSchema.find()
+        getCustomers: async (parent: any, args: any, context: any) => {
+            console.log(context.user)
+            return await CustomerSchema.find()
+        }
     },
     Mutation: {
         createCustomer: async (parent: any, args: any) => {
@@ -21,10 +24,10 @@ const customer = {
         },
         updateCustomer: async (parent: any, args: any) => {
             try {
-                const {customer_name, phone_number, email, types, remark} = args.data
-                const {id} = args.id
+                const { customer_name, phone_number, email, types, remark } = args.data
+                const { id } = args.id
 
-                const customerDoc = {$set: {customer_name, phone_number, email, types, remark}}
+                const customerDoc = { $set: { customer_name, phone_number, email, types, remark } }
 
                 const updateDoc = await CustomerSchema.findByIdAndUpdate(id, customerDoc)
 

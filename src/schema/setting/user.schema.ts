@@ -31,7 +31,6 @@ const user = new Schema<IUser>({
     roles: {
         type: mongoose.Types.ObjectId,
         ref: "Role",
-        required: true
     },
     image: {
         type: String,

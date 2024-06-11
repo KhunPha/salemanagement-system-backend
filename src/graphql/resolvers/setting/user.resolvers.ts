@@ -6,7 +6,19 @@ import { getToken } from "../../../function"
 const user = {
     Query: {
         getUsers: async (parent: any, args: any) => {
-            return await UserShcema.find()
+            const users = await UserShcema.find()
+            return users
+        },
+        getUsersSearch: async (parent: any, args: any) => {
+            const { search } = args.search
+            const users = await UserShcema.find({
+                $or: [
+                    { firstname: { $regex: search, $options: "i" } },
+                    { lastname: { $regex: search, $options: "i" } },
+                    { username: { $regex: search, $options: "i" } }
+                ]
+            })
+            return users
         }
     },
 

@@ -26,8 +26,13 @@ const user = gql`
         password: String
     }
 
+    input SearchInput {
+        search: String
+    }
+
     type Query {
         getUsers: [User]
+        getUsersSearch(search: SearchInput): [User]
     }
 
     type Mutation {

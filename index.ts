@@ -36,9 +36,9 @@ const startServer = async () => {
         const apolloServer = new ApolloServer({
             typeDefs,
             resolvers,
-            context: async (req: Request) => {
-                const user = verifyToken(req)
-                return { user }
+            context: async (req: any) => {
+                // const user = verifyToken(req)
+                // return { user }
             }
         })
 

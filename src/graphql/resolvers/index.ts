@@ -1,9 +1,9 @@
-import user from "./auth/user.resolvers";
-import bank from "./setting/bank.resolvers";
-import category from "./setting/categories.resolvers";
-import color from "./setting/color.resolvers";
-import supplier from "./stock/suppliers.resolvers";
-import customer from "./marketing/customers.resolvers";
+import user from "./auth/user.resolver";
+import bank from "./setting/bank.resolver";
+import category from "./setting/categories.resolver";
+import color from "./setting/color.resolver";
+import supplier from "./stock/suppliers.resolver";
+import customer from "./marketing/customers.resolver";
 
 const resolvers = [
     user,

@@ -6,6 +6,7 @@ import dotenv from "dotenv"
 import bodyParser from "body-parser"
 import { typeDefs, resolvers } from "./src/graphql"
 import { verifyToken } from "./src/middleware/auth.middleware"
+import { isContext } from "vm"
 const os = require("os")
 const app: any = express()
 
@@ -36,9 +37,9 @@ const startServer = async () => {
         const apolloServer = new ApolloServer({
             typeDefs,
             resolvers,
-            context: async (req: any) => {
-                // const user = verifyToken(req)
-                // return { user }
+            context: (req) => {
+                const user = verifyToken(req)
+                return { user }
             }
         })
 

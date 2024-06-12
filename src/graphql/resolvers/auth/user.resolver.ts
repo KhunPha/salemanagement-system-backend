@@ -5,9 +5,17 @@ import { getToken } from "../../../function"
 
 const user = {
     Query: {
-        getUsers: async (parent: any, args: any) => {
-            const users = await UserShcema.find()
-            return users
+        getUsers: async (parent: any, args: any, context: any) => {
+            try {
+                if(!context.user){
+                    throw new ApolloError("Unauthentication or Expired token")
+                }
+                const users = await UserShcema.find()
+
+                return users
+            } catch (error: any) {
+                throw new ApolloError(error.message)
+            }
         },
         getUsersSearch: async (parent: any, args: any) => {
             const { search } = args.search

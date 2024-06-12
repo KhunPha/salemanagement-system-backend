@@ -2,7 +2,7 @@ import { gql } from "apollo-server-express";
 
 const bank = gql`
     type Bank {
-        _id: String,
+        _id: ID,
         bank_name: String,
         remark: String
     }
@@ -12,18 +12,14 @@ const bank = gql`
         remark: String
     }
 
-    input BankId {
-        id: String
-    }
-
     type Query {
         getBanks: [Bank]
     }
 
     type Mutation {
         createBank(data: BankInput): Bank
-        updateBank(id: BankId, data: BankInput): Bank
-        deleteBank(id: BankId): Bank
+        updateBank(id: ID!, data: BankInput): Bank
+        deleteBank(id: ID!): Bank
     }
 `
 

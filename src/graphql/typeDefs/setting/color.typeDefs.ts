@@ -2,7 +2,7 @@ import { gql } from "apollo-server-express";
 
 const color = gql`
     type Color {
-        _id: String
+        _id: ID
         color_code: String,
         color_name: String,
         remark: String
@@ -14,18 +14,14 @@ const color = gql`
         remark: String
     }
 
-    input ColorId {
-        id: String
-    }
-
     type Query {
         getColors: [Color]
     }
 
     type Mutation {
         createColor(data: ColorInput): Color
-        updateColor(id: ColorId, data: ColorInput): Color
-        deleteColor(id: ColorId): Color
+        updateColor(id: ID, data: ColorInput): Color
+        deleteColor(id: ID): Color
     }
 `
 

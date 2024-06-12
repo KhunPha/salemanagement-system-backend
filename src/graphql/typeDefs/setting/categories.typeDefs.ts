@@ -2,7 +2,7 @@ import { gql } from "apollo-server-express";
 
 const category = gql`
     type Category {
-        _id: String,
+        _id: ID!,
         category_name: String,
         remark: String
     }
@@ -12,18 +12,14 @@ const category = gql`
         remark: String
     }
 
-    input CateId {
-        id: String
-    }
-
     type Query {
         getCategories: [Category]
     }
 
     type Mutation {
         createCategory(data: CateInput): Category
-        updateCategory(id: CateId, data: CateInput): Category
-        deleteCategory(id: CateId): Category
+        updateCategory(id: ID!, data: CateInput): Category
+        deleteCategory(id: ID!): Category
     }
 `
 

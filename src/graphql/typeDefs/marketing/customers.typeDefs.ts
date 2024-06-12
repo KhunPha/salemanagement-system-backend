@@ -2,7 +2,7 @@ import { gql } from "apollo-server-express";
 
 const customer = gql`
     type Customer {
-        _id: String,
+        _id: ID,
         customer_name: String,
         phone_number: String,
         email: String,
@@ -18,18 +18,14 @@ const customer = gql`
         remark: String
     }
 
-    input CustomerId {
-        id: String
-    }
-
     type Query {
         getCustomers: [Customer]
     }
 
     type Mutation {
         createCustomer(data: CustomerInput): Customer
-        updateCustomer(id: CustomerId, data: CustomerInput): Customer
-        deleteCustomer(id: CustomerId): Customer
+        updateCustomer(id: ID!, data: CustomerInput): Customer
+        deleteCustomer(id: ID!): Customer
     }
 `
 

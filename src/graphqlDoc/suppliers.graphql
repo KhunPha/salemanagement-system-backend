@@ -1,0 +1,75 @@
+# Get
+query Query {
+  getSuppliers {
+    _id
+    supplier_name
+    phone_number
+    email
+    address
+    remark
+  }
+}
+
+# Create
+mutation Mutation($data: SupplierInput) {
+  createSupplier(data: $data) {
+    _id
+    supplier_name
+    phone_number
+    email
+    address
+    remark
+  }
+}
+
+# Variable
+{
+  "data": {
+    "supplier_name": null,
+    "email": null,
+    "phone_number": null,
+    "address": null,
+    "remark": null
+  }
+}
+
+# Update
+mutation Mutation($id: ID, $data: SupplierInput) {
+  updateSupplier(id: $id, data: $data) {
+    _id
+    supplier_name
+    phone_number
+    email
+    address
+    remark
+  }
+}
+
+# Variable
+{
+  "id": null,
+  "data": {
+    "supplier_name": null,
+    "email": null,
+    "phone_number": null,
+    "address": null,
+    "remark": null
+  }
+}
+
+# Delete
+mutation Mutation($id: ID) {
+  deleteSupplier(id: $id) {
+    _id
+    supplier_name
+    phone_number
+    email
+    address
+    remark
+  }
+}
+
+# Variable
+{
+  "id": null
+}

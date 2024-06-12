@@ -1,0 +1,57 @@
+# Get
+query GetCategories {
+  getCategories {
+    _id
+    category_name
+    remark
+  }
+}
+
+# Create
+mutation Mutation($data: CateInput) {
+  createCategory(data: $data) {
+    _id
+    category_name
+    remark
+  }
+}
+
+# Variable
+{
+  "data": {
+    "category_name": null,
+    "remark": null
+  }
+}
+
+# Update
+mutation Mutation($id: ID!, $data: CateInput) {
+  updateCategory(id: $id, data: $data) {
+    _id
+    category_name
+    remark
+  }
+}
+
+# Variable
+{
+  "id": null,
+  "data": {
+    "category_name": null,
+    "remark": null
+  }
+}
+
+# Delete
+mutation Mutation($id: ID!) {
+  deleteCategory(id: $id) {
+    _id
+    category_name
+    remark
+  }
+}
+
+# Variable
+{
+  "id": null
+}

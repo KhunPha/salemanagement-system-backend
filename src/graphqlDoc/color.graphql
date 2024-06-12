@@ -1,0 +1,63 @@
+# Get
+query GetColors {
+  getColors {
+    _id
+    color_code
+    color_name
+    remark
+  }
+}
+
+# Create
+mutation CreateColor($data: ColorInput) {
+  createColor(data: $data) {
+    _id
+    color_code
+    color_name
+    remark
+  }
+}
+
+# Variable
+{
+  "data": {
+    "color_code": null,
+    "color_name": null,
+    "remark": null
+  }
+}
+
+# Update
+mutation Mutation($id: ID, $data: ColorInput) {
+  updateColor(id: $id, data: $data) {
+    _id
+    color_code
+    color_name
+    remark
+  }
+}
+
+# Variable
+{
+  "id": null,
+  "data": {
+    "color_code": null,
+    "color_name": null,
+    "remark": null
+  }
+}
+
+# Delete
+mutation Mutation($id: ID) {
+  deleteColor(id: $id) {
+    _id
+    color_code
+    color_name
+    remark
+  }
+}
+
+# Variable
+{
+  "id": null
+}

@@ -1,0 +1,57 @@
+# Get
+query GetBanks {
+  getBanks {
+    _id
+    bank_name
+    remark
+  }
+}
+
+# Create 
+mutation Mutation($data: BankInput) {
+  createBank(data: $data) {
+    _id
+    bank_name
+    remark
+  }
+}
+
+# Variable
+{
+  "data": {
+    "bank_name": null,
+    "remark": null
+  }
+}
+
+# Update
+mutation UpdateBank($id: ID!, $data: BankInput) {
+  updateBank(id: $id, data: $data) {
+    _id
+    bank_name
+    remark
+  }
+}
+
+# Variable
+{
+  "id": null,
+  "data": {
+    "bank_name": null,
+    "remark": null
+  }
+}
+
+# Delete
+mutation DeleteBank($id: ID!) {
+  deleteBank(id: $id) {
+    _id
+    bank_name
+    remark
+  }
+}
+
+# Variable
+{
+  "id": null
+}

@@ -1,0 +1,75 @@
+# Get
+query Query {
+  getCustomers {
+    _id
+    customer_name
+    phone_number
+    email
+    types
+    remark
+  }
+}
+
+# Create
+mutation Mutation($data: CustomerInput) {
+  createCustomer(data: $data) {
+    _id
+    customer_name
+    phone_number
+    email
+    types
+    remark
+  }
+}
+
+# Variable
+{
+  "data": {
+    "customer_name": null,
+    "email": null,
+    "phone_number": null,
+    "types": null,
+    "remark": null
+  }
+}
+
+# Update
+mutation Mutation($id: ID!, $data: CustomerInput) {
+  updateCustomer(id: $id, data: $data) {
+    _id
+    customer_name
+    phone_number
+    email
+    types
+    remark
+  }
+}
+
+# Variable
+{
+  "id": null,
+  "data": {
+    "customer_name": null,
+    "email": null,
+    "phone_number": null,
+    "types": null,
+    "remark": null
+  }
+}
+
+# Delete
+mutation Mutation($id: ID!) {
+  deleteCustomer(id: $id) {
+    _id
+    customer_name
+    phone_number
+    email
+    types
+    remark
+  }
+}
+
+# Variable
+{
+  "id": null
+}

@@ -1,0 +1,82 @@
+# Get All
+query Query {
+  getUsers {
+    _id
+    firstname
+    lastname
+    username
+    password
+    roles
+    image
+    token
+  }
+}
+
+# Get By Search
+query Query($search: SearchInput) {
+  getUsersSearch(search: $search) {
+    _id
+    firstname
+    lastname
+    username
+    password
+    roles
+    image
+    token
+  }
+}
+
+# Variable
+{
+  "search": {
+    "search": null
+  }
+}
+
+# Create
+mutation Mutation($data: UserInput!) {
+  createUser(data: $data) {
+    _id
+    firstname
+    lastname
+    username
+    password
+    roles
+    image
+    token
+  }
+}
+
+# Variable
+{
+  "data": {
+    "firstname": null,
+    "lastname": null,
+    "username": null,
+    "password": null,
+    "roles": null,
+    "image": null
+  }
+}
+
+# Login
+mutation Mutation($data: Login) {
+  login(data: $data) {
+    _id
+    firstname
+    lastname
+    username
+    password
+    roles
+    image
+    token
+  }
+}
+
+# Variable
+{
+  "data": {
+    "username": null,
+    "password": null
+  }
+}

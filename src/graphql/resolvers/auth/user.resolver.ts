@@ -9,7 +9,7 @@ const user = {
         getUsers: async (parent: any, args: any, context: any) => {
             try {
                 if(!verifyToken(context.user)){
-                    throw new ApolloError("Unauthentication or Expired token")
+                    throw new ApolloError("Unauthenticated or Expired token")
                 }
                 const users = await UserShcema.find()
 
@@ -20,7 +20,7 @@ const user = {
         },
         getUsersSearch: async (parent: any, args: any, context: any) => {
             if(!verifyToken(context.user)){
-                throw new ApolloError("Unauthentication or Expired token")
+                throw new ApolloError("Unauthenticated or Expired token")
             }
             const { search } = args.search
             const users = await UserShcema.find({
@@ -75,7 +75,7 @@ const user = {
                 return userfound
 
             } catch (error: any) {
-                return error.message
+                throw new ApolloError(error.message)
             }
         }
     }

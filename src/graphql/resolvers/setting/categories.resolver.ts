@@ -7,7 +7,7 @@ const category = {
         getCategories: async (parent: any, args: any, context: any) => {
             try {
                 if(!verifyToken(context.user)){
-                    throw new ApolloError("Unauthentication or Expired token")
+                    throw new ApolloError("Unauthenticated or Expired token")
                 }
                 return await CategoriesSchema.find()
             } catch (error: any) {
@@ -19,7 +19,7 @@ const category = {
         createCategory: async (parent: any, args: any, context: any) => {
             try {
                 if(!verifyToken(context.user)){
-                    throw new ApolloError("Unauthentication or Expired token")
+                    throw new ApolloError("Unauthenticated or Expired token")
                 }
                 const newcate = new CategoriesSchema({
                     ...args.data
@@ -35,7 +35,7 @@ const category = {
         updateCategory: async (parent: any, args: any, context: any) => {
             try {
                 if(!verifyToken(context.user)){
-                    throw new ApolloError("Unauthentication or Expired token")
+                    throw new ApolloError("Unauthenticated or Expired token")
                 }
                 const {category_name, remark} = args.data
                 const {id} = args.id
@@ -54,7 +54,7 @@ const category = {
         deleteCategory: async (parent: any, args: any, context: any) => {
             try {
                 if(!verifyToken(context.user)){
-                    throw new ApolloError("Unauthentication or Expired token")
+                    throw new ApolloError("Unauthenticated or Expired token")
                 }
                 const {id} = args.id
 

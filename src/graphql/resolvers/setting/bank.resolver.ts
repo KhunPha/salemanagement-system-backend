@@ -7,7 +7,7 @@ const bank = {
         getBanks: async (parent: any, args: any, context: any) => {
             try {
                 if(!verifyToken(context.user)){
-                    throw new ApolloError("Unauthentication or Expired token")
+                    throw new ApolloError("Unauthenticated or Expired token")
                 }
                 return  await BankSchema.find()
             } catch (error: any) {
@@ -19,7 +19,7 @@ const bank = {
         createBank: async (parent: any, args: any, context: any) => {
             try {
                 if(!verifyToken(context.user)){
-                    throw new ApolloError("Unauthentication or Expired token")
+                    throw new ApolloError("Unauthenticated or Expired token")
                 }
                 const newbank = new BankSchema({
                     ...args.data
@@ -35,7 +35,7 @@ const bank = {
         updateBank: async (parent: any, args: any, context: any) => {
             try {
                 if(!verifyToken(context.user)){
-                    throw new ApolloError("Unauthentication or Expired token")
+                    throw new ApolloError("Unauthenticated or Expired token")
                 }
                 const {bank_name, remark} = args.data
                 const {id} = args.id
@@ -52,7 +52,7 @@ const bank = {
         deleteBank: async (parent: any, args: any, context: any) => {
             try {
                 if(!verifyToken(context.user)){
-                    throw new ApolloError("Unauthentication or Expired token")
+                    throw new ApolloError("Unauthenticated or Expired token")
                 }
                 const {id} = args.id
                 const deleteBank = await BankSchema.findByIdAndDelete(id)

@@ -6,7 +6,7 @@ const customer = {
     Query: {
         getCustomers: async (parent: any, args: any, context: any) => {
             if(!verifyToken(context.user)){
-                throw new ApolloError("Unauthentication or Expired token")
+                throw new ApolloError("Unauthenticated or Expired token")
             }
             return await CustomerSchema.find()
         }
@@ -15,7 +15,7 @@ const customer = {
         createCustomer: async (parent: any, args: any, context: any) => {
             try {
                 if(!verifyToken(context.user)){
-                    throw new ApolloError("Unauthentication or Expired token")
+                    throw new ApolloError("Unauthenticated or Expired token")
                 }
                 const newcustomer = new CustomerSchema({
                     ...args.data
@@ -31,7 +31,7 @@ const customer = {
         updateCustomer: async (parent: any, args: any, context: any) => {
             try {
                 if(!verifyToken(context.user)){
-                    throw new ApolloError("Unauthentication or Expired token")
+                    throw new ApolloError("Unauthenticated or Expired token")
                 }
                 const { customer_name, phone_number, email, types, remark } = args.data
                 const { id } = args.id
@@ -48,7 +48,7 @@ const customer = {
         deleteCustomer: async (parent: any, args: any, context: any) => {
             try {
                 if(!verifyToken(context.user)){
-                    throw new ApolloError("Unauthentication or Expired token")
+                    throw new ApolloError("Unauthenticated or Expired token")
                 }
                 const {id} = args.id
 

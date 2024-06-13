@@ -7,7 +7,7 @@ const color = {
         getColors: async (parent: any, args: any, context: any) => {
             try {
                 if(!verifyToken(context.user)){
-                    throw new ApolloError("Unauthentication or Expired token")
+                    throw new ApolloError("Unauthenticated or Expired token")
                 }
                 return await ColorSchema.find()
             } catch (error: any) {
@@ -19,7 +19,7 @@ const color = {
         createColor: async (parent: any, args: any, context: any) => {
             try {
                 if(!verifyToken(context.user)){
-                    throw new ApolloError("Unauthentication or Expired token")
+                    throw new ApolloError("Unauthenticated or Expired token")
                 }
                 const newcolor = new ColorSchema({
                     ...args.data
@@ -35,7 +35,7 @@ const color = {
         updateColor: async (parent: any, args: any, context: any) => {
             try {
                 if(!verifyToken(context.user)){
-                    throw new ApolloError("Unauthentication or Expired token")
+                    throw new ApolloError("Unauthenticated or Expired token")
                 }
                 const {color_code, color_name, remark} = args.data
                 const {id} = args.id
@@ -52,7 +52,7 @@ const color = {
         deleteColor: async (parent: any, args: any, context: any) => {
             try {
                 if(!verifyToken(context.user)){
-                    throw new ApolloError("Unauthentication or Expired token")
+                    throw new ApolloError("Unauthenticated or Expired token")
                 }
                 const {id} = args.id
 

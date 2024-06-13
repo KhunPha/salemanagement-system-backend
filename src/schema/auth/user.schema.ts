@@ -22,15 +22,14 @@ const user = new Schema<IUser>({
     username: {
         type: String,
         required: true,
-        unique: true
     },
     password: {
         type: String,
         required: true
     },
     roles: {
-        type: mongoose.Types.ObjectId,
-        ref: "Role",
+        type: String,
+        enum: ["SUPER_ADMIN", "ADMIN", "SALER", "STOCK"]
     },
     image: {
         type: String,

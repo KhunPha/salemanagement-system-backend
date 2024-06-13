@@ -3,74 +3,85 @@ import UserShcema from "../../../schema/auth/user.schema"
 import bcrypt from "bcrypt"
 import { getToken } from "../../../function"
 import { verifyToken } from "../../../middleware/auth.middleware"
+import { GraphQLUpload, Upload } from "graphql-upload-ts"
+import path from "path"
+import fs from "fs"
 
 const user = {
+    Upload: GraphQLUpload,
+
     Query: {
         getUsers: async (parent: any, args: any, context: any) => {
             try {
                 if(!verifyToken(context.user)){
                     throw new ApolloError("Unauthenticated or Expired token")
                 }
-                const users = await UserShcema.find()
+                var {search, page, limit} = args
+
+                if(!search) {
+                    search = ""
+                }
+
+                const TUsers = await UserShcema.find()
+
+                const totalPages = Math.floor(TUsers.length / limit)
+
+                const skip = (page - 1) * limit
+
+                const users = await UserShcema.find({
+                    $or: [
+                        { firstname: { $regex: search, $options: "i" } },
+                        { lastname: { $regex: search, $options: "i" } },
+                        { username: { $regex: search, $options: "i" } }
+                    ]
+                }).skip(skip).limit(limit)
 
                 return users
             } catch (error: any) {
                 throw new ApolloError(error.message)
             }
-        },
-        getUsersSearch: async (parent: any, args: any, context: any) => {
-            if(!verifyToken(context.user)){
-                throw new ApolloError("Unauthenticated or Expired token")
-            }
-            const { search } = args.search
-            const users = await UserShcema.find({
-                $or: [
-                    { firstname: { $regex: search, $options: "i" } },
-                    { lastname: { $regex: search, $options: "i" } },
-                    { username: { $regex: search, $options: "i" } }
-                ]
-            })
-            return users
-        },
-        getUsersPagination: async (parent: any, args: any, context: any) => {
-            if(!verifyToken(context.user)){
-                throw new ApolloError("Unauthenticated or Expired token")
-            }
-            var {page, limit} = args
-            const TUsers = await UserShcema.find()
-
-            const totalPages = Math.floor(TUsers.length / limit)
-
-            console.log(totalPages)
-
-            console.log(page, limit)
-            page = (page - 1) * limit
-
-            const users = await UserShcema.find().skip(page).limit(limit);
-
-            return users
         }
     },
 
     Mutation: {
         createUser: async (parent: any, args: any) => {
-            const { firstname, lastname, username, password, roles, image } = args.data
+            try {
+                const { firstname, lastname, username, password, roles, image } = await args.data
+                const {createReadStream, filename, mimetype} = await args.file
 
-            const salt = await bcrypt.genSaltSync()
-            const hashpassword = await bcrypt.hashSync(password, salt)
-
-            const newuser = new UserShcema({
-                firstname,
-                lastname,
-                username,
-                password: hashpassword,
-                roles,
-                image
-            })
-
-            await newuser.save()
-
-            return newuser
+                const dupUser = await UserShcema.findOne({username})
+    
+                if(dupUser){
+                    throw new ApolloError("Duplicate Username")
+                }
+                
+                const salt = await bcrypt.genSaltSync()
+                const hashpassword = await bcrypt.hashSync(password, salt)
+    
+                let name = filename
+                const ext = name.split(".")[1]
+                name = `${Math.floor((Math.random() * 10000) + 1000)}`
+                const newfilename = `${name}-${Date.now()}.${ext}`;
+                const localtion = path.join(__dirname, `../../../../public/images/${newfilename}`)
+                const stream = createReadStream()
+    
+                await stream.pipe(fs.createWriteStream(localtion))
+    
+                const newuser = new UserShcema({
+                    firstname,
+                    lastname,
+                    username,
+                    password: hashpassword,
+                    roles,
+                    image: `http://localhost:8080/public/images/${newfilename}`
+                })
+    
+                await newuser.save()
+    
+                return newuser
+            } catch (error: any) {
+                throw new ApolloError(error.message)
+            }
         },
         login: async (parent: any, args: any) => {
             try {

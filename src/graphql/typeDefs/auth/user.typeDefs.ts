@@ -1,13 +1,15 @@
 import { gql } from "apollo-server-express";
 
 const user = gql`
+    scalar Upload
+
     type User {
-        _id: String!
+        _id: ID!
         firstname: String!
         lastname: String
         username: String
         password: String,
-        roles: String,
+        roles: RoleType,
         image: String,
         token: String
     }
@@ -18,7 +20,13 @@ const user = gql`
         username: String
         password: String,
         roles: String
-        image: String
+    }
+
+    enum RoleType {
+        SUPER_ADMIN
+        ADMIN
+        SALER
+        STOCK
     }
 
     input Login {
@@ -31,13 +39,11 @@ const user = gql`
     }
 
     type Query {
-        getUsers: [User]
-        getUsersSearch(search: SearchInput): [User]
-        getUsersPagination(page: Int, limit: Int): [User]
+        getUsers(search: String, page: Int, limit: Int): [User]
     }
 
     type Mutation {
-        createUser(data: UserInput!): User
+        createUser(data: UserInput!, file: Upload!): User
         login(data: Login): User
     }
 `

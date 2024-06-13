@@ -1,6 +1,7 @@
 import express, { Request, Response, NextFunction } from "express"
 import { ApolloServer } from "apollo-server-express"
 const { success, error } = require("consola")
+import { graphqlUploadExpress } from "graphql-upload-ts"
 import cors from "cors"
 import dotenv from "dotenv"
 import bodyParser from "body-parser"
@@ -42,6 +43,8 @@ const startServer = async () => {
                 return { user }
             }
         })
+
+        app.use(graphqlUploadExpress({maxFieldSize: 10000000, maxFiles: 10}))
 
         await apolloServer.start()
         apolloServer.applyMiddleware({ app, cors: true })

@@ -31,6 +31,24 @@ const user = {
                 ]
             })
             return users
+        },
+        getUsersPagination: async (parent: any, args: any, context: any) => {
+            if(!verifyToken(context.user)){
+                throw new ApolloError("Unauthenticated or Expired token")
+            }
+            var {page, limit} = args
+            const TUsers = await UserShcema.find()
+
+            const totalPages = Math.floor(TUsers.length / limit)
+
+            console.log(totalPages)
+
+            console.log(page, limit)
+            page = (page - 1) * limit
+
+            const users = await UserShcema.find().skip(page).limit(limit);
+
+            return users
         }
     },
 

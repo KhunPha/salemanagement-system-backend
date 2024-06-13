@@ -33,6 +33,7 @@ const user = gql`
     type Query {
         getUsers: [User]
         getUsersSearch(search: SearchInput): [User]
+        getUsersPagination(page: Int, limit: Int): [User]
     }
 
     type Mutation {

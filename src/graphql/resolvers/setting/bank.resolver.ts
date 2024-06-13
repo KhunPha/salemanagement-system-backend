@@ -1,13 +1,26 @@
 import { ApolloError } from "apollo-server-express";
 import BankSchema from "../../../schema/setting/bank.schema";
+import { verifyToken } from "../../../middleware/auth.middleware";
 
 const bank = {
     Query: {
-        getBanks: async () =>  await BankSchema.find()
+        getBanks: async (parent: any, args: any, context: any) => {
+            try {
+                if(!verifyToken(context.user)){
+                    throw new ApolloError("Unauthentication or Expired token")
+                }
+                return  await BankSchema.find()
+            } catch (error: any) {
+                throw new ApolloError(error.message)
+            }
+        }
     },
     Mutation: {
-        createBank: async (parent: any, args: any) => {
+        createBank: async (parent: any, args: any, context: any) => {
             try {
+                if(!verifyToken(context.user)){
+                    throw new ApolloError("Unauthentication or Expired token")
+                }
                 const newbank = new BankSchema({
                     ...args.data
                 })
@@ -19,8 +32,11 @@ const bank = {
                 throw new ApolloError(error.message)
             }
         },
-        updateBank: async (parent: any, args: any) => {
+        updateBank: async (parent: any, args: any, context: any) => {
             try {
+                if(!verifyToken(context.user)){
+                    throw new ApolloError("Unauthentication or Expired token")
+                }
                 const {bank_name, remark} = args.data
                 const {id} = args.id
     
@@ -33,8 +49,11 @@ const bank = {
                 throw new ApolloError(error.message)
             }
         },
-        deleteBank: async (parent: any, args: any) => {
+        deleteBank: async (parent: any, args: any, context: any) => {
             try {
+                if(!verifyToken(context.user)){
+                    throw new ApolloError("Unauthentication or Expired token")
+                }
                 const {id} = args.id
                 const deleteBank = await BankSchema.findByIdAndDelete(id)
     

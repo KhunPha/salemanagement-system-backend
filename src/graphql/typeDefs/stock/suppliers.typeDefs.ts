@@ -23,7 +23,7 @@ const supplier = gql`
     }
 
     type Mutation {
-        createSupplier(data: SupplierInput): [Supplier]
+        createSupplier(data: SupplierInput): Supplier
         updateSupplier(id: ID, data: SupplierInput): Supplier
         deleteSupplier(id: ID): Supplier
     }

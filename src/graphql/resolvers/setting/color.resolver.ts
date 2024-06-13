@@ -1,13 +1,26 @@
 import { ApolloError } from "apollo-server-express";
 import ColorSchema from "../../../schema/setting/color.schema";
+import { verifyToken } from "../../../middleware/auth.middleware";
 
 const color = {
     Query: {
-        getColors: async () => await ColorSchema.find()
+        getColors: async (parent: any, args: any, context: any) => {
+            try {
+                if(!verifyToken(context.user)){
+                    throw new ApolloError("Unauthentication or Expired token")
+                }
+                return await ColorSchema.find()
+            } catch (error: any) {
+                
+            }
+        }
     },
     Mutation: {
-        createColor: async (parent: any, args: any) => {
+        createColor: async (parent: any, args: any, context: any) => {
             try {
+                if(!verifyToken(context.user)){
+                    throw new ApolloError("Unauthentication or Expired token")
+                }
                 const newcolor = new ColorSchema({
                     ...args.data
                 })
@@ -19,8 +32,11 @@ const color = {
                 throw new ApolloError(error.message)
             }
         },
-        updateColor: async (parent: any, args: any) => {
+        updateColor: async (parent: any, args: any, context: any) => {
             try {
+                if(!verifyToken(context.user)){
+                    throw new ApolloError("Unauthentication or Expired token")
+                }
                 const {color_code, color_name, remark} = args.data
                 const {id} = args.id
 
@@ -33,8 +49,11 @@ const color = {
                 throw new ApolloError(error.message)
             }
         },
-        deleteColor: async (parent: any, args: any) => {
+        deleteColor: async (parent: any, args: any, context: any) => {
             try {
+                if(!verifyToken(context.user)){
+                    throw new ApolloError("Unauthentication or Expired token")
+                }
                 const {id} = args.id
 
                 const deleteColor = await ColorSchema.findByIdAndDelete(id)

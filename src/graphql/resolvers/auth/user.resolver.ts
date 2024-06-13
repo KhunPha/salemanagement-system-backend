@@ -2,12 +2,13 @@ import { ApolloError } from "apollo-server-express"
 import UserShcema from "../../../schema/auth/user.schema"
 import bcrypt from "bcrypt"
 import { getToken } from "../../../function"
+import { verifyToken } from "../../../middleware/auth.middleware"
 
 const user = {
     Query: {
         getUsers: async (parent: any, args: any, context: any) => {
             try {
-                if(!context.user){
+                if(!verifyToken(context.user)){
                     throw new ApolloError("Unauthentication or Expired token")
                 }
                 const users = await UserShcema.find()
@@ -17,7 +18,10 @@ const user = {
                 throw new ApolloError(error.message)
             }
         },
-        getUsersSearch: async (parent: any, args: any) => {
+        getUsersSearch: async (parent: any, args: any, context: any) => {
+            if(!verifyToken(context.user)){
+                throw new ApolloError("Unauthentication or Expired token")
+            }
             const { search } = args.search
             const users = await UserShcema.find({
                 $or: [

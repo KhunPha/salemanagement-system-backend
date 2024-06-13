@@ -38,7 +38,7 @@ const startServer = async () => {
             typeDefs,
             resolvers,
             context: (req) => {
-                const user = verifyToken(req)
+                const user = req;
                 return { user }
             }
         })

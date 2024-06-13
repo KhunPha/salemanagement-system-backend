@@ -10,7 +10,7 @@ function verifyToken(context: any) {
             const data = jwt.verify(token, process.env.JWT_KEY)
             return data
         }
-        return null
+        return false
     } catch (error: any) {
         throw new ApolloError(error.message)
     }

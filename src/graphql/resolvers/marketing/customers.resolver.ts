@@ -33,7 +33,7 @@ const customer = {
             try {
                 verify(context.user)
                 const { customer_name, phone_number, email, types, remark } = args.data
-                const { id } = args.id
+                const { id } = await args
 
                 const customerDoc = { $set: { customer_name, phone_number, email, types, remark } }
 

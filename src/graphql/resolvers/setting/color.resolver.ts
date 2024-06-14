@@ -47,7 +47,7 @@ const color = {
         deleteColor: async (parent: any, args: any, context: any) => {
             try {
                 verify(context.user)
-                const {id} = args.id
+                const {id} = args
 
                 const deleteColor = await ColorSchema.findByIdAndDelete(id)
 

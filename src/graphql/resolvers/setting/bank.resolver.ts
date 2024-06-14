@@ -33,7 +33,7 @@ const bank = {
             try {
                 verify(context.user)
                 const {bank_name, remark} = args.data
-                const {id} = args.id
+                const {id} = args
     
                 const bankDoc = {$set: {bank_name: bank_name, remark: remark}}
     

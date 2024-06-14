@@ -49,7 +49,7 @@ const unit = {
             try {
                 verify(context.user)
                 const {unit_name, remark} = await args.data
-                const {id} = await args.id
+                const {id} = await args
                 
                 const unitDoc = {$set: {unit_name, remark}}
 

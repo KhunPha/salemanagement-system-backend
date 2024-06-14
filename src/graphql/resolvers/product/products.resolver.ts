@@ -58,7 +58,7 @@ const product = {
             try {
                 verify(context.user)
                 const { pro_name, type_of_product, category, unit, barcode, image, price } = args.data
-                const { id } = args.id
+                const { id } = args
 
                 const productDoc = {$set: {pro_name, type_of_product, category, unit, barcode, image, price}}
 

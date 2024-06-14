@@ -3,7 +3,7 @@ import UserShcema from "../../../schema/auth/user.schema"
 import bcrypt from "bcrypt"
 import { getToken } from "../../../function"
 import { verifyToken } from "../../../middleware/auth.middleware"
-import { GraphQLUpload, Upload } from "graphql-upload-ts"
+import { GraphQLUpload } from "graphql-upload-ts"
 import path from "path"
 import fs from "fs"
 import verify from "../../../function/verifyToken.function"
@@ -15,9 +15,9 @@ const user = {
         getUsers: async (parent: any, args: any, context: any) => {
             try {
                 verify(context.user)
-                var {search, page, limit} = args
+                var { search, page, limit } = args
 
-                if(!search) {
+                if (!search) {
                     search = ""
                 }
 
@@ -46,26 +46,26 @@ const user = {
         createUser: async (parent: any, args: any) => {
             try {
                 const { firstname, lastname, username, password, roles, image } = await args.data
-                const {createReadStream, filename, mimetype} = await args.file
+                const { createReadStream, filename, mimetype } = await args.file
 
-                const dupUser = await UserShcema.findOne({username})
-    
-                if(dupUser){
+                const dupUser = await UserShcema.findOne({ username })
+
+                if (dupUser) {
                     throw new ApolloError("Duplicate Username")
                 }
-                
+
                 const salt = await bcrypt.genSaltSync()
                 const hashpassword = await bcrypt.hashSync(password, salt)
-    
+
                 let name = filename
                 const ext = name.split(".")[1]
                 name = `${Math.floor((Math.random() * 10000) + 1000)}`
                 const newfilename = `${name}-${Date.now()}.${ext}`;
                 const localtion = path.join(__dirname, `../../../../public/images/${newfilename}`)
                 const stream = createReadStream()
-    
+
                 await stream.pipe(fs.createWriteStream(localtion))
-    
+
                 const newuser = new UserShcema({
                     firstname,
                     lastname,
@@ -74,9 +74,9 @@ const user = {
                     roles,
                     image: `http://localhost:8080/public/images/${newfilename}`
                 })
-    
+
                 await newuser.save()
-    
+
                 return newuser
             } catch (error: any) {
                 throw new ApolloError(error.message)
@@ -109,12 +109,12 @@ const user = {
         updateUser: async (parent: any, args: any, context: any) => {
             try {
                 verify(context.user)
-                const {firstname, lastname, username, password, roles, image} = await args.data
-                const {id} = await args.id
+                const { firstname, lastname, username, password, roles, image } = await args.data
+                const { id } = args
 
-                const userDoc = {$set: {firstname, lastname, username, password, roles, image}}
+                const userDoc = { $set: { firstname, lastname, username, password, roles, image } }
 
-                const updateDoc = await UserShcema.findByIdAndUpdate(id, userDoc, {new: true})
+                const updateDoc = await UserShcema.findByIdAndUpdate(id, userDoc, { new: true })
 
                 return updateDoc
             } catch (error: any) {
@@ -125,10 +125,10 @@ const user = {
             try {
                 verify(context.user)
 
-                const {id} = await args
+                const { id } = await args
                 const userLog = verifyToken(context.user)
 
-                if(id === userLog.data._id){
+                if (id === userLog.data._id) {
                     throw new ApolloError("Cannot delete")
                 }
 

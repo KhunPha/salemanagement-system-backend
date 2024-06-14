@@ -33,7 +33,7 @@ const category = {
             try {
                 verify(context.user)
                 const {category_name, remark} = args.data
-                const {id} = args.id
+                const {id} = args
 
                 
 
@@ -49,7 +49,7 @@ const category = {
         deleteCategory: async (parent: any, args: any, context: any) => {
             try {
                 verify(context.user)
-                const {id} = args.id
+                const {id} = args
 
                 const deleteCategory = await CategoriesSchema.findOneAndDelete(id)
 

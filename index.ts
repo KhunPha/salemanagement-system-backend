@@ -6,8 +6,6 @@ import cors from "cors"
 import dotenv from "dotenv"
 import bodyParser from "body-parser"
 import { typeDefs, resolvers } from "./src/graphql"
-import { verifyToken } from "./src/middleware/auth.middleware"
-import { isContext } from "vm"
 const os = require("os")
 const app: any = express()
 

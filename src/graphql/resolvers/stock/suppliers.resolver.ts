@@ -22,7 +22,7 @@ const supplier = {
         updateSupplier: async (parent: any, args: any) => {
             try {
                 const {supplier_name, phone_number, email, address, remark} = args.data
-                const {id} = args.id
+                const {id} = args
 
                 const supplierDoc = {$set: {supplier_name, phone_number, email, address, remark}}
 
@@ -35,7 +35,7 @@ const supplier = {
         },
         deleteSupplier: async (parent: any, args: any) => {
             try {
-                const {id} = args.id
+                const {id} = args
 
                 const deleteSupplier = await SupplierSchema.findByIdAndDelete(id)
 

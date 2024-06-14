@@ -5,7 +5,6 @@ export interface IProduct extends Document {
     type_of_product: string,
     category: object,
     unit: object,
-    qty: number,
     barcode: number,
     image: string,
     price: number
@@ -26,9 +25,6 @@ const product = new Schema<IProduct>({
         type: mongoose.Types.ObjectId,
         ref: "Unit"
     },
-    qty: {
-        type: Number
-    },
     barcode: {
         type: Number
     },
@@ -40,6 +36,6 @@ const product = new Schema<IProduct>({
     }
 }, {timestamps: true})
 
-const products = mongoose.model<IProduct>("Product", product, "Products")
+const PorductSchema = mongoose.model<IProduct>("Product", product, "Products")
 
-export default products
+export default PorductSchema

@@ -1,14 +1,13 @@
 import { ApolloError } from "apollo-server-express";
 import BankSchema from "../../../schema/setting/bank.schema";
 import { verifyToken } from "../../../middleware/auth.middleware";
+import verify from "../../../function/verifyToken.function";
 
 const bank = {
     Query: {
         getBanks: async (parent: any, args: any, context: any) => {
             try {
-                if(!verifyToken(context.user)){
-                    throw new ApolloError("Unauthenticated or Expired token")
-                }
+                verify(context.user)
                 return  await BankSchema.find()
             } catch (error: any) {
                 throw new ApolloError(error.message)
@@ -18,9 +17,7 @@ const bank = {
     Mutation: {
         createBank: async (parent: any, args: any, context: any) => {
             try {
-                if(!verifyToken(context.user)){
-                    throw new ApolloError("Unauthenticated or Expired token")
-                }
+                verify(context.user)
                 const newbank = new BankSchema({
                     ...args.data
                 })
@@ -34,9 +31,7 @@ const bank = {
         },
         updateBank: async (parent: any, args: any, context: any) => {
             try {
-                if(!verifyToken(context.user)){
-                    throw new ApolloError("Unauthenticated or Expired token")
-                }
+                verify(context.user)
                 const {bank_name, remark} = args.data
                 const {id} = args.id
     
@@ -51,9 +46,7 @@ const bank = {
         },
         deleteBank: async (parent: any, args: any, context: any) => {
             try {
-                if(!verifyToken(context.user)){
-                    throw new ApolloError("Unauthenticated or Expired token")
-                }
+                verify(context.user)
                 const {id} = args.id
                 const deleteBank = await BankSchema.findByIdAndDelete(id)
     

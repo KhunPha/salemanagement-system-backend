@@ -43,8 +43,10 @@ const user = gql`
     }
 
     type Mutation {
-        createUser(data: UserInput!, file: Upload!): User
+        createUser(data: UserInput!, file: Upload): User
         login(data: Login): User
+        updateUser(id: ID!, data: UserInput): User,
+        deleteUser(id: ID!): User
     }
 `
 

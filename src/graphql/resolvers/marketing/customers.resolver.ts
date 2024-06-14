@@ -1,22 +1,23 @@
 import { ApolloError } from "apollo-server-express";
 import CustomerSchema from "../../../schema/marketing/customers.schema";
 import { verifyToken } from "../../../middleware/auth.middleware";
+import verify from "../../../function/verifyToken.function";
 
 const customer = {
     Query: {
         getCustomers: async (parent: any, args: any, context: any) => {
-            if(!verifyToken(context.user)){
-                throw new ApolloError("Unauthenticated or Expired token")
+            try {
+                verify(context.user)
+                return await CustomerSchema.find()
+            } catch (error: any) {
+                throw new ApolloError(error.message)
             }
-            return await CustomerSchema.find()
         }
     },
     Mutation: {
         createCustomer: async (parent: any, args: any, context: any) => {
             try {
-                if(!verifyToken(context.user)){
-                    throw new ApolloError("Unauthenticated or Expired token")
-                }
+                verify(context.user)
                 const newcustomer = new CustomerSchema({
                     ...args.data
                 })
@@ -30,9 +31,7 @@ const customer = {
         },
         updateCustomer: async (parent: any, args: any, context: any) => {
             try {
-                if(!verifyToken(context.user)){
-                    throw new ApolloError("Unauthenticated or Expired token")
-                }
+                verify(context.user)
                 const { customer_name, phone_number, email, types, remark } = args.data
                 const { id } = args.id
 
@@ -47,9 +46,7 @@ const customer = {
         },
         deleteCustomer: async (parent: any, args: any, context: any) => {
             try {
-                if(!verifyToken(context.user)){
-                    throw new ApolloError("Unauthenticated or Expired token")
-                }
+                verify(context.user)
                 const {id} = args.id
 
                 const deleteCustomer = await CustomerSchema.findByIdAndDelete(id)

@@ -4,7 +4,9 @@ export interface IPurchase extends Document {
     supplier_details: object,
     products_list: object,
     date: string,
-    type_of_product: string
+    product_type: string,
+    amounts: number,
+    remark: string
 }
 
 const purchase = new Schema<IPurchase>({
@@ -21,7 +23,13 @@ const purchase = new Schema<IPurchase>({
     date: {
         type: String
     },
-    type_of_product: {
+    product_type: {
+        type: String
+    },
+    amounts: {
+        type: Number
+    },
+    remark: {
         type: String
     }
 }, {timestamps: true})

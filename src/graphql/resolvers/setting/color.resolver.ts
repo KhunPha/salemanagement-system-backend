@@ -1,14 +1,13 @@
 import { ApolloError } from "apollo-server-express";
 import ColorSchema from "../../../schema/setting/color.schema";
 import { verifyToken } from "../../../middleware/auth.middleware";
+import verify from "../../../function/verifyToken.function";
 
 const color = {
     Query: {
         getColors: async (parent: any, args: any, context: any) => {
             try {
-                if(!verifyToken(context.user)){
-                    throw new ApolloError("Unauthenticated or Expired token")
-                }
+                verify(context.user)
                 return await ColorSchema.find()
             } catch (error: any) {
                 
@@ -18,9 +17,7 @@ const color = {
     Mutation: {
         createColor: async (parent: any, args: any, context: any) => {
             try {
-                if(!verifyToken(context.user)){
-                    throw new ApolloError("Unauthenticated or Expired token")
-                }
+                verify(context.user)
                 const newcolor = new ColorSchema({
                     ...args.data
                 })
@@ -34,9 +31,7 @@ const color = {
         },
         updateColor: async (parent: any, args: any, context: any) => {
             try {
-                if(!verifyToken(context.user)){
-                    throw new ApolloError("Unauthenticated or Expired token")
-                }
+                verify(context.user)
                 const {color_code, color_name, remark} = args.data
                 const {id} = args.id
 
@@ -51,9 +46,7 @@ const color = {
         },
         deleteColor: async (parent: any, args: any, context: any) => {
             try {
-                if(!verifyToken(context.user)){
-                    throw new ApolloError("Unauthenticated or Expired token")
-                }
+                verify(context.user)
                 const {id} = args.id
 
                 const deleteColor = await ColorSchema.findByIdAndDelete(id)

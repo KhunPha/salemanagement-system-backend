@@ -4,6 +4,8 @@ import category from "./setting/categories.resolver";
 import color from "./setting/color.resolver";
 import supplier from "./stock/suppliers.resolver";
 import customer from "./marketing/customers.resolver";
+import product from "./product/products.resolver";
+import unit from "./setting/unit.resolver";
 
 const resolvers = [
     user,
@@ -11,7 +13,9 @@ const resolvers = [
     category,
     color,
     supplier,
-    customer
+    customer,
+    product,
+    unit
 ]
 
 export default resolvers

@@ -133,6 +133,10 @@ const user = {
                 }
 
                 const deleteUser = await UserShcema.findByIdAndDelete(id)
+                
+                if(!deleteUser){
+                    throw new ApolloError("User not found")
+                }
 
                 return deleteUser
             } catch (error: any) {

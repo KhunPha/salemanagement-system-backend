@@ -2,7 +2,8 @@ import mongoose, {Schema, Document} from "mongoose";
 
 export interface IMarketing extends Document {
     title: string,
-    description: string
+    description: string,
+    image: string
 }
 
 const marketing = new Schema<IMarketing>({
@@ -10,6 +11,9 @@ const marketing = new Schema<IMarketing>({
         type: String
     },
     description: {
+        type: String
+    },
+    image: {
         type: String
     }
 }, {timestamps: true})

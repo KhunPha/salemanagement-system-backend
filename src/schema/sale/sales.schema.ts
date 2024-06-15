@@ -2,15 +2,46 @@ import mongoose, {Schema, Document, mongo} from "mongoose";
 
 export interface ISales extends Document {
     product_details: object
+    cashier: string
+    total_qty: number
+    total_amount: number
+    discount_type: string,
+    product_add: object
+    unit_product_discount: object
 }
 
 const sale = new Schema<ISales>({
-    product_details: {
-        type: mongoose.Types.ObjectId,
-        ref: "Product"
-    }
+    product_details: [{
+        product_name: {
+            type: mongoose.Schema.Types.ObjectId
+        },
+        qty: {
+            type: Number
+        },
+        amount: {
+            type: Number
+        }
+    }],
+    cashier: {
+        type: String
+    },
+    total_qty: {
+        type: Number
+    },
+    total_amount: {
+        type: Number
+    },
+    discount_type: {
+        type: String
+    },
+    product_add: [{
+        type: mongoose.Schema.Types.ObjectId
+    }],
+    unit_product_discount: [{
+        type: mongoose.Schema.Types.ObjectId
+    }]
 }, {timestamps: true})
 
-const sales = mongoose.model<ISales>("Sale", sale, "Sales")
+const SaleSchema = mongoose.model<ISales>("Sale", sale, "Sales")
 
-export default sales
+export default SaleSchema

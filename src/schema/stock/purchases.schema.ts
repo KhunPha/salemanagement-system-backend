@@ -34,6 +34,6 @@ const purchase = new Schema<IPurchase>({
     }
 }, {timestamps: true})
 
-const purchases = mongoose.model<IPurchase>("Purchase", purchase, "Purchases")
+const PurchaseSchema = mongoose.model<IPurchase>("Purchase", purchase, "Purchases")
 
-export default purchases
+export default PurchaseSchema

@@ -15,6 +15,6 @@ const product_add = new Schema<IPAdd>({
     }
 }, {timestamps: true})
 
-const ProductAddSchema = mongoose.model<IPAdd>("IPAdd", product_add, "IPAdds")
+const ProductAddSchema = mongoose.model<IPAdd>("ProductAdd", product_add, "ProductAdds")
 
 export default ProductAddSchema

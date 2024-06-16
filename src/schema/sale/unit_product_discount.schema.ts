@@ -19,6 +19,6 @@ const unit_product_discount = new Schema<IUPDiscount>({
     }
 }, {timestamps: true})
 
-const UPDiscountSchema = mongoose.model<IUPDiscount>("PDiscount", unit_product_discount, "PDiscounts")
+const UPDiscountSchema = mongoose.model<IUPDiscount>("UPDiscount", unit_product_discount, "UPDiscounts")
 
 export default UPDiscountSchema

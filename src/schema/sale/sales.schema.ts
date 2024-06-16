@@ -7,6 +7,7 @@ export interface ISales extends Document {
     total_amount: number
     discount_type: string,
     product_add: object
+    discount: number
     unit_product_discount: object
 }
 
@@ -33,6 +34,9 @@ const sale = new Schema<ISales>({
     },
     discount_type: {
         type: String
+    },
+    discount: {
+        type: Number
     },
     product_add: [{
         type: mongoose.Schema.Types.ObjectId

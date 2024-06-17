@@ -40,6 +40,8 @@ const unit = {
                     ...args.data
                 })
 
+                await newunit.save()
+
                 return newunit
             } catch (error: any) {
                 throw new ApolloError(error.message)

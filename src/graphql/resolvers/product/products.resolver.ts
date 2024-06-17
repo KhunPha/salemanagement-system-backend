@@ -1,5 +1,4 @@
 import { ApolloError } from "apollo-server-express"
-import { verifyToken } from "../../../middleware/auth.middleware"
 import PorductSchema from "../../../schema/product/products.schema"
 import verify from "../../../function/verifyToken.function"
 

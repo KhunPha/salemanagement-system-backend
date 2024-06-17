@@ -13,7 +13,7 @@ export interface ISales extends Document {
 
 const sale = new Schema<ISales>({
     product_lists: [{
-        product_details: {
+        product: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "Product"
         },

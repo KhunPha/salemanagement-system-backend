@@ -6,6 +6,10 @@ import supplier from "./stock/suppliers.typeDefs";
 import customer from "./marketing/customers.typeDefs";
 import product from "./product/products.typeDefs";
 import unit from "./setting/unit.typeDefs";
+import product_add from "./sale/product_add.typeDefs";
+import product_lists from "./sale/product_list.typeDefs";
+import unit_product_discount from "./sale/unit_product_discount.typeDefs";
+import sales from "./sale/sales.typeDefs";
 
 const typeDefs = [
     user,
@@ -16,6 +20,10 @@ const typeDefs = [
     customer,
     product,
     unit,
+    product_add,
+    product_lists,
+    unit_product_discount,
+    sales
 ]
 
 export default typeDefs

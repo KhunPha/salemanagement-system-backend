@@ -1,7 +1,7 @@
 import mongoose, {Schema, Document, mongo} from "mongoose";
 
 export interface ISales extends Document {
-    product_details: object
+    product_lists: object
     cashier: string
     total_qty: number
     total_amount: number
@@ -12,9 +12,10 @@ export interface ISales extends Document {
 }
 
 const sale = new Schema<ISales>({
-    product_details: [{
-        product_name: {
-            type: mongoose.Schema.Types.ObjectId
+    product_lists: [{
+        product_details: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Product"
         },
         qty: {
             type: Number
@@ -39,10 +40,25 @@ const sale = new Schema<ISales>({
         type: Number
     },
     product_add: [{
-        type: mongoose.Schema.Types.ObjectId
+        product_details: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Product"
+        },
+        qty: {
+            type: Number
+        }
     }],
     unit_product_discount: [{
-        type: mongoose.Schema.Types.ObjectId
+        product_details: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Product"
+        },
+        discount_type: {
+            type: String
+        },
+        discount: {
+            type: Number
+        }
     }]
 }, {timestamps: true})
 

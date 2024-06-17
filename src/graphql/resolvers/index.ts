@@ -15,7 +15,7 @@ const resolvers = [
     supplier,
     customer,
     product,
-    unit
+    unit,
 ]
 
 export default resolvers

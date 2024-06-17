@@ -15,7 +15,7 @@ const typeDefs = [
     supplier,
     customer,
     product,
-    unit
+    unit,
 ]
 
 export default typeDefs

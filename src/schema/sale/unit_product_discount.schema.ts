@@ -1,13 +1,13 @@
 import mongoose, { Schema, Document } from "mongoose";
 
 export interface IUPDiscount extends Document {
-    product: object,
+    product_details: object,
     discount_type: string,
     discount: number
 }
 
 const unit_product_discount = new Schema<IUPDiscount>({
-    product: {
+    product_details: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Product"
     },

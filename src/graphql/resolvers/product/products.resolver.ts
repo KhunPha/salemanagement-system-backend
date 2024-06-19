@@ -9,7 +9,7 @@ const product = {
                 // Verify Toekn
                 verify(context.user)
 
-                var { page, limit, search } = args
+                var { page, limit, search, filter } = args
 
                 if (!search) {
                     search = ""
@@ -29,9 +29,6 @@ const product = {
                 }).populate([
                     {
                         path: "category",
-                        match: {
-                            category_name: "គូ"
-                        }
                     },
                     {
                         path: "unit"

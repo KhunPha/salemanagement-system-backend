@@ -23,7 +23,7 @@ const product = gql`
     }
 
     type Query {
-        getProducts(page: Int, limit: Int, search: String): [Product]
+        getProducts(page: Int, limit: Int, search: String, filter: String): [Product]
     }
 
     type Mutation {

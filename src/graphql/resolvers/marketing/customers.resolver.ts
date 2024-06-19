@@ -47,7 +47,7 @@ const customer = {
         deleteCustomer: async (parent: any, args: any, context: any) => {
             try {
                 verify(context.user)
-                const {id} = args.id
+                const {id} = args
 
                 const deleteCustomer = await CustomerSchema.findByIdAndDelete(id)
 

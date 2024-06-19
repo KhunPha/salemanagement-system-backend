@@ -3,7 +3,8 @@ import mongoose, {Schema, Document} from "mongoose";
 export interface IMarketing extends Document {
     title: string,
     description: string,
-    image: string
+    image: string,
+    customer: object
 }
 
 const marketing = new Schema<IMarketing>({
@@ -15,9 +16,12 @@ const marketing = new Schema<IMarketing>({
     },
     image: {
         type: String
-    }
+    },
+    customer: [{
+        type: mongoose.Schema.Types.ObjectId
+    }]
 }, {timestamps: true})
 
-const marketings = mongoose.model<IMarketing>("Marketing", marketing, "Marketings")
+const MarketingSchema = mongoose.model<IMarketing>("Marketing", marketing, "Marketings")
 
-export default marketings
+export default MarketingSchema

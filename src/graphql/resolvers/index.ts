@@ -7,6 +7,9 @@ import customer from "./marketing/customers.resolver";
 import product from "./product/products.resolver";
 import unit from "./setting/unit.resolver";
 import sales from "./sale/sales.resolver";
+import exchange_rate from "./setting/exchange_rate.resolver";
+import shop_information from "./setting/shop_information.resolver";
+import marketing from "./marketing/marketing.resolver";
 
 const resolvers = [
     user,
@@ -17,7 +20,10 @@ const resolvers = [
     customer,
     product,
     unit,
-    sales
+    sales,
+    exchange_rate,
+    shop_information,
+    marketing
 ]
 
 export default resolvers

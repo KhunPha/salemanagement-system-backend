@@ -1,14 +1,18 @@
 import mongoose, {Schema, Document} from "mongoose";
 
 export interface IExchange extends Document {
-    exchange_rate_num: string,
+    exchange_rate_name: string
+    exchange_rate: number,
     status: boolean
     remark: string
 }
 
 const exchange = new Schema<IExchange>({
-    exchange_rate_num: {
-        type: String,
+    exchange_rate_name: {
+        type: String
+    },
+    exchange_rate: {
+        type: Number,
     },
     status: {
         type: Boolean

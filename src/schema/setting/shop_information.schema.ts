@@ -2,14 +2,18 @@ import mongoose, {Schema, Document} from "mongoose";
 
 export interface IShop extends Document {
     logo: string,
+    store_name: string,
     phone_number: string,
     email_address: string,
     address: string,
-    description: string
+    remark: string
 }
 
 const shop = new Schema<IShop>({
     logo: {
+        type: String
+    },
+    store_name: {
         type: String
     },
     phone_number: {
@@ -21,7 +25,7 @@ const shop = new Schema<IShop>({
     address: {
         type: String
     },
-    description: {
+    remark: {
         type: String
     }
 }, {timestamps: true})

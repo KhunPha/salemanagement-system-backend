@@ -1,5 +1,5 @@
 import { ApolloError } from "apollo-server-express"
-import PorductSchema from "../../../schema/product/products.schema"
+import ProductSchema from "../../../schema/product/products.schema"
 import verify from "../../../function/verifyToken.function"
 
 const product = {
@@ -15,21 +15,28 @@ const product = {
                     search = ""
                 }
 
-                const TProducts = await PorductSchema.find()
+                const TProducts = await ProductSchema.find()
 
                 const totalPages = Math.floor(TProducts.length / limit)
 
                 const skip = (page - 1) * limit
 
-                const products = await PorductSchema.find({
+                const products = await ProductSchema.find({
                     $or: [
                         { pro_name: { $regex: search, $options: "i" } },
-                        { type_of_product: { $regex: search, $options: "i" } },
-                        { category: { $regex: search, $options: "i" } },
-                        { unit: { $regex: search, $options: "i" } },
-                        { price: { $regex: search, $options: "i" } }
+                        { type_of_product: { $regex: search, $options: "i" } }
                     ]
-                }).skip(skip).limit(limit)
+                }).populate([
+                    {
+                        path: "category",
+                        match: {
+                            category_name: "គូ"
+                        }
+                    },
+                    {
+                        path: "unit"
+                    }
+                    ,]).skip(skip).limit(limit)
 
                 return products
             } catch (error: any) {
@@ -42,7 +49,7 @@ const product = {
             try {
                 verify(context.user)
 
-                const newproduct = new PorductSchema({
+                const newproduct = new ProductSchema({
                     ...args.data
                 })
 
@@ -59,9 +66,9 @@ const product = {
                 const { pro_name, type_of_product, category, unit, barcode, image, price } = args.data
                 const { id } = args
 
-                const productDoc = {$set: {pro_name, type_of_product, category, unit, barcode, image, price}}
+                const productDoc = { $set: { pro_name, type_of_product, category, unit, barcode, image, price } }
 
-                const updateDoc = await PorductSchema.findByIdAndUpdate(id, productDoc, {new: true})
+                const updateDoc = await ProductSchema.findByIdAndUpdate(id, productDoc, { new: true })
 
                 return updateDoc
             } catch (error: any) {
@@ -71,9 +78,9 @@ const product = {
         deleteProduct: async (parent: any, args: any, context: any) => {
             try {
                 verify(context.user)
-                const {id} = args
+                const { id } = args
 
-                const deleteProduct = await PorductSchema.findByIdAndDelete(id)
+                const deleteProduct = await ProductSchema.findByIdAndDelete(id)
 
                 return deleteProduct
             } catch (error: any) {

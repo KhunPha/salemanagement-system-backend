@@ -4,6 +4,9 @@ const product = gql`
     type Product {
         _id: ID
         pro_name: String
+        brand: String
+        size: Float
+        color: Color
         type_of_product: String
         category: Category
         unit: Unit
@@ -14,6 +17,9 @@ const product = gql`
 
     input ProductInput {
         pro_name: String,
+        brand: String
+        size: Float
+        color: ID
         type_of_product: String,
         category: ID
         unit: ID

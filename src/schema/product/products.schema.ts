@@ -2,6 +2,9 @@ import mongoose, {Schema, Document} from "mongoose";
 
 export interface IProduct extends Document {
     pro_name: string,
+    brand: string,
+    size: number,
+    color: object
     type_of_product: string,
     category: object,
     unit: object,
@@ -13,6 +16,15 @@ export interface IProduct extends Document {
 const product = new Schema<IProduct>({
     pro_name: {
         type: String
+    },
+    brand: {
+        type: String
+    },
+    size: {
+        type: Number
+    },
+    color: {
+        type: mongoose.Schema.Types.ObjectId
     },
     type_of_product: {
         type: String

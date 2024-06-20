@@ -60,10 +60,10 @@ const product = {
         updateProduct: async (parent: any, args: any, context: any) => {
             try {
                 verify(context.user)
-                const { pro_name, type_of_product, category, unit, barcode, image, price } = args.data
+                const { pro_name, brand, size, color, type_of_product, category, unit, barcode, image, price } = args.data
                 const { id } = args
 
-                const productDoc = { $set: { pro_name, type_of_product, category, unit, barcode, image, price } }
+                const productDoc = { $set: { pro_name, brand, size, color, type_of_product, category, unit, barcode, image, price } }
 
                 const updateDoc = await ProductSchema.findByIdAndUpdate(id, productDoc, { new: true })
 

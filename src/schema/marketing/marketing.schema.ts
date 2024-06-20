@@ -18,7 +18,8 @@ const marketing = new Schema<IMarketing>({
         type: String
     },
     customer: [{
-        type: mongoose.Schema.Types.ObjectId
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Customer"
     }]
 }, {timestamps: true})
 

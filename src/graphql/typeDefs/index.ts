@@ -13,6 +13,9 @@ import sales from "./sale/sales.typeDefs";
 import exchange_rate from "./setting/exchange_rate.typeDefs";
 import shop_information from "./setting/shop_information.typeDefs";
 import marketing from "./marketing/marketing.typeDefs";
+import stock from "./stock/stocks.typeDefs";
+import payment_purchase from "./stock/payment_purchase.typeDefs";
+import purchase from "./stock/purchases.typeDefs";
 
 const typeDefs = [
     user,
@@ -29,7 +32,10 @@ const typeDefs = [
     sales,
     exchange_rate,
     shop_information,
-    marketing
+    marketing,
+    stock,
+    payment_purchase,
+    purchase
 ]
 
 export default typeDefs

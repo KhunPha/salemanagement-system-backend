@@ -7,7 +7,7 @@ const marketing = {
         getMarketings: async (parent: any, args: any, context: any) => {
             try {
                 verify(context.user)
-                return await MarketingSchema.find()
+                return await MarketingSchema.find().populate("customer")
             } catch (error: any) {
                 throw new ApolloError(error.message)
             }
@@ -23,7 +23,7 @@ const marketing = {
 
                 await newmarketing.save()
 
-                return newmarketing
+                return newmarketing.populate("customer")
             } catch (error: any) {
                 throw new ApolloError(error.message)
             }

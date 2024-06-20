@@ -1,0 +1,36 @@
+import mongoose, {Schema, Document} from "mongoose"
+
+export interface IPaymentPurchase extends Document {
+    purchase_id: string
+    total_dollar: number
+    total_riel: number
+    payment_method: string
+    bank: object
+    remark: string
+}
+
+const payment_purchase = new Schema<IPaymentPurchase>({
+    purchase_id: {
+        type: String
+    },
+    total_dollar: {
+        type: Number
+    },
+    total_riel: {
+        type: Number
+    },
+    payment_method: {
+        type: String
+    },
+    bank: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Bank"
+    },
+    remark: {
+        type: String
+    }
+}, {timestamps: true})
+
+const PaymentPurchaseSchema = mongoose.model<IPaymentPurchase>("PaymentPurchase", payment_purchase, "PaymentPurchases")
+
+export default PaymentPurchaseSchema

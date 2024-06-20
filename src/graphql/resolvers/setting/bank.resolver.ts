@@ -2,6 +2,7 @@ import { ApolloError } from "apollo-server-express";
 import BankSchema from "../../../schema/setting/bank.schema";
 import { verifyToken } from "../../../middleware/auth.middleware";
 import verify from "../../../helper/verifyToken.function";
+import message from "../../../helper/message.helper";
 
 const bank = {
     Query: {
@@ -24,7 +25,11 @@ const bank = {
 
                 await newbank.save()
 
-                return newbank
+                if(!newbank){
+                    throw new ApolloError("Create failed")
+                }
+
+                return message
             } catch (error: any) {
                 throw new ApolloError(error.message)
             }
@@ -39,7 +44,11 @@ const bank = {
 
                 const updateDoc = await BankSchema.findByIdAndUpdate(id, bankDoc)
 
-                return updateDoc
+                if(!updateDoc){
+                    throw new ApolloError("Update failed")
+                }
+
+                return message
             } catch (error: any) {
                 throw new ApolloError(error.message)
             }
@@ -50,7 +59,11 @@ const bank = {
                 const { id } = args
                 const deleteBank = await BankSchema.findByIdAndDelete(id)
 
-                return deleteBank
+                if(!deleteBank){
+                    throw new ApolloError("Delete failed")
+                }
+
+                return message
             } catch (error: any) {
                 throw new ApolloError(error.message)
             }

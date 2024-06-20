@@ -1,7 +1,7 @@
 import mongoose, {Schema, Document} from "mongoose";
 
 export interface ISliceSecondHandHistory extends Document {
-    product_id: object
+    product_id: string
     grade_details: object
     qty: number
     price: number
@@ -9,8 +9,7 @@ export interface ISliceSecondHandHistory extends Document {
 
 const slicesecondhandhistory = new Schema<ISliceSecondHandHistory>({
     product_id: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Product"
+        type: String
     },
     grade_details: {
         type: mongoose.Schema.Types.ObjectId,

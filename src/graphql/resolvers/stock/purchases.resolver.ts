@@ -1,6 +1,7 @@
 import { ApolloError } from "apollo-server-express"
 import verify from "../../../helper/verifyToken.function"
 import PurchaseSchema from "../../../schema/stock/purchases.schema"
+import message from "../../../helper/message.helper"
 
 const purchase = {
     Query: {
@@ -23,7 +24,11 @@ const purchase = {
 
                 await newpurchase.save()
 
-                return newpurchase.populate(["supplier_details", "product_lists"])
+                if(!newpurchase){
+                    throw new ApolloError("Purchase failed")
+                }
+
+                return message
             } catch (error: any) {
                 throw new ApolloError(error.message)
             }

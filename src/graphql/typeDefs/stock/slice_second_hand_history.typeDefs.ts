@@ -3,7 +3,7 @@ import { gql } from "apollo-server-express";
 const slicesecondhandhistory = gql`
     type SliceSecondHand {
         _id: ID
-        product_id: Product
+        product_id: ID
         grade_details: SecondHand
         qty: Int
         price: Float

@@ -2,6 +2,7 @@ import { ApolloError } from "apollo-server-express";
 import ColorSchema from "../../../schema/setting/color.schema";
 import { verifyToken } from "../../../middleware/auth.middleware";
 import verify from "../../../helper/verifyToken.function";
+import message from "../../../helper/message.helper";
 
 const color = {
     Query: {
@@ -24,7 +25,11 @@ const color = {
 
                 await newcolor.save()
 
-                return newcolor
+                if(!newcolor){
+                    throw new ApolloError("Create failed")
+                }
+
+                return message
             } catch (error: any) {
                 throw new ApolloError(error.message)
             }
@@ -39,7 +44,11 @@ const color = {
 
                 const updateDoc = await ColorSchema.findByIdAndUpdate(id, colorDoc)
 
-                return updateDoc
+                if(!updateDoc){
+                    throw new ApolloError("Update failed")
+                }
+
+                return message
             } catch (error: any) {
                 throw new ApolloError(error.message)
             }
@@ -51,7 +60,11 @@ const color = {
 
                 const deleteColor = await ColorSchema.findByIdAndDelete(id)
 
-                return deleteColor
+                if(!deleteColor){
+                    throw new ApolloError("Delete failed")
+                }
+
+                return message
             } catch (error: any) {
                 throw new ApolloError(error.message)
             }

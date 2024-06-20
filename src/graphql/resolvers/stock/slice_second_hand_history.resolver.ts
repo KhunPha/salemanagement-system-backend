@@ -1,6 +1,7 @@
 import { ApolloError } from "apollo-server-express"
 import verify from "../../../helper/verifyToken.function"
 import SliceSecondHandHistorySchema from "../../../schema/stock/slice_second_hand_history.schema"
+import message from "../../../helper/message.helper"
 
 const slicesecondhandhistory = {
     Query: {
@@ -23,7 +24,11 @@ const slicesecondhandhistory = {
 
                 await newslicesecondhand.save()
 
-                return newslicesecondhand.populate(["product_id", "grade_details"])
+                if(!newslicesecondhand){
+                    throw new ApolloError("Slice failed")
+                }
+                
+                return message
             } catch (error: any) {
                 throw new ApolloError(error.message)
             }

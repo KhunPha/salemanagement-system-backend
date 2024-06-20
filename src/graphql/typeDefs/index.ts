@@ -18,6 +18,7 @@ import payment_purchase from "./stock/payment_purchase.typeDefs";
 import purchase from "./stock/purchases.typeDefs";
 import secondhand from "./stock/second_hand.typeDefs";
 import slicesecondhandhistory from "./stock/slice_second_hand_history.typeDefs";
+import responemessage from "./response/respone.typeDefs";
 
 const typeDefs = [
     user,
@@ -39,7 +40,8 @@ const typeDefs = [
     payment_purchase,
     purchase,
     secondhand,
-    slicesecondhandhistory
+    slicesecondhandhistory,
+    responemessage
 ]
 
 export default typeDefs

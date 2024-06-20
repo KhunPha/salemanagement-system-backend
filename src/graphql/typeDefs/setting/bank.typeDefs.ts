@@ -17,9 +17,9 @@ const bank = gql`
     }
 
     type Mutation {
-        createBank(data: BankInput): Bank
-        updateBank(id: ID!, data: BankInput): Bank
-        deleteBank(id: ID!): Bank
+        createBank(data: BankInput): Respone
+        updateBank(id: ID!, data: BankInput): Respone
+        deleteBank(id: ID!): Respone
     }
 `
 

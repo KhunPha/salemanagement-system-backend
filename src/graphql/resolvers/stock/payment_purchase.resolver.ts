@@ -1,3 +1,4 @@
+import message from "../../../helper/message.helper"
 import verify from "../../../helper/verifyToken.function"
 import PaymentPurchaseSchema from "../../../schema/stock/payment_purchase.schema"
 import { ApolloError } from "apollo-server-express"
@@ -25,7 +26,11 @@ const payment_purchase = {
 
                 await newpaymentpurchase.save()
 
-                return newpaymentpurchase.populate("bank")
+                if(!newpaymentpurchase){
+                    throw new ApolloError("Payment failed")
+                }
+
+                return message
             } catch (error: any) {
                 throw new ApolloError(error.message)
             }

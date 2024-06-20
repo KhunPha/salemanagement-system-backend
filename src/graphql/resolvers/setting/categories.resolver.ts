@@ -2,6 +2,7 @@ import { ApolloError } from "apollo-server-express";
 import CategoriesSchema from "../../../schema/setting/categories.schema";
 import { verifyToken } from "../../../middleware/auth.middleware";
 import verify from "../../../helper/verifyToken.function";
+import message from "../../../helper/message.helper";
 
 const category = {
     Query: {
@@ -24,7 +25,11 @@ const category = {
 
                 await newcate.save()
 
-                return newcate
+                if(!newcate){
+                    throw new ApolloError("Create failed")
+                }
+
+                return message
             } catch (error: any) {
                 throw new ApolloError(error.message)
             }
@@ -35,13 +40,15 @@ const category = {
                 const { category_name, remark } = args.data
                 const { id } = args
 
-
-
                 const cateDoc = { $set: { category_name, remark } }
 
                 const updateDoc = await CategoriesSchema.findByIdAndUpdate(id, cateDoc)
 
-                return updateDoc
+                if(!updateDoc){
+                    throw new ApolloError("Update failed")
+                }
+
+                return message
             } catch (error: any) {
                 throw new ApolloError(error.message)
             }
@@ -53,7 +60,11 @@ const category = {
 
                 const deleteCategory = await CategoriesSchema.findOneAndDelete(id)
 
-                return deleteCategory
+                if(!deleteCategory){
+                    throw new ApolloError("Delete failed")
+                }
+
+                return message
             } catch (error: any) {
                 throw new ApolloError(error.message)
             }

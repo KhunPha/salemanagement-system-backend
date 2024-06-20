@@ -21,9 +21,9 @@ const marketing = gql`
     }
 
     type Mutation {
-        createMarketing(data: MarketingInput): Marketing
-        updateMarketing(id: ID, data: MarketingInput): Marketing
-        deleteMarketing(id: ID): Marketing
+        createMarketing(data: MarketingInput): Respone
+        updateMarketing(id: ID, data: MarketingInput): Respone
+        deleteMarketing(id: ID): Respone
     }
 `
 

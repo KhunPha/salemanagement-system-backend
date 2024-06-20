@@ -7,6 +7,7 @@ import { GraphQLUpload } from "graphql-upload-ts"
 import path from "path"
 import fs from "fs"
 import verify from "../../../helper/verifyToken.function"
+import message from "../../../helper/message.helper"
 
 const user = {
     Upload: GraphQLUpload,
@@ -77,7 +78,11 @@ const user = {
 
                 await newuser.save()
 
-                return newuser
+                if(!newuser){
+                    throw new ApolloError("Create failed")
+                }
+
+                return message
             } catch (error: any) {
                 throw new ApolloError(error.message)
             }
@@ -100,7 +105,7 @@ const user = {
 
                 userfound.token = await getToken(userfound)
 
-                return userfound
+                return message
 
             } catch (error: any) {
                 throw new ApolloError(error.message)
@@ -116,7 +121,11 @@ const user = {
 
                 const updateDoc = await UserShcema.findByIdAndUpdate(id, userDoc, { new: true })
 
-                return updateDoc
+                if(!updateDoc){
+                    throw new ApolloError("Update failed")
+                }
+
+                return message
             } catch (error: any) {
                 throw new ApolloError(error.message)
             }
@@ -135,10 +144,10 @@ const user = {
                 const deleteUser = await UserShcema.findByIdAndDelete(id)
 
                 if (!deleteUser) {
-                    throw new ApolloError("User not found")
+                    throw new ApolloError("Delete failed")
                 }
 
-                return deleteUser
+                return message
             } catch (error: any) {
                 throw new ApolloError(error.message)
             }

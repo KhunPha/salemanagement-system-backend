@@ -1,5 +1,6 @@
 import { ApolloError } from "apollo-server-express"
 import SupplierSchema from "../../../schema/stock/suppliers.schema"
+import message from "../../../helper/message.helper"
 
 const supplier = {
     Query: {
@@ -14,7 +15,11 @@ const supplier = {
 
                 await newsupplier.save()
 
-                return newsupplier
+                if(!newsupplier){
+                    throw new ApolloError("Create failed")
+                }
+
+                return message
             } catch (error: any) {
                 throw new ApolloError(error.message)
             }
@@ -28,7 +33,11 @@ const supplier = {
 
                 const updateDoc = await SupplierSchema.findByIdAndUpdate(id, supplierDoc)
 
-                return updateDoc
+                if(!updateDoc){
+                    throw new ApolloError("Update failed")
+                }
+
+                return message
             } catch (error: any) {
                 throw new ApolloError(error.message)
             }
@@ -39,7 +48,11 @@ const supplier = {
 
                 const deleteSupplier = await SupplierSchema.findByIdAndDelete(id)
 
-                return deleteSupplier
+                if(!deleteSupplier){
+                    throw new ApolloError("Delete failed")
+                }
+
+                return message
             } catch (error: any) {
                 throw new ApolloError(error.message)
             }

@@ -1,7 +1,7 @@
 import { ApolloError } from "apollo-server-express";
 import CustomerSchema from "../../../schema/marketing/customers.schema";
-import { verifyToken } from "../../../middleware/auth.middleware";
 import verify from "../../../helper/verifyToken.function";
+import message from "../../../helper/message.helper";
 
 const customer = {
     Query: {
@@ -24,7 +24,11 @@ const customer = {
 
                 await newcustomer.save()
 
-                return newcustomer
+                if(!newcustomer){
+                    throw new ApolloError("Create failed")
+                }
+
+                return message
             } catch (error: any) {
                 throw new ApolloError(error.message)
             }
@@ -39,7 +43,11 @@ const customer = {
 
                 const updateDoc = await CustomerSchema.findByIdAndUpdate(id, customerDoc)
 
-                return updateDoc
+                if(!updateDoc){
+                    throw new ApolloError("Update failed")
+                }
+
+                return message
             } catch (error: any) {
                 throw new ApolloError(error.message)
             }
@@ -51,7 +59,11 @@ const customer = {
 
                 const deleteCustomer = await CustomerSchema.findByIdAndDelete(id)
 
-                return deleteCustomer
+                if(!deleteCustomer){
+                    throw new ApolloError("Delete failed")
+                }
+
+                return message
             } catch (error: any) {
                 throw new ApolloError(error.message)
             }

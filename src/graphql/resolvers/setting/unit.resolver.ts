@@ -1,6 +1,7 @@
 import { ApolloError } from "apollo-server-express"
 import verify from "../../../helper/verifyToken.function"
 import UnitSchema from "../../../schema/setting/unit.shema"
+import message from "../../../helper/message.helper"
 
 const unit = {
     Query: {
@@ -42,7 +43,11 @@ const unit = {
 
                 await newunit.save()
 
-                return newunit
+                if(!newunit){
+                    throw new ApolloError("Create error")
+                }
+
+                return message
             } catch (error: any) {
                 throw new ApolloError(error.message)
             }
@@ -55,9 +60,13 @@ const unit = {
 
                 const unitDoc = { $set: { unit_name, remark } }
 
-                const updateDoc = await UnitSchema.findByIdAndUpdate(id, unit, { new: true })
+                const updateDoc = await UnitSchema.findByIdAndUpdate(id, unitDoc, { new: true })
 
-                return updateDoc
+                if(!updateDoc){
+                    throw new ApolloError("Update failed")
+                }
+
+                return message
             } catch (error: any) {
                 throw new ApolloError(error.message)
             }
@@ -69,7 +78,11 @@ const unit = {
 
                 const deleteUnit = await UnitSchema.findByIdAndDelete(id)
 
-                return deleteUnit
+                if(!deleteUnit){
+                    throw new ApolloError("Delete Failed")
+                }
+
+                return message
             } catch (error: any) {
                 throw new ApolloError(error.message)
             }

@@ -1,6 +1,7 @@
 import { ApolloError } from "apollo-server-express"
 import verify from "../../../helper/verifyToken.function"
 import MarketingSchema from "../../../schema/marketing/marketing.schema"
+import message from "../../../helper/message.helper"
 
 const marketing = {
     Query: {
@@ -23,7 +24,11 @@ const marketing = {
 
                 await newmarketing.save()
 
-                return newmarketing.populate("customer")
+                if(!newmarketing){
+                    throw new ApolloError("Create failed")
+                }
+
+                return message
             } catch (error: any) {
                 throw new ApolloError(error.message)
             }
@@ -38,7 +43,11 @@ const marketing = {
 
                 const updateDoc = await MarketingSchema.findByIdAndUpdate(id, MarketingDoc, { new: true })
 
-                return updateDoc
+                if(!updateDoc){
+                    throw new ApolloError("Update failed")
+                }
+
+                return message
             } catch (error: any) {
                 throw new ApolloError(error.message)
             }
@@ -50,7 +59,11 @@ const marketing = {
 
                 const deleteMarketing = await MarketingSchema.findByIdAndDelete(id)
 
-                return deleteMarketing
+                if(!deleteMarketing){
+                    throw new ApolloError("Delete failed")
+                }
+
+                return message
             } catch (error: any) {
                 throw new ApolloError(error.message)
             }

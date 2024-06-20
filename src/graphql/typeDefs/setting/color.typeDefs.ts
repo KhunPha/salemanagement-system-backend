@@ -19,9 +19,9 @@ const color = gql`
     }
 
     type Mutation {
-        createColor(data: ColorInput): Color
-        updateColor(id: ID, data: ColorInput): Color
-        deleteColor(id: ID): Color
+        createColor(data: ColorInput): Respone
+        updateColor(id: ID, data: ColorInput): Respone
+        deleteColor(id: ID): Respone
     }
 `
 

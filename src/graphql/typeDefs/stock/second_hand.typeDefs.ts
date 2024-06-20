@@ -21,9 +21,9 @@ const secondhand = gql`
     }
 
     type Mutation {
-        createSecondHand(data: SecondHandInput): SecondHand
-        updateSecondHand(id: ID, data: SecondHandInput): SecondHand
-        deleteSecondHand(id: ID): SecondHand
+        createSecondHand(data: SecondHandInput): Respone
+        updateSecondHand(id: ID, data: SecondHandInput): Respone
+        deleteSecondHand(id: ID): Respone
     }
 `
 

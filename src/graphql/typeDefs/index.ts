@@ -16,6 +16,8 @@ import marketing from "./marketing/marketing.typeDefs";
 import stock from "./stock/stocks.typeDefs";
 import payment_purchase from "./stock/payment_purchase.typeDefs";
 import purchase from "./stock/purchases.typeDefs";
+import secondhand from "./stock/second_hand.typeDefs";
+import slicesecondhandhistory from "./stock/slice_second_hand_history.typeDefs";
 
 const typeDefs = [
     user,
@@ -35,7 +37,9 @@ const typeDefs = [
     marketing,
     stock,
     payment_purchase,
-    purchase
+    purchase,
+    secondhand,
+    slicesecondhandhistory
 ]
 
 export default typeDefs

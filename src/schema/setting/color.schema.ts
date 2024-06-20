@@ -1,16 +1,12 @@
 import mongoose, {Schema, Document} from "mongoose";
 
 export interface IColor extends Document {
-    color: string,
     color_name: string,
     color_code: string,
     remark: string
 }
 
 const color = new Schema<IColor>({
-    color: {
-        type: String
-    },
     color_name: {
         type: String
     },

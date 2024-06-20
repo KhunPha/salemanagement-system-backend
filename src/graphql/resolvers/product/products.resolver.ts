@@ -1,6 +1,6 @@
 import { ApolloError } from "apollo-server-express"
 import ProductSchema from "../../../schema/product/products.schema"
-import verify from "../../../function/verifyToken.function"
+import verify from "../../../helper/verifyToken.function"
 
 const product = {
     Query: {

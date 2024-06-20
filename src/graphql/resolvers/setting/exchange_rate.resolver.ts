@@ -1,5 +1,5 @@
 import { ApolloError } from "apollo-server-express"
-import verify from "../../../function/verifyToken.function"
+import verify from "../../../helper/verifyToken.function"
 import ExchangeRateSchema from "../../../schema/setting/exchange_rate.schema"
 
 const exchange_rate = {
@@ -34,9 +34,9 @@ const exchange_rate = {
                 const { exchange_rate_name, exchange_rate, status, remark } = await args.data
                 const { id } = await args.id
 
-                const ExchangeRateDoc = {$set: {exchange_rate_name, exchange_rate, status, remark}}
+                const ExchangeRateDoc = { $set: { exchange_rate_name, exchange_rate, status, remark } }
 
-                const updateDoc = await ExchangeRateSchema.findByIdAndUpdate(id, ExchangeRateDoc, {new: true})
+                const updateDoc = await ExchangeRateSchema.findByIdAndUpdate(id, ExchangeRateDoc, { new: true })
 
                 return updateDoc
             } catch (error: any) {

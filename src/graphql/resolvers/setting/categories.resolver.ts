@@ -1,7 +1,7 @@
 import { ApolloError } from "apollo-server-express";
 import CategoriesSchema from "../../../schema/setting/categories.schema";
 import { verifyToken } from "../../../middleware/auth.middleware";
-import verify from "../../../function/verifyToken.function";
+import verify from "../../../helper/verifyToken.function";
 
 const category = {
     Query: {
@@ -12,7 +12,7 @@ const category = {
             } catch (error: any) {
                 throw new ApolloError(error.message)
             }
-        } 
+        }
     },
     Mutation: {
         createCategory: async (parent: any, args: any, context: any) => {
@@ -32,12 +32,12 @@ const category = {
         updateCategory: async (parent: any, args: any, context: any) => {
             try {
                 verify(context.user)
-                const {category_name, remark} = args.data
-                const {id} = args
+                const { category_name, remark } = args.data
+                const { id } = args
 
-                
 
-                const cateDoc = {$set: {category_name, remark}}
+
+                const cateDoc = { $set: { category_name, remark } }
 
                 const updateDoc = await CategoriesSchema.findByIdAndUpdate(id, cateDoc)
 
@@ -49,7 +49,7 @@ const category = {
         deleteCategory: async (parent: any, args: any, context: any) => {
             try {
                 verify(context.user)
-                const {id} = args
+                const { id } = args
 
                 const deleteCategory = await CategoriesSchema.findOneAndDelete(id)
 

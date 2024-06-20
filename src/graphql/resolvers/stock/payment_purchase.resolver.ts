@@ -1,4 +1,4 @@
-import verify from "../../../function/verifyToken.function"
+import verify from "../../../helper/verifyToken.function"
 import PaymentPurchaseSchema from "../../../schema/stock/payment_purchase.schema"
 import { ApolloError } from "apollo-server-express"
 
@@ -7,9 +7,9 @@ const payment_purchase = {
         getPaymentPurchases: async (parent: any, args: any, context: any) => {
             try {
                 verify(context.user)
-                const {id} = await args
+                const { id } = await args
 
-                return await PaymentPurchaseSchema.find({id}).populate("bank")
+                return await PaymentPurchaseSchema.find({ id }).populate("bank")
             } catch (error: any) {
                 throw new ApolloError(error.message)
             }

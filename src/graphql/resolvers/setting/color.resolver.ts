@@ -1,7 +1,7 @@
 import { ApolloError } from "apollo-server-express";
 import ColorSchema from "../../../schema/setting/color.schema";
 import { verifyToken } from "../../../middleware/auth.middleware";
-import verify from "../../../function/verifyToken.function";
+import verify from "../../../helper/verifyToken.function";
 
 const color = {
     Query: {
@@ -10,7 +10,7 @@ const color = {
                 verify(context.user)
                 return await ColorSchema.find()
             } catch (error: any) {
-                
+
             }
         }
     },
@@ -21,7 +21,7 @@ const color = {
                 const newcolor = new ColorSchema({
                     ...args.data
                 })
-                
+
                 await newcolor.save()
 
                 return newcolor
@@ -32,10 +32,10 @@ const color = {
         updateColor: async (parent: any, args: any, context: any) => {
             try {
                 verify(context.user)
-                const {color_code, color_name, remark} = args.data
-                const {id} = args.id
+                const { color_code, color_name, remark } = args.data
+                const { id } = args.id
 
-                const colorDoc = {$set: {color_code, color_name, remark}}
+                const colorDoc = { $set: { color_code, color_name, remark } }
 
                 const updateDoc = await ColorSchema.findByIdAndUpdate(id, colorDoc)
 
@@ -47,7 +47,7 @@ const color = {
         deleteColor: async (parent: any, args: any, context: any) => {
             try {
                 verify(context.user)
-                const {id} = args
+                const { id } = args
 
                 const deleteColor = await ColorSchema.findByIdAndDelete(id)
 

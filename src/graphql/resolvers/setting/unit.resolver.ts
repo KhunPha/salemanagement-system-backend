@@ -1,5 +1,5 @@
 import { ApolloError } from "apollo-server-express"
-import verify from "../../../function/verifyToken.function"
+import verify from "../../../helper/verifyToken.function"
 import UnitSchema from "../../../schema/setting/unit.shema"
 
 const unit = {
@@ -50,12 +50,12 @@ const unit = {
         updateUnit: async (parent: any, args: any, context: any) => {
             try {
                 verify(context.user)
-                const {unit_name, remark} = await args.data
-                const {id} = await args
-                
-                const unitDoc = {$set: {unit_name, remark}}
+                const { unit_name, remark } = await args.data
+                const { id } = await args
 
-                const updateDoc = await UnitSchema.findByIdAndUpdate(id, unit, {new: true})
+                const unitDoc = { $set: { unit_name, remark } }
+
+                const updateDoc = await UnitSchema.findByIdAndUpdate(id, unit, { new: true })
 
                 return updateDoc
             } catch (error: any) {
@@ -65,7 +65,7 @@ const unit = {
         deleteUnit: async (parent: any, args: any, context: any) => {
             try {
                 verify(context.user)
-                const {id} = await args
+                const { id } = await args
 
                 const deleteUnit = await UnitSchema.findByIdAndDelete(id)
 

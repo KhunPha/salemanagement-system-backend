@@ -1,12 +1,12 @@
 import { ApolloError } from "apollo-server-express"
 import UserShcema from "../../../schema/auth/user.schema"
 import bcrypt from "bcrypt"
-import { getToken } from "../../../function"
+import { getToken } from "../../../helper"
 import { verifyToken } from "../../../middleware/auth.middleware"
 import { GraphQLUpload } from "graphql-upload-ts"
 import path from "path"
 import fs from "fs"
-import verify from "../../../function/verifyToken.function"
+import verify from "../../../helper/verifyToken.function"
 
 const user = {
     Upload: GraphQLUpload,
@@ -133,8 +133,8 @@ const user = {
                 }
 
                 const deleteUser = await UserShcema.findByIdAndDelete(id)
-                
-                if(!deleteUser){
+
+                if (!deleteUser) {
                     throw new ApolloError("User not found")
                 }
 

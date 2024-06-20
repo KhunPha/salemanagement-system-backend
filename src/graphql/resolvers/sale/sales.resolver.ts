@@ -1,14 +1,14 @@
 import { ApolloError } from "apollo-server-express"
 import SaleSchema from "../../../schema/sale/sales.schema"
 import { populate } from "dotenv"
-import verify from "../../../function/verifyToken.function"
+import verify from "../../../helper/verifyToken.function"
 
 const sales = {
     Query: {
         getSales: async (parent: any, args: any, context: any) => {
             try {
                 verify(context.user)
-                const sales = await SaleSchema.find().populate([{path: 'product_lists.product', populate: {path: 'category unit'}}, {path: 'product_add.product_details', populate: {path: 'category unit'}}, {path: 'unit_product_discount.product_details', populate: {path: 'category unit'}}])
+                const sales = await SaleSchema.find().populate([{ path: 'product_lists.product', populate: { path: 'category unit' } }, { path: 'product_add.product_details', populate: { path: 'category unit' } }, { path: 'unit_product_discount.product_details', populate: { path: 'category unit' } }])
                 return sales
             } catch (error: any) {
                 throw new ApolloError(error.message)

@@ -1,5 +1,5 @@
 import { ApolloError } from "apollo-server-express"
-import verify from "../../../function/verifyToken.function"
+import verify from "../../../helper/verifyToken.function"
 import ShopInformationSchema from "../../../schema/setting/shop_information.schema"
 
 const shop_information = {
@@ -36,7 +36,7 @@ const shop_information = {
 
                 const ShopInformationDoc = { $set: { logo, store_name, phone_number, email_address, address, remark } }
 
-                const updateDoc = await ShopInformationSchema.findByIdAndUpdate(id, ShopInformationDoc, {new: true})
+                const updateDoc = await ShopInformationSchema.findByIdAndUpdate(id, ShopInformationDoc, { new: true })
 
                 return updateDoc
             } catch (error: any) {

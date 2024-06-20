@@ -1,7 +1,7 @@
 import { ApolloError } from "apollo-server-express";
 import CustomerSchema from "../../../schema/marketing/customers.schema";
 import { verifyToken } from "../../../middleware/auth.middleware";
-import verify from "../../../function/verifyToken.function";
+import verify from "../../../helper/verifyToken.function";
 
 const customer = {
     Query: {
@@ -47,7 +47,7 @@ const customer = {
         deleteCustomer: async (parent: any, args: any, context: any) => {
             try {
                 verify(context.user)
-                const {id} = args
+                const { id } = args
 
                 const deleteCustomer = await CustomerSchema.findByIdAndDelete(id)
 

@@ -1,5 +1,5 @@
 import { ApolloError } from "apollo-server-express"
-import verify from "../../../function/verifyToken.function"
+import verify from "../../../helper/verifyToken.function"
 import StockSchema from "../../../schema/stock/stocks.schema"
 
 const stock = {
@@ -22,7 +22,7 @@ const stock = {
 
                 const StockDoc = { $set: { cost, discount } }
 
-                const updateDoc = await StockSchema.findByIdAndUpdate(id, StockDoc, {new: true})
+                const updateDoc = await StockSchema.findByIdAndUpdate(id, StockDoc, { new: true })
 
                 return updateDoc?.populate("product_details")
             } catch (error: any) {

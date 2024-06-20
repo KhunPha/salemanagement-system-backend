@@ -1,5 +1,5 @@
 import { ApolloError } from "apollo-server-express"
-import verify from "../../../function/verifyToken.function"
+import verify from "../../../helper/verifyToken.function"
 import PurchaseSchema from "../../../schema/stock/purchases.schema"
 
 const purchase = {

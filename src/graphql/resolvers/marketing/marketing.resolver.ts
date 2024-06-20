@@ -1,5 +1,5 @@
 import { ApolloError } from "apollo-server-express"
-import verify from "../../../function/verifyToken.function"
+import verify from "../../../helper/verifyToken.function"
 import MarketingSchema from "../../../schema/marketing/marketing.schema"
 
 const marketing = {
@@ -31,12 +31,12 @@ const marketing = {
         updateMarketing: async (parent: any, args: any, context: any) => {
             try {
                 verify(context.user)
-                const {title, description, customer, image} = await args.data
-                const {id} = await args.id
+                const { title, description, customer, image } = await args.data
+                const { id } = await args.id
 
-                const MarketingDoc = {$set: {title, description, customer, image}}
+                const MarketingDoc = { $set: { title, description, customer, image } }
 
-                const updateDoc = await MarketingSchema.findByIdAndUpdate(id, MarketingDoc, {new: true})
+                const updateDoc = await MarketingSchema.findByIdAndUpdate(id, MarketingDoc, { new: true })
 
                 return updateDoc
             } catch (error: any) {
@@ -46,8 +46,8 @@ const marketing = {
         deleteMarketing: async (parent: any, args: any, context: any) => {
             try {
                 verify(context.user)
-                const {id} = await args
-                
+                const { id } = await args
+
                 const deleteMarketing = await MarketingSchema.findByIdAndDelete(id)
 
                 return deleteMarketing

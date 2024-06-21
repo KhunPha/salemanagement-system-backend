@@ -13,6 +13,7 @@
   "description": "",
   "dependencies": {
     "@types/luxon": "^3.4.2",
+    "@types/node-windows": "^0.1.6",
     "apollo-server-express": "^3.13.0",
     "bcrypt": "^5.1.1",
     "body-parser": "^1.20.2",

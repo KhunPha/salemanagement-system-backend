@@ -22,6 +22,7 @@
     "fs": "^0.0.1-security",
     "graphql-upload-ts": "^2.1.2",
     "jsonwebtoken": "^9.0.2",
+    "mongodb": "^6.7.0",
     "mongoose": "^8.4.0",
     "node": "^20.14.0",
     "nodemon": "^3.1.1",

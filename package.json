@@ -12,6 +12,7 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@types/luxon": "^3.4.2",
     "apollo-server-express": "^3.13.0",
     "bcrypt": "^5.1.1",
     "body-parser": "^1.20.2",
@@ -22,6 +23,7 @@
     "fs": "^0.0.1-security",
     "graphql-upload-ts": "^2.1.2",
     "jsonwebtoken": "^9.0.2",
+    "luxon": "^3.4.4",
     "mongodb": "^6.7.0",
     "mongoose": "^8.4.0",
     "node": "^20.14.0",

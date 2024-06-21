@@ -7,7 +7,8 @@ import { GraphQLUpload } from "graphql-upload-ts"
 import path from "path"
 import fs from "fs"
 import verify from "../../../helper/verifyToken.helper"
-import {message, messageLogin} from "../../../helper/message.helper"
+import { message, messageLogin } from "../../../helper/message.helper"
+import UserLogSchema from "../../../schema/auth/userlog.schema"
 
 const user = {
     Upload: GraphQLUpload,
@@ -87,7 +88,7 @@ const user = {
                 throw new ApolloError(error.message)
             }
         },
-        login: async (parent: any, args: any) => {
+        login: async (parent: any, args: any, context: any) => {
             try {
                 const { username, password } = await args.data
 
@@ -101,6 +102,30 @@ const user = {
 
                 if (!passTrue) {
                     throw new ApolloError("Incorrect password!")
+                }
+
+                const user_ip_address: any = context.client
+
+                console.log(context)
+
+                const findlog = await UserLogSchema.findOne({
+                    $and: [
+                        { user_details: `${userfound._id}` },
+                        { user_ip_address: `${user_ip_address}` }
+                    ]
+                })
+
+                if (findlog) {
+                    var log_count = findlog.log_count + 1
+                    const updateDoc = { $set: { log_count } }
+                    await UserLogSchema.findOneAndUpdate({ user_ip_address }, updateDoc, { new: true })
+                } else {
+                    const newlog = new UserLogSchema({
+                        user_details: userfound._id,
+                        user_ip_address: context.client,
+                        log_count: 1
+                    })
+                    await newlog.save()
                 }
 
                 messageLogin.token = await getToken(userfound)

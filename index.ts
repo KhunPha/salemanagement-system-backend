@@ -6,6 +6,7 @@ import cors from "cors"
 import dotenv from "dotenv"
 import bodyParser from "body-parser"
 import { typeDefs, resolvers } from "./src/graphql"
+
 const os = require("os")
 const app: any = express()
 
@@ -27,9 +28,11 @@ app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
 
 const PORT = process.env.PORT || 3000
+var client: any = null
 
 app.use((req: Request, res: Response, next: NextFunction) => {
     const clientIp = req.ip || req.socket.remoteAddress || '127.0.0.1';
+    client = clientIp.split("::ffff:")[1]
     next();
 });
 
@@ -40,7 +43,7 @@ const startServer = async () => {
             resolvers,
             context: (req) => {
                 const user = req;
-                return { user }
+                return { user, client }
             }
         })
 

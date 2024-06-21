@@ -6,7 +6,7 @@ try {
     mongoose.connect(MONGO_URI)
     success({
         badge: true,
-        message: `${MONGO_URI}`
+        message: `Connect to: ${MONGO_URI}`
     })
 } catch (error: any) {
     error({

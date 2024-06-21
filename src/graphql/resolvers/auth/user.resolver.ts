@@ -106,8 +106,6 @@ const user = {
 
                 const user_ip_address: any = context.client
 
-                console.log(context)
-
                 const findlog = await UserLogSchema.findOne({
                     $and: [
                         { user_details: `${userfound._id}` },
@@ -118,7 +116,7 @@ const user = {
                 if (findlog) {
                     var log_count = findlog.log_count + 1
                     const updateDoc = { $set: { log_count } }
-                    await UserLogSchema.findOneAndUpdate({ user_ip_address }, updateDoc, { new: true })
+                    await UserLogSchema.findByIdAndUpdate(findlog._id, updateDoc, { new: true })
                 } else {
                     const newlog = new UserLogSchema({
                         user_details: userfound._id,

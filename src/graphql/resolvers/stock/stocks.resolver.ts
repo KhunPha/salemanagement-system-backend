@@ -1,7 +1,7 @@
 import { ApolloError } from "apollo-server-express"
-import verify from "../../../helper/verifyToken.function"
+import verify from "../../../helper/verifyToken.helper"
 import StockSchema from "../../../schema/stock/stocks.schema"
-import message from "../../../helper/message.helper"
+import {message, messageLogin} from "../../../helper/message.helper"
 
 const stock = {
     Query: {
@@ -25,7 +25,7 @@ const stock = {
 
                 const updateDoc = await StockSchema.findByIdAndUpdate(id, StockDoc, { new: true })
 
-                if(!updateDoc){
+                if (!updateDoc) {
                     throw new ApolloError("Update failed")
                 }
 

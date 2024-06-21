@@ -21,8 +21,8 @@ const exchange_rate = gql`
     }
 
     type Mutation {
-        createExchangeRate(data: ExchangeRateInput): Respone
-        updateExchangeRate(id: ID, data: ExchangeRateInput): Respone
+        createExchangeRate(data: ExchangeRateInput): Response
+        updateExchangeRate(id: ID, data: ExchangeRateInput): Response
     }
 `
 

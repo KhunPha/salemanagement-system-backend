@@ -1,6 +1,6 @@
 import { ApolloError } from "apollo-server-express"
 import SupplierSchema from "../../../schema/stock/suppliers.schema"
-import message from "../../../helper/message.helper"
+import {message, messageLogin} from "../../../helper/message.helper"
 
 const supplier = {
     Query: {

@@ -1,7 +1,7 @@
 import { ApolloError } from "apollo-server-express"
-import verify from "../../../helper/verifyToken.function"
+import verify from "../../../helper/verifyToken.helper"
 import ExchangeRateSchema from "../../../schema/setting/exchange_rate.schema"
-import message from "../../../helper/message.helper"
+import {message, messageLogin} from "../../../helper/message.helper"
 
 const exchange_rate = {
     Query: {
@@ -24,10 +24,10 @@ const exchange_rate = {
 
                 await newexchangerate.save()
 
-                if(!newexchangerate){
+                if (!newexchangerate) {
                     throw new ApolloError("Create failed")
                 }
-                
+
                 return message
             } catch (error: any) {
                 throw new ApolloError(error.message)
@@ -43,7 +43,7 @@ const exchange_rate = {
 
                 const updateDoc = await ExchangeRateSchema.findByIdAndUpdate(id, ExchangeRateDoc, { new: true })
 
-                if(!updateDoc){
+                if (!updateDoc) {
                     throw new ApolloError("Update failed")
                 }
 

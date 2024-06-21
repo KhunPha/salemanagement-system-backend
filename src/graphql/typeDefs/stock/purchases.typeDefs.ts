@@ -35,7 +35,7 @@ const purchase = gql`
     }
 
     type Mutation {
-        createPurchase(data: PurchaseInput): Respone
+        createPurchase(data: PurchaseInput): Response
     }
 `
 

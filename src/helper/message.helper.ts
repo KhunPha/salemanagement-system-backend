@@ -4,4 +4,14 @@ const message = {
     status: true,
 }
 
-export default message
+const messageLogin = {
+    message_kh: "ជោគជ័យ",
+    message_en: "successfully",
+    status: true,
+    token: null
+}
+
+export {
+    message,
+    messageLogin
+}

@@ -1,7 +1,7 @@
 import { ApolloError } from "apollo-server-express"
 import ProductSchema from "../../../schema/product/products.schema"
-import verify from "../../../helper/verifyToken.function"
-import message from "../../../helper/message.helper"
+import verify from "../../../helper/verifyToken.helper"
+import {message, messageLogin} from "../../../helper/message.helper"
 
 const product = {
     Query: {
@@ -53,7 +53,7 @@ const product = {
 
                 await newproduct.save()
 
-                if(!newproduct){
+                if (!newproduct) {
                     throw new ApolloError("Create falied")
                 }
 
@@ -72,7 +72,7 @@ const product = {
 
                 const updateDoc = await ProductSchema.findByIdAndUpdate(id, productDoc, { new: true })
 
-                if(!updateDoc){
+                if (!updateDoc) {
                     throw new ApolloError("Update failed")
                 }
 
@@ -88,7 +88,7 @@ const product = {
 
                 const deleteProduct = await ProductSchema.findByIdAndDelete(id)
 
-                if(!deleteProduct){
+                if (!deleteProduct) {
                     throw new ApolloError("Delete failed")
                 }
 

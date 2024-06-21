@@ -6,8 +6,8 @@ import { verifyToken } from "../../../middleware/auth.middleware"
 import { GraphQLUpload } from "graphql-upload-ts"
 import path from "path"
 import fs from "fs"
-import verify from "../../../helper/verifyToken.function"
-import message from "../../../helper/message.helper"
+import verify from "../../../helper/verifyToken.helper"
+import {message, messageLogin} from "../../../helper/message.helper"
 
 const user = {
     Upload: GraphQLUpload,
@@ -78,7 +78,7 @@ const user = {
 
                 await newuser.save()
 
-                if(!newuser){
+                if (!newuser) {
                     throw new ApolloError("Create failed")
                 }
 
@@ -103,10 +103,9 @@ const user = {
                     throw new ApolloError("Incorrect password!")
                 }
 
-                userfound.token = await getToken(userfound)
+                messageLogin.token = await getToken(userfound)
 
-                return message
-
+                return messageLogin
             } catch (error: any) {
                 throw new ApolloError(error.message)
             }
@@ -121,7 +120,7 @@ const user = {
 
                 const updateDoc = await UserShcema.findByIdAndUpdate(id, userDoc, { new: true })
 
-                if(!updateDoc){
+                if (!updateDoc) {
                     throw new ApolloError("Update failed")
                 }
 

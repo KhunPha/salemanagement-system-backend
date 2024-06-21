@@ -1,7 +1,7 @@
 import { ApolloError } from "apollo-server-express"
-import verify from "../../../helper/verifyToken.function"
+import verify from "../../../helper/verifyToken.helper"
 import SecondHandSchema from "../../../schema/stock/second_hand.schema"
-import message from "../../../helper/message.helper"
+import {message, messageLogin} from "../../../helper/message.helper"
 
 const secondhand = {
     Query: {
@@ -24,7 +24,7 @@ const secondhand = {
 
                 await newsecondhand.save()
 
-                if(!newsecondhand){
+                if (!newsecondhand) {
                     throw new ApolloError("Create failed")
                 }
 
@@ -36,14 +36,14 @@ const secondhand = {
         updateSecondHand: async (parent: any, args: any, context: any) => {
             try {
                 verify(context.user)
-                const {grade_name, price, barcode, remark} = await args.data
-                const {id} = await args.id
+                const { grade_name, price, barcode, remark } = await args.data
+                const { id } = await args.id
 
-                const SecondHandDoc = {$set: {grade_name, price, barcode, remark}}
+                const SecondHandDoc = { $set: { grade_name, price, barcode, remark } }
 
-                const updateDoc = await SecondHandSchema.findByIdAndUpdate(id, SecondHandDoc, {new: true})
+                const updateDoc = await SecondHandSchema.findByIdAndUpdate(id, SecondHandDoc, { new: true })
 
-                if(!updateDoc){
+                if (!updateDoc) {
                     throw new ApolloError("Update failed")
                 }
 
@@ -55,14 +55,14 @@ const secondhand = {
         deleteSecondHand: async (parent: any, args: any, context: any) => {
             try {
                 verify(context.user)
-                const {id} = await args
+                const { id } = await args
 
                 const deleteSecondHand = await SecondHandSchema.findByIdAndDelete(id)
 
-                if(!deleteSecondHand){
+                if (!deleteSecondHand) {
                     throw new ApolloError("Delete failed")
                 }
-                
+
                 return message
             } catch (error: any) {
                 throw new ApolloError(error.message)

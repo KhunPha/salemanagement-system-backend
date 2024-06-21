@@ -1,8 +1,8 @@
 import { ApolloError } from "apollo-server-express"
 import SaleSchema from "../../../schema/sale/sales.schema"
 import { populate } from "dotenv"
-import verify from "../../../helper/verifyToken.function"
-import message from "../../../helper/message.helper"
+import verify from "../../../helper/verifyToken.helper"
+import {message, messageLogin} from "../../../helper/message.helper"
 
 const sales = {
     Query: {
@@ -27,7 +27,7 @@ const sales = {
 
                 await newsales.save()
 
-                if(!newsales){
+                if (!newsales) {
                     throw new ApolloError("Sales failed")
                 }
 

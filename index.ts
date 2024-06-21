@@ -21,6 +21,15 @@ if (os.networkInterfaces()['Ethernet']) {
 }
 
 dotenv.config()
+
+export var MONGO_URI: any = null
+
+if(ip_address !== "localhost"){
+    MONGO_URI = process.env.MONGO_URI
+}else{
+    MONGO_URI = process.env.MONGO_URI_LOCAL
+}
+
 require("./src/util/db")
 
 app.use(cors())

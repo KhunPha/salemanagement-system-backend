@@ -9,6 +9,7 @@ import fs from "fs"
 import verify from "../../../helper/verifyToken.helper"
 import { message, messageError, messageLogin } from "../../../helper/message.helper"
 import UserLogSchema from "../../../schema/auth/userlog.schema"
+import { UserRegisterationRules } from "../../../validators/auth.validation"
 
 const user = {
     Upload: GraphQLUpload,
@@ -46,47 +47,55 @@ const user = {
 
     Mutation: {
         createUser: async (parent: any, args: any) => {
-            try {
-                const { firstname, lastname, username, password, roles, image } = await args.data
+            const { firstname, lastname, username, password, roles, image } = await args.data
+            var newfilename = "profile.png"
+
+            await UserRegisterationRules.validate({
+                firstname,
+                lastname,
+                username,
+                password
+            }, {
+                abortEarly: false
+            })
+
+            const dupUser = await UserShcema.findOne({ username })
+
+            if (dupUser) {
+                return messageError
+            }
+
+            const salt = await bcrypt.genSaltSync()
+            const hashpassword = await bcrypt.hashSync(password, salt)
+
+            if(args.file){
                 const { createReadStream, filename, mimetype } = await args.file
-
-                const dupUser = await UserShcema.findOne({ username })
-
-                if (dupUser) {
-                    return messageError
-                }
-
-                const salt = await bcrypt.genSaltSync()
-                const hashpassword = await bcrypt.hashSync(password, salt)
-
                 let name = filename
                 const ext = name.split(".")[1]
                 name = `${Math.floor((Math.random() * 10000) + 1000)}`
-                const newfilename = `${name}-${Date.now()}.${ext}`;
+                newfilename = `${name}-${Date.now()}.${ext}`;
                 const localtion = path.join(__dirname, `../../../../public/images/${newfilename}`)
                 const stream = createReadStream()
-
+    
                 await stream.pipe(fs.createWriteStream(localtion))
-
-                const newuser = new UserShcema({
-                    firstname,
-                    lastname,
-                    username,
-                    password: hashpassword,
-                    roles,
-                    image: `http://localhost:8080/public/images/${newfilename}`
-                })
-
-                await newuser.save()
-
-                if (!newuser) {
-                    return messageError
-                }
-
-                return message
-            } catch (error: any) {
-                throw new ApolloError(error.message)
             }
+
+            const newuser = new UserShcema({
+                firstname,
+                lastname,
+                username,
+                password: hashpassword,
+                roles,
+                image: `http://localhost:8080/public/images/${newfilename}`
+            })
+
+            await newuser.save()
+
+            if (!newuser) {
+                return messageError
+            }
+
+            return message
         },
         login: async (parent: any, args: any, context: any) => {
             try {

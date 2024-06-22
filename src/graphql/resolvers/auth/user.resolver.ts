@@ -7,7 +7,7 @@ import { GraphQLUpload } from "graphql-upload-ts"
 import path from "path"
 import fs from "fs"
 import verify from "../../../helper/verifyToken.helper"
-import { message, messageLogin } from "../../../helper/message.helper"
+import { message, messageError, messageLogin } from "../../../helper/message.helper"
 import UserLogSchema from "../../../schema/auth/userlog.schema"
 
 const user = {
@@ -53,7 +53,7 @@ const user = {
                 const dupUser = await UserShcema.findOne({ username })
 
                 if (dupUser) {
-                    throw new ApolloError("Duplicate Username")
+                    return messageError
                 }
 
                 const salt = await bcrypt.genSaltSync()
@@ -80,7 +80,7 @@ const user = {
                 await newuser.save()
 
                 if (!newuser) {
-                    throw new ApolloError("Create failed")
+                    return messageError
                 }
 
                 return message
@@ -144,7 +144,7 @@ const user = {
                 const updateDoc = await UserShcema.findByIdAndUpdate(id, userDoc, { new: true })
 
                 if (!updateDoc) {
-                    throw new ApolloError("Update failed")
+                    return messageError
                 }
 
                 return message
@@ -166,7 +166,7 @@ const user = {
                 const deleteUser = await UserShcema.findByIdAndDelete(id)
 
                 if (!deleteUser) {
-                    throw new ApolloError("Delete failed")
+                    return messageError
                 }
 
                 return message

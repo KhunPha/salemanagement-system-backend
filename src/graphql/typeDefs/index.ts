@@ -1,24 +1,26 @@
-import bank from "./setting/bank.typeDefs";
-import user from "./auth/user.typeDefs";
-import category from "./setting/categories.typeDefs";
-import color from "./setting/color.typeDefs";
-import supplier from "./stock/suppliers.typeDefs";
-import customer from "./marketing/customers.typeDefs";
-import product from "./product/products.typeDefs";
-import unit from "./setting/unit.typeDefs";
-import product_add from "./sale/product_add.typeDefs";
-import product_lists from "./sale/product_list.typeDefs";
-import unit_product_discount from "./sale/unit_product_discount.typeDefs";
-import sales from "./sale/sales.typeDefs";
-import exchange_rate from "./setting/exchange_rate.typeDefs";
-import shop_information from "./setting/shop_information.typeDefs";
-import marketing from "./marketing/marketing.typeDefs";
-import stock from "./stock/stocks.typeDefs";
-import payment_purchase from "./stock/payment_purchase.typeDefs";
-import purchase from "./stock/purchases.typeDefs";
-import secondhand from "./stock/second_hand.typeDefs";
-import slicesecondhandhistory from "./stock/slice_second_hand_history.typeDefs";
-import responemessage from "./response/respone.typeDefs";
+import bank from "./setting/bank.typeDef";
+import user from "./auth/user.typeDef";
+import category from "./setting/categories.typeDef";
+import color from "./setting/color.typeDef";
+import supplier from "./stock/suppliers.typeDef";
+import customer from "./marketing/customers.typeDef";
+import product from "./product/products.typeDef";
+import unit from "./setting/unit.typeDef";
+import product_add from "./sale/product_add.typeDef";
+import product_lists from "./sale/product_list.typeDef";
+import unit_product_discount from "./sale/unit_product_discount.typeDef";
+import sales from "./sale/sales.typeDef";
+import exchange_rate from "./setting/exchange_rate.typeDef";
+import shop_information from "./setting/shop_information.typeDef";
+import marketing from "./marketing/marketing.typeDef";
+import stock from "./stock/stocks.typeDef";
+import payment_purchase from "./stock/payment_purchase.typeDef";
+import purchase from "./stock/purchases.typeDef";
+import secondhand from "./stock/second_hand.typeDef";
+import slicesecondhandhistory from "./stock/slice_second_hand_history.typeDef";
+import responemessage from "./response/response.typeDef";
+import transferin from "./stock/transfer_in.typeDef";
+import transferout from "./stock/transfer_out.typeDef";
 
 const typeDefs = [
     user,
@@ -41,7 +43,9 @@ const typeDefs = [
     purchase,
     secondhand,
     slicesecondhandhistory,
-    responemessage
+    responemessage,
+    transferin,
+    transferout
 ]
 
 export default typeDefs

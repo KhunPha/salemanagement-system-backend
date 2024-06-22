@@ -1,7 +1,7 @@
 import { ApolloError } from "apollo-server-express"
 import verify from "../../../helper/verifyToken.helper"
 import SecondHandSchema from "../../../schema/stock/second_hand.schema"
-import {message, messageLogin} from "../../../helper/message.helper"
+import {message, messageError, messageLogin} from "../../../helper/message.helper"
 
 const secondhand = {
     Query: {
@@ -25,7 +25,7 @@ const secondhand = {
                 await newsecondhand.save()
 
                 if (!newsecondhand) {
-                    throw new ApolloError("Create failed")
+                    return messageError
                 }
 
                 return message
@@ -44,7 +44,7 @@ const secondhand = {
                 const updateDoc = await SecondHandSchema.findByIdAndUpdate(id, SecondHandDoc, { new: true })
 
                 if (!updateDoc) {
-                    throw new ApolloError("Update failed")
+                    return messageError
                 }
 
                 return message
@@ -60,7 +60,7 @@ const secondhand = {
                 const deleteSecondHand = await SecondHandSchema.findByIdAndDelete(id)
 
                 if (!deleteSecondHand) {
-                    throw new ApolloError("Delete failed")
+                    return messageError
                 }
 
                 return message

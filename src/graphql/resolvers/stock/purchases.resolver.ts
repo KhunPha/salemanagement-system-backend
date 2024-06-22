@@ -1,7 +1,7 @@
 import { ApolloError } from "apollo-server-express"
 import verify from "../../../helper/verifyToken.helper"
 import PurchaseSchema from "../../../schema/stock/purchases.schema"
-import {message, messageLogin} from "../../../helper/message.helper"
+import {message, messageError, messageLogin} from "../../../helper/message.helper"
 
 const purchase = {
     Query: {
@@ -25,7 +25,7 @@ const purchase = {
                 await newpurchase.save()
 
                 if (!newpurchase) {
-                    throw new ApolloError("Purchase failed")
+                    return messageError
                 }
 
                 return message

@@ -15,6 +15,8 @@ import purchase from "./stock/purchases.resolver";
 import payment_purchase from "./stock/payment_purchase.resolver";
 import secondhand from "./stock/second_hand.resolver";
 import slicesecondhandhistory from "./stock/slice_second_hand_history.resolver";
+import transferin from "./stock/transfer_in.resolver";
+import transferout from "./stock/transfer_out.resolver";
 
 const resolvers = [
     user,
@@ -33,7 +35,9 @@ const resolvers = [
     purchase,
     payment_purchase,
     secondhand,
-    slicesecondhandhistory
+    slicesecondhandhistory,
+    transferin,
+    transferout
 ]
 
 export default resolvers

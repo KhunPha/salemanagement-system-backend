@@ -11,7 +11,14 @@ const messageLogin = {
     token: null
 }
 
+const messageError = {
+    message_kh: "បរាជ័យ",
+    message_en: "failed",
+    status: false,
+}
+
 export {
     message,
-    messageLogin
+    messageLogin,
+    messageError
 }

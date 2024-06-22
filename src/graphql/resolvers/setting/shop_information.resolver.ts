@@ -1,7 +1,7 @@
 import { ApolloError } from "apollo-server-express"
 import verify from "../../../helper/verifyToken.helper"
 import ShopInformationSchema from "../../../schema/setting/shop_information.schema"
-import {message, messageLogin} from "../../../helper/message.helper"
+import {message, messageError, messageLogin} from "../../../helper/message.helper"
 
 const shop_information = {
     Query: {
@@ -25,7 +25,7 @@ const shop_information = {
                 await newshopinformation.save()
 
                 if (!newshopinformation) {
-                    throw new ApolloError("Create failed")
+                    return messageError
                 }
 
                 return message
@@ -44,7 +44,7 @@ const shop_information = {
                 const updateDoc = await ShopInformationSchema.findByIdAndUpdate(id, ShopInformationDoc, { new: true })
 
                 if (!updateDoc) {
-                    throw new ApolloError("Update failed")
+                    return messageError
                 }
 
                 return message

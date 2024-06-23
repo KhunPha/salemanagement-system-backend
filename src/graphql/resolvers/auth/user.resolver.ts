@@ -9,7 +9,7 @@ import fs from "fs"
 import verify from "../../../helper/verifyToken.helper"
 import { message, messageError, messageLogin } from "../../../helper/message.helper"
 import UserLogSchema from "../../../schema/auth/userlog.schema"
-import { UserRegisterationRules } from "../../../validators/auth.validation"
+import { UserLoginRules, UserRegisterationRules } from "../../../validators/auth.validation"
 
 const user = {
     Upload: GraphQLUpload,
@@ -68,7 +68,7 @@ const user = {
             const salt = await bcrypt.genSaltSync()
             const hashpassword = await bcrypt.hashSync(password, salt)
 
-            if(args.file){
+            if (args.file) {
                 const { createReadStream, filename, mimetype } = await args.file
                 let name = filename
                 const ext = name.split(".")[1]
@@ -76,7 +76,7 @@ const user = {
                 newfilename = `${name}-${Date.now()}.${ext}`;
                 const localtion = path.join(__dirname, `../../../../public/images/${newfilename}`)
                 const stream = createReadStream()
-    
+
                 await stream.pipe(fs.createWriteStream(localtion))
             }
 
@@ -98,49 +98,52 @@ const user = {
             return message
         },
         login: async (parent: any, args: any, context: any) => {
-            try {
-                const { username, password } = await args.data
+            const { username, password } = await args.data
 
-                const userfound = await UserShcema.findOne({ username })
+            await UserLoginRules.validate({
+                username,
+                password
+            }, {
+                abortEarly: false
+            })
 
-                if (!userfound) {
-                    throw new ApolloError("User not found!")
-                }
+            const userfound = await UserShcema.findOne({ username })
 
-                const passTrue = await bcrypt.compareSync(password, userfound.password)
-
-                if (!passTrue) {
-                    throw new ApolloError("Incorrect password!")
-                }
-
-                const user_ip_address: any = context.client
-
-                const findlog = await UserLogSchema.findOne({
-                    $and: [
-                        { user_details: `${userfound._id}` },
-                        { user_ip_address: `${user_ip_address}` }
-                    ]
-                })
-
-                if (findlog) {
-                    var log_count = findlog.log_count + 1
-                    const updateDoc = { $set: { log_count } }
-                    await UserLogSchema.findByIdAndUpdate(findlog._id, updateDoc, { new: true })
-                } else {
-                    const newlog = new UserLogSchema({
-                        user_details: userfound._id,
-                        user_ip_address: context.client,
-                        log_count: 1
-                    })
-                    await newlog.save()
-                }
-
-                messageLogin.token = await getToken(userfound)
-
-                return messageLogin
-            } catch (error: any) {
-                throw new ApolloError(error.message)
+            if (!userfound) {
+                throw new ApolloError("User not found!")
             }
+
+            const passTrue = await bcrypt.compareSync(password, userfound.password)
+
+            if (!passTrue) {
+                throw new ApolloError("Incorrect password!")
+            }
+
+            const user_ip_address: any = context.client
+
+            const findlog = await UserLogSchema.findOne({
+                $and: [
+                    { user_details: `${userfound._id}` },
+                    { user_ip_address: `${user_ip_address}` }
+                ]
+            })
+
+            if (findlog) {
+                var log_count = findlog.log_count + 1
+                const updateDoc = { $set: { log_count } }
+                await UserLogSchema.findByIdAndUpdate(findlog._id, updateDoc, { new: true })
+            } else {
+                const newlog = new UserLogSchema({
+                    user_details: userfound._id,
+                    user_ip_address: context.client,
+                    log_count: 1
+                })
+                await newlog.save()
+            }
+
+            messageLogin.token = await getToken(userfound)
+
+            return messageLogin
         },
         updateUser: async (parent: any, args: any, context: any) => {
             try {

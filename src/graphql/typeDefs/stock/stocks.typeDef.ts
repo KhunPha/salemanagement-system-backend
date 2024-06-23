@@ -21,7 +21,7 @@ const stock = gql`
     }
 
     type Mutation {
-        updateStock(id: ID, data: StockInput): Response
+        updateStock(id: ID, data: StockInput): Response!
     }
 `
 

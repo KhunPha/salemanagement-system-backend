@@ -15,7 +15,7 @@ const lastname = yup
 const username = yup
     .string()
     .required("Username is required.")
-    .min(6, "Username sould have atleast 6 characters.")
+    .min(5, "Username sould have atleast 5 characters.")
     .max(21, "Username should have atmost 20 character");
 
 const password = yup
@@ -28,4 +28,9 @@ export const UserRegisterationRules = yup.object().shape({
     lastname,
     username,
     password,
+})
+
+export const UserLoginRules = yup.object().shape({
+    username,
+    password
 })

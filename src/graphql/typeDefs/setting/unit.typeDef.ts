@@ -17,9 +17,9 @@ const unit = gql`
     }
 
     type Mutation {
-        createUnit(data: UnitInput): Response
-        updateUnit(id: ID!, data: UnitInput): Response
-        deleteUnit(id: ID!): Response
+        createUnit(data: UnitInput): Response!
+        updateUnit(id: ID!, data: UnitInput): Response!
+        deleteUnit(id: ID!): Response!
     }
 `
 

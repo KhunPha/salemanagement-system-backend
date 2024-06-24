@@ -33,8 +33,11 @@ const product = {
                     },
                     {
                         path: "unit"
+                    },
+                    {
+                        path: "color"
                     }
-                    ,]).skip(skip).limit(limit)
+                    ]).skip(skip).limit(limit)
 
                 return products
             } catch (error: any) {

@@ -6,7 +6,7 @@ const purchase = gql`
     type Purchase {
         _id: ID
         supplier_details: Supplier
-        products_lists: [Product]
+        products_lists: [PurchaseProductDetails]
         date: Date
         product_type: String
         amounts: Float
@@ -17,9 +17,20 @@ const purchase = gql`
         remark: String
     }
 
+    type PurchaseProductDetails {
+        product_details: Product
+        qty: Int
+    }
+
+    input PurchaseProductDetailsInput {
+        product_details: ID
+        qty: Int
+        unit_price: Float
+    }
+
     input PurchaseInput {
         supplier_details: ID
-        products_lists: [ID]
+        products_lists: [PurchaseProductDetailsInput]
         date: Date
         product_type: String
         amounts: Float

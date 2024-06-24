@@ -1,8 +1,12 @@
-import mongoose, {Schema, Document} from "mongoose";
+import mongoose, { Schema, Document } from "mongoose";
 
 export interface IPurchase extends Document {
     supplier_details: object,
-    products_lists: object,
+    products_lists: {
+        product_details: object,
+        qty: number
+        unit_price: number
+    },
     date: string,
     product_type: string,
     amounts: number,
@@ -19,17 +23,24 @@ const purchase = new Schema<IPurchase>({
         type: mongoose.Types.ObjectId,
         ref: "Supplier"
     },
-    products_lists: [
-        {
-            type: mongoose.Types.ObjectId,
+    products_lists: [{
+        product_details: {
+            type: mongoose.Schema.Types.ObjectId,
             ref: "Product"
+        },
+        qty: {
+            type: Number
+        },
+        unit_price: {
+            type: Number
         }
-    ],
+    }],
     date: {
         type: String
     },
     product_type: {
-        type: String
+        type: String,
+        enum: ["New", "Second_Hand"]
     },
     amounts: {
         type: Number
@@ -52,7 +63,7 @@ const purchase = new Schema<IPurchase>({
     remark: {
         type: String
     }
-}, {timestamps: true})
+}, { timestamps: true })
 
 const PurchaseSchema = mongoose.model<IPurchase>("Purchase", purchase, "Purchases")
 

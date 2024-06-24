@@ -10,7 +10,7 @@ const product = gql`
         type_of_product: String
         category: Category
         unit: Unit
-        barcode: Int
+        barcode: String
         image: String,
         price: Float
     }

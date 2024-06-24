@@ -8,7 +8,7 @@ export interface IProduct extends Document {
     type_of_product: string,
     category: object,
     unit: object,
-    barcode: number,
+    barcode: string,
     image: string,
     price: number
 }
@@ -24,7 +24,8 @@ const product = new Schema<IProduct>({
         type: Number
     },
     color: {
-        type: mongoose.Schema.Types.ObjectId
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Color"
     },
     type_of_product: {
         type: String
@@ -38,7 +39,7 @@ const product = new Schema<IProduct>({
         ref: "Unit"
     },
     barcode: {
-        type: Number
+        type: String
     },
     image: {
         type: String

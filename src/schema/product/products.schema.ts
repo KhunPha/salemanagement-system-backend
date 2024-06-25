@@ -28,7 +28,8 @@ const product = new Schema<IProduct>({
         ref: "Color"
     },
     type_of_product: {
-        type: String
+        type: String,
+        enum: ["New", "Second_Hand"]
     },
     category: {
         type: mongoose.Types.ObjectId,

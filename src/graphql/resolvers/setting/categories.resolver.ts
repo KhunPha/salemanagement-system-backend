@@ -1,6 +1,5 @@
 import { ApolloError } from "apollo-server-express";
 import CategoriesSchema from "../../../schema/setting/categories.schema";
-import { verifyToken } from "../../../middleware/auth.middleware";
 import verify from "../../../helper/verifyToken.helper";
 import {message, messageError, messageLogin} from "../../../helper/message.helper"
 

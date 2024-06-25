@@ -2,17 +2,36 @@ import { ApolloError } from "apollo-server-express"
 import verify from "../../../helper/verifyToken.helper"
 import PurchaseSchema from "../../../schema/stock/purchases.schema"
 import { message, messageError, messageLogin } from "../../../helper/message.helper"
-import { format } from "date-fns"
+import { date } from "../../../helper/date.helper"
 
 const purchase = {
     Query: {
         getPurchases: async (parent: any, args: any, context: any) => {
             try {
                 verify(context.user)
+                var { search, page, limit, filter } = args
+                let purchases = []
 
-                return await PurchaseSchema.find().populate([
+                if (!search) {
+                    search = ""
+                }
+
+                if (!filter) {
+                    filter = ""
+                }
+
+                const TPurchase = await PurchaseSchema.find()
+
+                const totalPages = Math.floor(TPurchase.length / limit)
+
+                const skip = (page - 1) * limit
+
+                const purchase: any = await PurchaseSchema.find({status: true}).populate([
                     {
-                        path: "supplier_details"
+                        path: "supplier_details",
+                        match: {
+                            supplier_name: { $regex: filter, $options: "i" }
+                        }
                     },
                     {
                         path: "products_lists.product_details",
@@ -28,7 +47,15 @@ const purchase = {
                             }
                         ]
                     }
-                ])
+                ]).skip(skip).limit(limit)
+
+                for (let i in purchase) {
+                    if (purchase[i].supplier_details) {
+                        purchases.push(purchase[i])
+                    }
+                }
+
+                return purchases
             } catch (error: any) {
                 throw new ApolloError(error.message)
             }
@@ -38,10 +65,6 @@ const purchase = {
         createPurchase: async (parent: any, args: any, context: any) => {
             try {
                 verify(context.user)
-
-                var date = new Date(Date.now());
-                date.toLocaleString('en-US', { timeZone: 'Asia/Phnom_Penh' })
-                const new_date = format(date, 'dd/MM/yyyy HH:mm:ii')
 
                 const total_qty_map = await args.data.products_lists
                 var total_qty = 0, total_price = [], total_amount = 0
@@ -54,7 +77,7 @@ const purchase = {
 
                 args.data.total_qty = total_qty
                 args.data.amounts = total_amount
-                args.data.date = new_date
+                args.data.date = date()
 
                 const newpurchase = new PurchaseSchema({
                     ...args.data
@@ -63,6 +86,24 @@ const purchase = {
                 await newpurchase.save()
 
                 if (!newpurchase) {
+                    return messageError
+                }
+
+                return message
+            } catch (error: any) {
+                throw new ApolloError(error.message)
+            }
+        },
+        voidPurchase: async (parent: any, args: any, context: any) => {
+            try {
+                verify(context.user)
+                const {id, status} = await args
+
+                const voidpurchaseDoc = {$set: {status}}
+
+                const voidDoc = await PurchaseSchema.findByIdAndUpdate(id, voidpurchaseDoc, {new: true})
+
+                if(!voidDoc){
                     return messageError
                 }
 

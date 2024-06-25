@@ -37,7 +37,7 @@ const marketing = {
             try {
                 verify(context.user)
                 const { title, description, customer, image } = await args.data
-                const { id } = await args.id
+                const { id } = await args
 
                 const MarketingDoc = { $set: { title, description, customer, image } }
 

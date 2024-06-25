@@ -1,6 +1,5 @@
 import { ApolloError } from "apollo-server-express";
 import ColorSchema from "../../../schema/setting/color.schema";
-import { verifyToken } from "../../../middleware/auth.middleware";
 import verify from "../../../helper/verifyToken.helper";
 import {message, messageError, messageLogin} from "../../../helper/message.helper"
 
@@ -38,7 +37,7 @@ const color = {
             try {
                 verify(context.user)
                 const { color_code, color_name, remark } = args.data
-                const { id } = args.id
+                const { id } = args
 
                 const colorDoc = { $set: { color_code, color_name, remark } }
 

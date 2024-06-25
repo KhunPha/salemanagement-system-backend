@@ -37,7 +37,7 @@ const exchange_rate = {
             try {
                 verify(context.user)
                 const { exchange_rate_name, exchange_rate, status, remark } = await args.data
-                const { id } = await args.id
+                const { id } = await args
 
                 const ExchangeRateDoc = { $set: { exchange_rate_name, exchange_rate, status, remark } }
 

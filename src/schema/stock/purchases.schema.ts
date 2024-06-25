@@ -40,7 +40,7 @@ const purchase = new Schema<IPurchase>({
     },
     product_type: {
         type: String,
-        enum: ["New", "Second_Hand"]
+        enum: ["New", "Second Hand"]
     },
     amounts: {
         type: Number
@@ -49,13 +49,15 @@ const purchase = new Schema<IPurchase>({
         type: Boolean
     },
     priority: {
-        type: String
+        type: String,
+        enum: ["Hard", "Medium", "Normal"]
     },
     total_qty: {
         type: Number
     },
     due: {
-        type: Number
+        type: Number,
+        default: 0
     },
     remiding_date: {
         type: Date

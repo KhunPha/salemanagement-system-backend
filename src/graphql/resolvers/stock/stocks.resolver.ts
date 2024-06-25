@@ -19,7 +19,7 @@ const stock = {
             try {
                 verify(context.user)
                 const { cost, discount } = await args.data
-                const { id } = await args.id
+                const { id } = await args
 
                 const StockDoc = { $set: { cost, discount } }
 

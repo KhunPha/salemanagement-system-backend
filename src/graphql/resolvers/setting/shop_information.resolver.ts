@@ -37,7 +37,7 @@ const shop_information = {
             try {
                 verify(context.user)
                 const { logo, store_name, phone_number, email_address, address, remark } = await args.data
-                const { id } = await args.id
+                const { id } = await args
 
                 const ShopInformationDoc = { $set: { logo, store_name, phone_number, email_address, address, remark } }
 

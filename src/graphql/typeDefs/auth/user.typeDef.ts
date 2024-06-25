@@ -9,7 +9,7 @@ const user = gql`
         lastname: String
         username: String
         password: String,
-        roles: RoleType,
+        roles: String,
         image: String,
         token: String
     }
@@ -20,13 +20,6 @@ const user = gql`
         username: String
         password: String,
         roles: String
-    }
-
-    enum RoleType {
-        SUPER_ADMIN
-        ADMIN
-        SALER
-        STOCK
     }
 
     input Login {

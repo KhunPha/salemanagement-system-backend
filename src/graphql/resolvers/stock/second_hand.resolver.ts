@@ -37,7 +37,7 @@ const secondhand = {
             try {
                 verify(context.user)
                 const { grade_name, price, barcode, remark } = await args.data
-                const { id } = await args.id
+                const { id } = await args
 
                 const SecondHandDoc = { $set: { grade_name, price, barcode, remark } }
 

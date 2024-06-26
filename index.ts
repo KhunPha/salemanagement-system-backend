@@ -64,8 +64,7 @@ const startServer = async () => {
         app.listen(PORT, () => {
             success({
                 badge: true,
-                // message: `Server running on http://${ip_address}:${PORT}${apolloServer.graphqlPath}`
-                message: `Server running on http://localhost:${PORT}${apolloServer.graphqlPath}`
+                message: `Server running on http://${ip_address}:${PORT}${apolloServer.graphqlPath}`
             })
         })
 

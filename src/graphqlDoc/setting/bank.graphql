@@ -10,9 +10,9 @@ query GetBanks {
 # Create 
 mutation Mutation($data: BankInput) {
   createBank(data: $data) {
-    _id
-    bank_name
-    remark
+    message_en
+    message_kh
+    status
   }
 }
 
@@ -27,9 +27,9 @@ mutation Mutation($data: BankInput) {
 # Update
 mutation UpdateBank($id: ID!, $data: BankInput) {
   updateBank(id: $id, data: $data) {
-    _id
-    bank_name
-    remark
+    message_en
+    message_kh
+    status
   }
 }
 
@@ -45,9 +45,9 @@ mutation UpdateBank($id: ID!, $data: BankInput) {
 # Delete
 mutation DeleteBank($id: ID!) {
   deleteBank(id: $id) {
-    _id
-    bank_name
-    remark
+    message_en
+    message_kh
+    status
   }
 }
 

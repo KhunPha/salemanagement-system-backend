@@ -10,9 +10,9 @@ query GetCategories {
 # Create
 mutation Mutation($data: CateInput) {
   createCategory(data: $data) {
-    _id
-    category_name
-    remark
+    message_en
+    message_kh
+    status
   }
 }
 
@@ -27,9 +27,9 @@ mutation Mutation($data: CateInput) {
 # Update
 mutation Mutation($id: ID!, $data: CateInput) {
   updateCategory(id: $id, data: $data) {
-    _id
-    category_name
-    remark
+    message_en
+    message_kh
+    status
   }
 }
 
@@ -45,9 +45,9 @@ mutation Mutation($id: ID!, $data: CateInput) {
 # Delete
 mutation Mutation($id: ID!) {
   deleteCategory(id: $id) {
-    _id
-    category_name
-    remark
+    message_en
+    message_kh
+    status
   }
 }
 

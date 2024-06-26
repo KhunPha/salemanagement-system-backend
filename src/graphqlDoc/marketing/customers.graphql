@@ -13,12 +13,9 @@ query Query {
 # Create
 mutation Mutation($data: CustomerInput) {
   createCustomer(data: $data) {
-    _id
-    customer_name
-    phone_number
-    email
-    types
-    remark
+    message_en
+    message_kh
+    status
   }
 }
 
@@ -36,12 +33,9 @@ mutation Mutation($data: CustomerInput) {
 # Update
 mutation Mutation($id: ID!, $data: CustomerInput) {
   updateCustomer(id: $id, data: $data) {
-    _id
-    customer_name
-    phone_number
-    email
-    types
-    remark
+    message_en
+    message_kh
+    status
   }
 }
 
@@ -60,12 +54,9 @@ mutation Mutation($id: ID!, $data: CustomerInput) {
 # Delete
 mutation Mutation($id: ID!) {
   deleteCustomer(id: $id) {
-    _id
-    customer_name
-    phone_number
-    email
-    types
-    remark
+    message_en
+    message_kh
+    status
   }
 }
 

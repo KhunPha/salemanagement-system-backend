@@ -36,14 +36,9 @@ query Query($search: SearchInput) {
 # Create
 mutation Mutation($data: UserInput!) {
   createUser(data: $data) {
-    _id
-    firstname
-    lastname
-    username
-    password
-    roles
-    image
-    token
+    message_en
+    message_kh
+    status
   }
 }
 
@@ -62,13 +57,9 @@ mutation Mutation($data: UserInput!) {
 # Login
 mutation Mutation($data: Login) {
   login(data: $data) {
-    _id
-    firstname
-    lastname
-    username
-    password
-    roles
-    image
+    message_en
+    message_kh
+    status
     token
   }
 }

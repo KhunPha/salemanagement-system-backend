@@ -11,10 +11,9 @@ query GetColors {
 # Create
 mutation CreateColor($data: ColorInput) {
   createColor(data: $data) {
-    _id
-    color_code
-    color_name
-    remark
+    message_en
+    message_kh
+    status
   }
 }
 
@@ -30,10 +29,9 @@ mutation CreateColor($data: ColorInput) {
 # Update
 mutation Mutation($id: ID, $data: ColorInput) {
   updateColor(id: $id, data: $data) {
-    _id
-    color_code
-    color_name
-    remark
+    message_en
+    message_kh
+    status
   }
 }
 
@@ -50,10 +48,9 @@ mutation Mutation($id: ID, $data: ColorInput) {
 # Delete
 mutation Mutation($id: ID) {
   deleteColor(id: $id) {
-    _id
-    color_code
-    color_name
-    remark
+    message_en
+    message_kh
+    status
   }
 }
 

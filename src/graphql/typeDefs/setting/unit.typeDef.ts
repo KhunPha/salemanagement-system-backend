@@ -13,7 +13,7 @@ const unit = gql`
     }
 
     type Query {
-        getUnits(page: Int, limit: Int, search: String): [Unit]
+        getUnits(page: Int, limit: Int, keyword: String): [Unit]
     }
 
     type Mutation {

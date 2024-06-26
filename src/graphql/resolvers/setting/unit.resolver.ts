@@ -8,10 +8,10 @@ const unit = {
         getUnits: async (parent: any, args: any, context: any) => {
             try {
                 verify(context.user)
-                var { page, limit, search } = args
+                var { page, limit, keyword } = args
 
-                if (!search) {
-                    search = ""
+                if (!keyword) {
+                    keyword = ""
                 }
 
                 const TUnits = await UnitSchema.find()
@@ -22,8 +22,8 @@ const unit = {
 
                 const units = await UnitSchema.find({
                     $or: [
-                        { unit_name: { $regex: search, $options: "i" } },
-                        { remark: { $regex: search, $options: "i" } }
+                        { unit_name: { $regex: keyword, $options: "i" } },
+                        { remark: { $regex: keyword, $options: "i" } }
                     ]
                 }).skip(skip).limit(limit)
 

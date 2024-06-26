@@ -17,7 +17,7 @@ const secondhand = gql`
     }
 
     type Query {
-        getSecondHands(page: Int, limit: Int, search: String): [SecondHand]
+        getSecondHands(page: Int, limit: Int, keyword: String): [SecondHand]
     }
 
     type Mutation {

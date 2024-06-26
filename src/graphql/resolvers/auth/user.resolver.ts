@@ -18,10 +18,10 @@ const user = {
         getUsers: async (parent: any, args: any, context: any) => {
             try {
                 verify(context.user)
-                var { search, page, limit } = args
+                var { keyword, page, limit } = args
 
-                if (!search) {
-                    search = ""
+                if (!keyword) {
+                    keyword = ""
                 }
 
                 const TUsers = await UserShcema.find()
@@ -32,9 +32,9 @@ const user = {
 
                 const users = await UserShcema.find({
                     $or: [
-                        { firstname: { $regex: search, $options: "i" } },
-                        { lastname: { $regex: search, $options: "i" } },
-                        { username: { $regex: search, $options: "i" } }
+                        { firstname: { $regex: keyword, $options: "i" } },
+                        { lastname: { $regex: keyword, $options: "i" } },
+                        { username: { $regex: keyword, $options: "i" } }
                     ]
                 }).skip(skip).limit(limit)
 

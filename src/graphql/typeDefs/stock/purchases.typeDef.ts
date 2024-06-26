@@ -42,7 +42,7 @@ const purchase = gql`
     }
 
     type Query {
-        getPurchases(page: Int, limit: Int, search: String, filter: String): [Purchase]
+        getPurchases(page: Int, limit: Int, keyword: String, filter: String): [Purchase]
     }
 
     type Mutation {

@@ -9,11 +9,11 @@ const purchase = {
         getPurchases: async (parent: any, args: any, context: any) => {
             try {
                 verify(context.user)
-                var { search, page, limit, filter } = args
+                var { keyword, page, limit, filter } = args
                 let purchases = []
 
-                if (!search) {
-                    search = ""
+                if (!keyword) {
+                    keyword = ""
                 }
 
                 if (!filter) {

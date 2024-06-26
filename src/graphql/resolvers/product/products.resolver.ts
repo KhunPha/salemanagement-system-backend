@@ -10,10 +10,10 @@ const product = {
                 // Verify Toekn
                 verify(context.user)
 
-                var { page, limit, search, filter } = args
+                var { page, limit, keyword, filter } = args
 
-                if (!search) {
-                    search = ""
+                if (!keyword) {
+                    keyword = ""
                 }
 
                 const TProducts = await ProductSchema.find()
@@ -24,8 +24,8 @@ const product = {
 
                 const products = await ProductSchema.find({
                     $or: [
-                        { pro_name: { $regex: search, $options: "i" } },
-                        { type_of_product: { $regex: search, $options: "i" } }
+                        { pro_name: { $regex: keyword, $options: "i" } },
+                        { type_of_product: { $regex: keyword, $options: "i" } }
                     ]
                 }).populate([
                     {

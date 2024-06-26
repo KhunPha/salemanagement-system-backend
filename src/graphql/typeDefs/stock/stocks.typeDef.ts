@@ -17,7 +17,7 @@ const stock = gql`
     }
 
     type Query {
-        getStocks(page: Int, limit: Int, search: String): [Stock]
+        getStocks(page: Int, limit: Int, keyword: String): [Stock]
     }
 
     type Mutation {

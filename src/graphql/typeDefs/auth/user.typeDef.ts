@@ -27,12 +27,8 @@ const user = gql`
         password: String
     }
 
-    input SearchInput {
-        search: String
-    }
-
     type Query {
-        getUsers(search: String, page: Int, limit: Int): [User]
+        getUsers(keyword: String, page: Int, limit: Int): [User]
     }
 
     type Mutation {

@@ -50,7 +50,6 @@ mutation Mutation($data: UserInput!) {
     "username": null,
     "password": null,
     "roles": null,
-    "image": null
   }
 }
 

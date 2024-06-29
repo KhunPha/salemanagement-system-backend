@@ -37,6 +37,10 @@ const user = gql`
         updateUser(id: ID!, data: UserInput): Response!
         deleteUser(id: ID!): Response!
     }
+
+    type Subscription {
+        getnewUser: User!
+    }
 `
 
 export default user

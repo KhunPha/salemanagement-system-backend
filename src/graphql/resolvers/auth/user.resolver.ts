@@ -10,6 +10,9 @@ import verify from "../../../helper/verifyToken.helper"
 import { message, messageError, messageLogin } from "../../../helper/message.helper"
 import UserLogSchema from "../../../schema/auth/userlog.schema"
 import { UserLoginRules, UserRegisterationRules } from "../../../validators/auth.validation"
+import { PubSub } from "graphql-subscriptions"
+
+const pubsub = new PubSub()
 
 const user = {
     Upload: GraphQLUpload,
@@ -90,6 +93,9 @@ const user = {
             })
 
             await newuser.save()
+
+            // WebScoket
+            pubsub.publish("NEW_USER", { getnewUser: newuser })
 
             if (!newuser) {
                 return messageError
@@ -185,6 +191,11 @@ const user = {
             } catch (error: any) {
                 throw new ApolloError(error.message)
             }
+        }
+    },
+    Subscription: {
+        getnewUser: {
+            subscribe: () => pubsub.asyncIterator("NEW_USER")
         }
     }
 }

@@ -5,6 +5,10 @@ import { graphqlUploadExpress } from "graphql-upload-ts"
 import cors from "cors"
 import dotenv from "dotenv"
 import bodyParser from "body-parser"
+import http from "http"
+import { execute, subscribe } from "graphql"
+import { SubscriptionServer } from "subscriptions-transport-ws"
+import { makeExecutableSchema } from "@graphql-tools/schema"
 import { typeDefs, resolvers } from "./src/graphql"
 
 const os = require("os")
@@ -24,9 +28,9 @@ dotenv.config()
 
 export var MONGO_URI: any = null
 
-if(ip_address !== "localhost"){
+if (ip_address !== "localhost") {
     MONGO_URI = process.env.MONGO_URI
-}else{
+} else {
     MONGO_URI = process.env.MONGO_URI_LOCAL
 }
 
@@ -45,27 +49,50 @@ app.use((req: Request, res: Response, next: NextFunction) => {
     next();
 });
 
+const schema = makeExecutableSchema({
+    typeDefs,
+    resolvers
+})
+
 const startServer = async () => {
     try {
         const apolloServer = new ApolloServer({
-            typeDefs,
-            resolvers,
+            schema,
             context: (req) => {
                 const user = req;
                 return { user, client }
             }
         })
 
-        app.use(graphqlUploadExpress({maxFieldSize: 10000000, maxFiles: 10}))
+        app.use(graphqlUploadExpress({ maxFieldSize: 10000000, maxFiles: 10 }))
 
         await apolloServer.start()
         apolloServer.applyMiddleware({ app, cors: true })
 
-        app.listen(PORT, () => {
+        const httpServer = http.createServer(app)
+
+        httpServer.listen(PORT, () => {
             success({
                 badge: true,
                 message: `Server running on http://${ip_address}:${PORT}${apolloServer.graphqlPath}`
             })
+        })
+
+        SubscriptionServer.create(
+            {
+                schema,
+                execute,
+                subscribe,
+            },
+            {
+                server: httpServer,
+                path: apolloServer.graphqlPath
+            }
+        )
+
+        success({
+            badge: true,
+            message: `WebSocket subscriptions ready at ws://${ip_address}:${PORT}${apolloServer.graphqlPath}`
         })
 
     } catch (err: any) {

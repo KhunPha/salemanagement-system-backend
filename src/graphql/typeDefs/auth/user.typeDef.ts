@@ -11,6 +11,7 @@ const user = gql`
         password: String,
         roles: String,
         image: String,
+        remark: String
         token: String
     }
 
@@ -20,6 +21,7 @@ const user = gql`
         username: String
         password: String,
         roles: String
+        remark: String
     }
 
     input Login {

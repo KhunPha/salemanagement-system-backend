@@ -50,7 +50,7 @@ const user = {
 
     Mutation: {
         createUser: async (parent: any, args: any) => {
-            const { firstname, lastname, username, password, roles, image } = await args.data
+            const { firstname, lastname, username, password, roles, remark } = await args.data
             var newfilename = "profile.png"
 
             await UserRegisterationRules.validate({
@@ -89,7 +89,8 @@ const user = {
                 username,
                 password: hashpassword,
                 roles,
-                image: `http://localhost:8080/public/images/${newfilename}`
+                image: `http://localhost:8080/public/images/${newfilename}`,
+                remark
             })
 
             await newuser.save()

@@ -7,6 +7,7 @@ export interface IUser extends Document {
     password: string,
     roles: object,
     image: string,
+    remark: string,
     token: string
 }
 
@@ -34,6 +35,9 @@ const user = new Schema<IUser>({
     image: {
         type: String,
         default: ""
+    },
+    remark: {
+        type: String
     },
     token: {
         type: String

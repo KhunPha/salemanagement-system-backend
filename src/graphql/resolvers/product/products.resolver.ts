@@ -20,9 +20,11 @@ const product = {
         //     keyword = ""
         // }
 
-        const TProducts = await ProductSchema.find();
+        // const TProducts = await ProductSchema.find();
+        const countProduct = await ProductSchema.countDocuments();
 
-        const totalPages = Math.floor(TProducts.length / limit);
+        // const totalPages = Math.floor(TProducts.length / limit);
+        const totalPages = Math.floor(countProduct / limit);
 
         const skip = (page - 1) * limit;
 

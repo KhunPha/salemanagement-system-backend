@@ -11,28 +11,18 @@ const product = {
   Query: {
     getProducts: async (parent: any, args: any, context: any) => {
       try {
-        // Verify Toekn
+        // Verify Token
         verify(context.user);
 
         var { page, limit, keyword, unit, category, type_of_product } = args;
 
-        // if (!keyword) {
-        //     keyword = ""
-        // }
-
-        // const TProducts = await ProductSchema.find();
         const countProduct = await ProductSchema.countDocuments();
 
-        // const totalPages = Math.floor(TProducts.length / limit);s
         const totalPages = Math.floor(countProduct / limit);
 
         const skip = (page - 1) * limit;
 
         const products = await ProductSchema.find({
-          // $or: [
-          //     { pro_name: { $regex: keyword, $options: "i" } },
-          //     { type_of_product: { $regex: keyword, $options: "i" } }
-          // ]
           $and: [
             keyword ? { pro_name: { $regex: keyword, $options: "i" } } : {},
             type_of_product === "All" ? {} : { type_of_product },

@@ -1,14 +1,31 @@
 import { ApolloError } from "apollo-server-express";
 import BankSchema from "../../../schema/setting/bank.schema";
 import verify from "../../../helper/verifyToken.helper";
-import {message, messageError, messageLogin} from "../../../helper/message.helper"
+import { message, messageError, messageLogin } from "../../../helper/message.helper"
 
 const bank = {
     Query: {
         getBanks: async (parent: any, args: any, context: any) => {
             try {
                 verify(context.user)
-                return await BankSchema.find()
+                const fullData = await BankSchema.paginate()
+
+                const data = fullData.docs
+                
+                const paginator = {
+                    totalDocs: fullData.totalDocs,
+                    offset: fullData.offset,
+                    limit: fullData.limit,
+                    totalPages: fullData.totalPages,
+                    page: fullData.page,
+                    pagingCounter: fullData.pagingCounter,
+                    hasPrevPage: fullData.hasPrevPage,
+                    hasNextPage: fullData.hasNextPage,
+                    prevPage: fullData.prevPage,
+                    nextPage: fullData.nextPage
+                }
+
+                return {data, paginator}
             } catch (error: any) {
                 throw new ApolloError(error.message)
             }

@@ -1,4 +1,5 @@
-import mongoose, {Schema, Document} from "mongoose"
+import mongoose, {Schema, Document, PaginateModel} from "mongoose"
+import paginate from "mongoose-paginate-v2"
 
 export interface IBank extends Document {
     bank_name: string,
@@ -15,6 +16,8 @@ const bank = new Schema<IBank>({
     }
 }, {timestamps: true})
 
-const BankSchema = mongoose.model<IBank>("Bank", bank, "Banks")
+bank.plugin(paginate)
+
+const BankSchema = mongoose.model<IBank, PaginateModel<IBank>>("Bank", bank, "Banks")
 
 export default BankSchema

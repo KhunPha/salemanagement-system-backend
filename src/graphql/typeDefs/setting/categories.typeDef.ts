@@ -31,7 +31,7 @@ const category = gql`
     }
 
     type Query {
-        getCategories(page: Int, limit: Int, pagination: Boolean, keyword: String): [CategoryPagination]
+        getCategories(page: Int, limit: Int, pagination: Boolean, keyword: String): CategoryPagination
     }
 
     type Mutation {

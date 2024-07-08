@@ -33,7 +33,7 @@ const color = gql`
     }
 
     type Query {
-        getColors(page: Int, limit: Int, pagination: Boolean, keyword: String): [ColorPagination]
+        getColors(page: Int, limit: Int, pagination: Boolean, keyword: String): ColorPagination
     }
 
     type Mutation {

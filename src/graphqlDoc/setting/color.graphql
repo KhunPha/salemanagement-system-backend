@@ -9,8 +9,8 @@ query GetColors {
 }
 
 # Create
-mutation CreateColor($data: ColorInput) {
-  createColor(data: $data) {
+mutation CreateColor($input: ColorInput) {
+  createColor(input: $input) {
     message_en
     message_kh
     status
@@ -19,7 +19,7 @@ mutation CreateColor($data: ColorInput) {
 
 # Variable
 {
-  "data": {
+  "input": {
     "color_code": null,
     "color_name": null,
     "remark": null
@@ -27,8 +27,8 @@ mutation CreateColor($data: ColorInput) {
 }
 
 # Update
-mutation Mutation($id: ID, $data: ColorInput) {
-  updateColor(id: $id, data: $data) {
+mutation Mutation($id: ID, $input: ColorInput) {
+  updateColor(id: $id, input: $input) {
     message_en
     message_kh
     status
@@ -38,7 +38,7 @@ mutation Mutation($id: ID, $data: ColorInput) {
 # Variable
 {
   "id": null,
-  "data": {
+  "input": {
     "color_code": null,
     "color_name": null,
     "remark": null

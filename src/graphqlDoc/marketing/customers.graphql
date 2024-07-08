@@ -11,8 +11,8 @@ query Query {
 }
 
 # Create
-mutation Mutation($data: CustomerInput) {
-  createCustomer(data: $data) {
+mutation Mutation($input: CustomerInput) {
+  createCustomer(input: $input) {
     message_en
     message_kh
     status
@@ -21,7 +21,7 @@ mutation Mutation($data: CustomerInput) {
 
 # Variable
 {
-  "data": {
+  "input": {
     "customer_name": null,
     "email": null,
     "phone_number": null,
@@ -31,8 +31,8 @@ mutation Mutation($data: CustomerInput) {
 }
 
 # Update
-mutation Mutation($id: ID!, $data: CustomerInput) {
-  updateCustomer(id: $id, data: $data) {
+mutation Mutation($id: ID!, $input: CustomerInput) {
+  updateCustomer(id: $id, input: $input) {
     message_en
     message_kh
     status
@@ -42,7 +42,7 @@ mutation Mutation($id: ID!, $data: CustomerInput) {
 # Variable
 {
   "id": null,
-  "data": {
+  "input": {
     "customer_name": null,
     "email": null,
     "phone_number": null,

@@ -8,8 +8,8 @@ query GetBanks {
 }
 
 # Create 
-mutation Mutation($data: BankInput) {
-  createBank(data: $data) {
+mutation Mutation($input: BankInput) {
+  createBank(input: $input) {
     message_en
     message_kh
     status
@@ -18,15 +18,15 @@ mutation Mutation($data: BankInput) {
 
 # Variable
 {
-  "data": {
+  "input": {
     "bank_name": null,
     "remark": null
   }
 }
 
 # Update
-mutation UpdateBank($id: ID!, $data: BankInput) {
-  updateBank(id: $id, data: $data) {
+mutation UpdateBank($id: ID!, $input: BankInput) {
+  updateBank(id: $id, input: $input) {
     message_en
     message_kh
     status
@@ -36,7 +36,7 @@ mutation UpdateBank($id: ID!, $data: BankInput) {
 # Variable
 {
   "id": null,
-  "data": {
+  "input": {
     "bank_name": null,
     "remark": null
   }

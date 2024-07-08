@@ -28,7 +28,7 @@ const bank = {
             try {
                 verify(context.user)
                 const newbank = new BankSchema({
-                    ...args.data
+                    ...args.input
                 })
 
                 await newbank.save()
@@ -45,7 +45,7 @@ const bank = {
         updateBank: async (parent: any, args: any, context: any) => {
             try {
                 verify(context.user)
-                const { bank_name, remark } = args.data
+                const { bank_name, remark } = args.input
                 const { id } = args
 
                 const bankDoc = { $set: { bank_name: bank_name, remark: remark } }

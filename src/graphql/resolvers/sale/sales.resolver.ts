@@ -46,9 +46,9 @@ const sales = {
         createSales: async (parent: any, args: any, context: any) => {
             try {
                 verify(context.user)
-                console.log(args.data)
+                console.log(args.input)
                 const newsales = new SaleSchema({
-                    ...args.data
+                    ...args.input
                 })
 
                 await newsales.save()

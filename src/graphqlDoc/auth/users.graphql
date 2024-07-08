@@ -34,8 +34,8 @@ query Query($search: SearchInput) {
 }
 
 # Create
-mutation Mutation($data: UserInput!) {
-  createUser(data: $data) {
+mutation Mutation($input: UserInput!) {
+  createUser(input: $input) {
     message_en
     message_kh
     status
@@ -44,7 +44,7 @@ mutation Mutation($data: UserInput!) {
 
 # Variable
 {
-  "data": {
+  "input": {
     "firstname": null,
     "lastname": null,
     "username": null,
@@ -54,8 +54,8 @@ mutation Mutation($data: UserInput!) {
 }
 
 # Login
-mutation Mutation($data: Login) {
-  login(data: $data) {
+mutation Mutation($input: Login) {
+  login(input: $input) {
     message_en
     message_kh
     status
@@ -65,7 +65,7 @@ mutation Mutation($data: Login) {
 
 # Variable
 {
-  "data": {
+  "input": {
     "username": null,
     "password": null
   }

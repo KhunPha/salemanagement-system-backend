@@ -8,8 +8,8 @@ query GetCategories {
 }
 
 # Create
-mutation Mutation($data: CateInput) {
-  createCategory(data: $data) {
+mutation Mutation($input: CateInput) {
+  createCategory(input: $input) {
     message_en
     message_kh
     status
@@ -18,15 +18,15 @@ mutation Mutation($data: CateInput) {
 
 # Variable
 {
-  "data": {
+  "input": {
     "category_name": null,
     "remark": null
   }
 }
 
 # Update
-mutation Mutation($id: ID!, $data: CateInput) {
-  updateCategory(id: $id, data: $data) {
+mutation Mutation($id: ID!, $input: CateInput) {
+  updateCategory(id: $id, input: $input) {
     message_en
     message_kh
     status
@@ -36,7 +36,7 @@ mutation Mutation($id: ID!, $data: CateInput) {
 # Variable
 {
   "id": null,
-  "data": {
+  "input": {
     "category_name": null,
     "remark": null
   }

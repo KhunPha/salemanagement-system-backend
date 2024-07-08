@@ -34,7 +34,16 @@ const product = {
           page: page,
           limit: limit
         }
-        return await ProductSchema.paginate({}, options)
+
+        const query = {
+          $and: [
+            keyword ? { pro_name: { $regex: keyword, $options: "i" } } : {},
+            type_of_product === "All" ? {} : { type_of_product },
+            unit.bank_name ? { unit } : {},
+            category ? { category } : {},
+          ]
+        }
+        return await ProductSchema.paginate(query, options)
 
         // const countProduct = await ProductSchema.countDocuments();
 

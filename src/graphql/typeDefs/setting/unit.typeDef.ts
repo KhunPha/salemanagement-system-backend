@@ -31,7 +31,7 @@ const unit = gql`
     }
 
     type Query {
-        getUnits(page: Int, limit: Int, pagination: Boolean, keyword: String): [UnitPagination]
+        getUnits(page: Int, limit: Int, pagination: Boolean, keyword: String): UnitPagination
     }
 
     type Mutation {

@@ -35,7 +35,7 @@ const secondhand = gql`
     }
 
     type Query {
-        getSecondHands(page: Int, limit: Int, pagination: Boolean, keyword: String): [SecondHandPagination]
+        getSecondHands(page: Int, limit: Int, pagination: Boolean, keyword: String): SecondHandPagination
     }
 
     type Mutation {

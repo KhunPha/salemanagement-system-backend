@@ -60,7 +60,7 @@ const purchase = gql`
     }
 
     type Query {
-        getPurchases(page: Int, limit: Int, pagination: Boolean, keyword: String): [PurchasePagination]
+        getPurchases(page: Int, limit: Int, pagination: Boolean, keyword: String): PurchasePagination
     }
 
     type Mutation {

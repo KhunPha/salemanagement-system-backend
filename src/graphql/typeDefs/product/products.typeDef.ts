@@ -47,7 +47,7 @@ const product = gql`
     }
 
     type Query {
-        getProducts(page: Int, limit: Int, pagination: Boolean, keyword: String, unit: String, category: String, type_of_product: String): [ProductPagination]
+        getProducts(page: Int, limit: Int, pagination: Boolean, keyword: String, unit: String, category: String, type_of_product: String): ProductPagination
     }
 
     type Mutation {

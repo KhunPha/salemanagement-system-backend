@@ -37,7 +37,7 @@ const supplier = gql`
     }
 
     type Query {
-        getSuppliers(page: Int, limit: Int, pagination: Boolean, keyword: String): [SupplierPagination]
+        getSuppliers(page: Int, limit: Int, pagination: Boolean, keyword: String): SupplierPagination
     }
 
     type Mutation {

@@ -69,7 +69,7 @@ const sales = gql`
     }
 
     type Query {
-        getSales(page: Int, limit: Int, pagination: Boolean, keyword: String): [SalesPagination]
+        getSales(page: Int, limit: Int, pagination: Boolean, keyword: String): SalesPagination
     }
 
     type Mutation {

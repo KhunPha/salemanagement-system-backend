@@ -37,7 +37,7 @@ const customer = gql`
     }
 
     type Query {
-        getCustomers: [CustomerPagination]
+        getCustomers: CustomerPagination
     }
 
     type Mutation {

@@ -48,7 +48,7 @@ const user = gql`
     }
 
     type Query {
-        getUsers(keyword: String, page: Int, limit: Int): [UserPagination]
+        getUsers(keyword: String, page: Int, pagination: Boolean, limit: Int): UserPagination
     }
 
     type Mutation {

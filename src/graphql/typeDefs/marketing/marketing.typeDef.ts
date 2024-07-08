@@ -35,7 +35,7 @@ const marketing = gql`
     }
 
     type Query {
-        getMarketings(page: Int, limit: Int, keyword: String): [MarketingPagination]
+        getMarketings(page: Int, limit: Int, keyword: String): MarketingPagination
     }
 
     type Mutation {

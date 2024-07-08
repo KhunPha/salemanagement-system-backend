@@ -2,20 +2,20 @@
     "version": 2,
     "builds": [
         {
-            "src": "./index.t",
+            "src": "./src/index.ts",
             "use": "@vercel/node"
         }
     ],
     "routes": [
         {
             "src": "/(.*)",
-            "dest": "/"
+            "dest": "/src"
         }
     ],
     "rewrites": [
         {
             "source": "/(.*)",
-            "destination": "./"
+            "destination": "./src"
         }
     ]
 }

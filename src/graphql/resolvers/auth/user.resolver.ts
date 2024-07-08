@@ -50,7 +50,7 @@ const user = {
 
     Mutation: {
         createUser: async (parent: any, args: any) => {
-            const { firstname, lastname, username, password, roles, remark } = await args.data
+            const { firstname, lastname, username, password, roles, remark } = await args.input
             var newfilename = "profile.png"
 
             await UserRegisterationRules.validate({
@@ -105,7 +105,7 @@ const user = {
             return message
         },
         login: async (parent: any, args: any, context: any) => {
-            const { username, password } = await args.data
+            const { username, password } = await args.input
 
             await UserLoginRules.validate({
                 username,
@@ -155,7 +155,7 @@ const user = {
         updateUser: async (parent: any, args: any, context: any) => {
             try {
                 verify(context.user)
-                const { firstname, lastname, username, password, roles, image } = await args.data
+                const { firstname, lastname, username, password, roles, image } = await args.input
                 const { id } = args
 
                 const userDoc = { $set: { firstname, lastname, username, password, roles, image } }
@@ -178,7 +178,7 @@ const user = {
                 const { id } = await args
                 const userLog = verifyToken(context.user)
 
-                if (id === userLog.data._id) {
+                if (id === userLog.input._id) {
                     throw new ApolloError("Cannot delete")
                 }
 

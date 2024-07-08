@@ -38,7 +38,7 @@ const unit = {
             try {
                 verify(context.user)
                 const newunit = new UnitSchema({
-                    ...args.data
+                    ...args.input
                 })
 
                 await newunit.save()
@@ -55,7 +55,7 @@ const unit = {
         updateUnit: async (parent: any, args: any, context: any) => {
             try {
                 verify(context.user)
-                const { unit_name, remark } = await args.data
+                const { unit_name, remark } = await args.input
                 const { id } = await args
 
                 const unitDoc = { $set: { unit_name, remark } }

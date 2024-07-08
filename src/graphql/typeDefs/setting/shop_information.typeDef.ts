@@ -25,8 +25,8 @@ const shop_information = gql`
     }
 
     type Mutation {
-        createShopInformation(data: ShopInformationInput): Response!
-        updateShopInformation(id: ID, data: ShopInformationInput): Response!
+        createShopInformation(input: ShopInformationInput): Response!
+        updateShopInformation(id: ID, input: ShopInformationInput): Response!
     }
 `
 

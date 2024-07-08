@@ -19,7 +19,7 @@ const transferin = {
             try {
                 verify(context.user)
                 const newtransferin = new TransferInSchema({
-                    ...args.data
+                    ...args.input
                 })
 
                 await newtransferin.save()

@@ -19,7 +19,7 @@ const transferout = {
             try {
                 verify(context.user)
                 const newtransferout = new TransferOutSchema({
-                    ...args.data
+                    ...args.input
                 })
 
                 await newtransferout.save()

@@ -55,8 +55,8 @@ const sales = gql`
     }
 
     type Mutation {
-        createSales(data: SalesInput): Response!
-        updateSales(id: ID, data: SalesInput): Response!
+        createSales(input: SalesInput): Response!
+        updateSales(id: ID, input: SalesInput): Response!
         deleteSales(id: ID): Response!
     }
 `

@@ -19,7 +19,7 @@ const exchange_rate = {
             try {
                 verify(context.user)
                 const newexchangerate = new ExchangeRateSchema({
-                    ...args.data
+                    ...args.input
                 })
 
                 await newexchangerate.save()
@@ -36,7 +36,7 @@ const exchange_rate = {
         updateExchangeRate: async (parent: any, args: any, context: any) => {
             try {
                 verify(context.user)
-                const { exchange_rate_name, exchange_rate, status, remark } = await args.data
+                const { exchange_rate_name, exchange_rate, status, remark } = await args.input
                 const { id } = await args
 
                 const ExchangeRateDoc = { $set: { exchange_rate_name, exchange_rate, status, remark } }

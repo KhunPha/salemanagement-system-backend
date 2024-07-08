@@ -25,7 +25,7 @@ const payment_purchase = gql`
     }
 
     type Mutation {
-        paymentPurchase(data: PaymentPurchaseInput): Response!
+        paymentPurchase(input: PaymentPurchaseInput): Response!
     }
 `
 

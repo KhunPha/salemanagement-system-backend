@@ -17,8 +17,8 @@ const category = gql`
     }
 
     type Mutation {
-        createCategory(data: CateInput): Response!
-        updateCategory(id: ID!, data: CateInput): Response!
+        createCategory(input: CateInput): Response!
+        updateCategory(id: ID!, input: CateInput): Response!
         deleteCategory(id: ID!): Response!
     }
 `

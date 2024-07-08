@@ -23,8 +23,8 @@ const customer = gql`
     }
 
     type Mutation {
-        createCustomer(data: CustomerInput): Response!
-        updateCustomer(id: ID!, data: CustomerInput): Response!
+        createCustomer(input: CustomerInput): Response!
+        updateCustomer(id: ID!, input: CustomerInput): Response!
         deleteCustomer(id: ID!): Response!
     }
 `

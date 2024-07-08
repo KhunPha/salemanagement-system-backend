@@ -19,7 +19,7 @@ const shop_information = {
             try {
                 verify(context.user)
                 const newshopinformation = new ShopInformationSchema({
-                    ...args.data
+                    ...args.input
                 })
 
                 await newshopinformation.save()
@@ -36,7 +36,7 @@ const shop_information = {
         updateShopInformation: async (parent: any, args: any, context: any) => {
             try {
                 verify(context.user)
-                const { logo, store_name, phone_number, email_address, address, remark } = await args.data
+                const { logo, store_name, phone_number, email_address, address, remark } = await args.input
                 const { id } = await args
 
                 const ShopInformationDoc = { $set: { logo, store_name, phone_number, email_address, address, remark } }

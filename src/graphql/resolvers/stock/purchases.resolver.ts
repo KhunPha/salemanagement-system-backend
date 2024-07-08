@@ -66,7 +66,7 @@ const purchase = {
             try {
                 verify(context.user)
 
-                const total_qty_map = await args.data.products_lists
+                const total_qty_map = await args.input.products_lists
                 var total_qty = 0, total_price = [], total_amount = 0
 
                 for (var i = 0; i < total_qty_map.length; i++) {
@@ -75,12 +75,12 @@ const purchase = {
                     total_amount = total_amount + total_price[i]
                 }
 
-                args.data.total_qty = total_qty
-                args.data.amounts = total_amount
-                args.data.date = date()
+                args.input.total_qty = total_qty
+                args.input.amounts = total_amount
+                args.input.date = date()
 
                 const newpurchase = new PurchaseSchema({
-                    ...args.data
+                    ...args.input
                 })
 
                 await newpurchase.save()

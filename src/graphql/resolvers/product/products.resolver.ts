@@ -56,7 +56,7 @@ const product = {
         verify(context.user);
 
         const newproduct = new ProductSchema({
-          ...args.data,
+          ...args.input,
         });
 
         await newproduct.save();
@@ -84,7 +84,7 @@ const product = {
           barcode,
           image,
           price,
-        } = args.data;
+        } = args.input;
         const { id } = args;
 
         const productDoc = {

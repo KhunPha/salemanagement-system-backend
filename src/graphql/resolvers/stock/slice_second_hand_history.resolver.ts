@@ -19,7 +19,7 @@ const slicesecondhandhistory = {
             try {
                 verify(context.user)
                 const newslicesecondhand = new SliceSecondHandHistorySchema({
-                    ...args.data
+                    ...args.input
                 })
 
                 await newslicesecondhand.save()

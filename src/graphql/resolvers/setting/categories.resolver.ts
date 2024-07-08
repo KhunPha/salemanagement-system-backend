@@ -19,7 +19,7 @@ const category = {
             try {
                 verify(context.user)
                 const newcate = new CategoriesSchema({
-                    ...args.data
+                    ...args.input
                 })
 
                 await newcate.save()
@@ -36,7 +36,7 @@ const category = {
         updateCategory: async (parent: any, args: any, context: any) => {
             try {
                 verify(context.user)
-                const { category_name, remark } = args.data
+                const { category_name, remark } = args.input
                 const { id } = args
 
                 const cateDoc = { $set: { category_name, remark } }

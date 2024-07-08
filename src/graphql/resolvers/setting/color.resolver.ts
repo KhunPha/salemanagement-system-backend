@@ -19,7 +19,7 @@ const color = {
             try {
                 verify(context.user)
                 const newcolor = new ColorSchema({
-                    ...args.data
+                    ...args.input
                 })
 
                 await newcolor.save()
@@ -36,7 +36,7 @@ const color = {
         updateColor: async (parent: any, args: any, context: any) => {
             try {
                 verify(context.user)
-                const { color_code, color_name, remark } = args.data
+                const { color_code, color_name, remark } = args.input
                 const { id } = args
 
                 const colorDoc = { $set: { color_code, color_name, remark } }

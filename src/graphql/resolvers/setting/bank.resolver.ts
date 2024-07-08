@@ -2,30 +2,23 @@ import { ApolloError } from "apollo-server-express";
 import BankSchema from "../../../schema/setting/bank.schema";
 import verify from "../../../helper/verifyToken.helper";
 import { message, messageError, messageLogin } from "../../../helper/message.helper"
+import { customLabels } from "../../../helper/customeLabels.helper";
+import { PaginateOptions } from "mongoose";
 
 const bank = {
     Query: {
-        getBanks: async (parent: any, args: any, context: any) => {
+        getBankPagination: async (parent: any, args: any, context: any) => {
             try {
                 verify(context.user)
-                const fullData = await BankSchema.paginate()
-
-                const data = fullData.docs
-                
-                const paginator = {
-                    totalDocs: fullData.totalDocs,
-                    offset: fullData.offset,
-                    limit: fullData.limit,
-                    totalPages: fullData.totalPages,
-                    page: fullData.page,
-                    pagingCounter: fullData.pagingCounter,
-                    hasPrevPage: fullData.hasPrevPage,
-                    hasNextPage: fullData.hasNextPage,
-                    prevPage: fullData.prevPage,
-                    nextPage: fullData.nextPage
+                const {page, limit, pagination, keyword} = await args
+                const options: PaginateOptions = {
+                    pagination,
+                    customLabels,
+                    page: page,
+                    limit: limit,
+                    offset: (page - 1) * limit
                 }
-
-                return {data, paginator}
+                return await BankSchema.paginate({}, options)
             } catch (error: any) {
                 throw new ApolloError(error.message)
             }

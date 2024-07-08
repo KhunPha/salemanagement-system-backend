@@ -21,7 +21,7 @@ const payment_purchase = {
             try {
                 verify(context.user)
                 const newpaymentpurchase = new PaymentPurchaseSchema({
-                    ...args.data
+                    ...args.input
                 })
 
                 await newpaymentpurchase.save()

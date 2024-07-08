@@ -18,7 +18,7 @@ const stock = {
         updateStock: async (parent: any, args: any, context: any) => {
             try {
                 verify(context.user)
-                const { cost, discount } = await args.data
+                const { cost, discount } = await args.input
                 const { id } = await args
 
                 const StockDoc = { $set: { cost, discount } }

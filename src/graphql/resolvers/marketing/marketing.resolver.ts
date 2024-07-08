@@ -19,7 +19,7 @@ const marketing = {
             try {
                 verify(context.user)
                 const newmarketing = new MarketingSchema({
-                    ...args.data
+                    ...args.input
                 })
 
                 await newmarketing.save()
@@ -36,7 +36,7 @@ const marketing = {
         updateMarketing: async (parent: any, args: any, context: any) => {
             try {
                 verify(context.user)
-                const { title, description, customer, image } = await args.data
+                const { title, description, customer, image } = await args.input
                 const { id } = await args
 
                 const MarketingDoc = { $set: { title, description, customer, image } }

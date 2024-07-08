@@ -8,16 +8,16 @@ const bank = gql`
     }
 
     type Paginator {
-        totalDocs: Int
-        offset: Int
-        limit: Int
+        slNo: Int
+        prev: Int
+        next: Int
+        perPage: Int
+        totalPosts: Int
         totalPages: Int
-        page: Int
-        pagingCounter: Int
+        currentPage: Int
         hasPrevPage: Boolean
         hasNextPage: Boolean
-        prevPage: Int
-        nextPage: Int
+        totalDocs: Int
     }
 
     type BankPagination {
@@ -31,12 +31,12 @@ const bank = gql`
     }
 
     type Query {
-        getBanks: BankPagination
+        getBankPagination(page:Int, limit: Int, pagination: Boolean, keyword: String): BankPagination
     }
 
     type Mutation {
-        createBank(data: BankInput): Response!
-        updateBank(id: ID!, data: BankInput): Response!
+        createBank(input: BankInput): Response!
+        updateBank(id: ID!, input: BankInput): Response!
         deleteBank(id: ID!): Response!
     }
 `

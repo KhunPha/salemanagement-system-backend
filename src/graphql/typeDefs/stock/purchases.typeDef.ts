@@ -46,7 +46,7 @@ const purchase = gql`
     }
 
     type Mutation {
-        createPurchase(data: PurchaseInput): Response!
+        createPurchase(input: PurchaseInput): Response!
         voidPurchase(id: ID!, status: Boolean): Response
     }
 `

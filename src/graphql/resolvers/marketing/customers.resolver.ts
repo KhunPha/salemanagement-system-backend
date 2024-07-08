@@ -19,7 +19,7 @@ const customer = {
             try {
                 verify(context.user)
                 const newcustomer = new CustomerSchema({
-                    ...args.data
+                    ...args.input
                 })
 
                 await newcustomer.save()
@@ -36,7 +36,7 @@ const customer = {
         updateCustomer: async (parent: any, args: any, context: any) => {
             try {
                 verify(context.user)
-                const { customer_name, phone_number, email, types, remark } = args.data
+                const { customer_name, phone_number, email, types, remark } = args.input
                 const { id } = await args
 
                 const customerDoc = { $set: { customer_name, phone_number, email, types, remark } }

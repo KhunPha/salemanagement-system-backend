@@ -10,7 +10,7 @@ const supplier = {
         createSupplier: async (parent: any, args: any) => {
             try {
                 const newsupplier = new SupplierSchema({
-                    ...args.data
+                    ...args.input
                 })
 
                 await newsupplier.save()
@@ -26,7 +26,7 @@ const supplier = {
         },
         updateSupplier: async (parent: any, args: any) => {
             try {
-                const {supplier_name, phone_number, email, address, remark} = args.data
+                const {supplier_name, phone_number, email, address, remark} = args.input
                 const {id} = args
 
                 const supplierDoc = {$set: {supplier_name, phone_number, email, address, remark}}

@@ -19,7 +19,7 @@ const secondhand = {
             try {
                 verify(context.user)
                 const newsecondhand = new SecondHandSchema({
-                    ...args.data
+                    ...args.input
                 })
 
                 await newsecondhand.save()
@@ -36,7 +36,7 @@ const secondhand = {
         updateSecondHand: async (parent: any, args: any, context: any) => {
             try {
                 verify(context.user)
-                const { grade_name, price, barcode, remark } = await args.data
+                const { grade_name, price, barcode, remark } = await args.input
                 const { id } = await args
 
                 const SecondHandDoc = { $set: { grade_name, price, barcode, remark } }

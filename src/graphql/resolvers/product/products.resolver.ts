@@ -20,6 +20,17 @@ const product = {
         const options: PaginateOptions = {
           pagination,
           customLabels,
+          populate: [
+            {
+              path: "category",
+            },
+            {
+              path: "unit",
+            },
+            {
+              path: "color",
+            },
+          ],
           page: page,
           limit: limit
         }

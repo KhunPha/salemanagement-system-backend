@@ -3,59 +3,41 @@ import verify from "../../../helper/verifyToken.helper"
 import PurchaseSchema from "../../../schema/stock/purchases.schema"
 import { message, messageError, messageLogin } from "../../../helper/message.helper"
 import { date } from "../../../helper/date.helper"
+import { PaginateOptions } from "mongoose"
+import { customLabels } from "../../../helper/customeLabels.helper"
 
 const purchase = {
     Query: {
         getPurchases: async (parent: any, args: any, context: any) => {
             try {
                 verify(context.user)
-                var { keyword, page, limit, filter } = args
-                let purchases = []
-
-                if (!keyword) {
-                    keyword = ""
-                }
-
-                if (!filter) {
-                    filter = ""
-                }
-
-                const TPurchase = await PurchaseSchema.find()
-
-                const totalPages = Math.floor(TPurchase.length / limit)
-
-                const skip = (page - 1) * limit
-
-                const purchase: any = await PurchaseSchema.find({status: true}).populate([
-                    {
-                        path: "supplier_details",
-                        match: {
-                            supplier_name: { $regex: filter, $options: "i" }
+                const { page, limit, pagination, keyword } = await args
+                const options: PaginateOptions = {
+                    pagination,
+                    customLabels,
+                    populate: [
+                        {
+                            path: "supplier_details"
+                        },
+                        {
+                            path: "products_lists.product_details",
+                            populate: [
+                                {
+                                    path: "color"
+                                },
+                                {
+                                    path: "category"
+                                },
+                                {
+                                    path: "unit"
+                                }
+                            ]
                         }
-                    },
-                    {
-                        path: "products_lists.product_details",
-                        populate: [
-                            {
-                                path: "color"
-                            },
-                            {
-                                path: "category"
-                            },
-                            {
-                                path: "unit"
-                            }
-                        ]
-                    }
-                ]).skip(skip).limit(limit)
-
-                for (let i in purchase) {
-                    if (purchase[i].supplier_details) {
-                        purchases.push(purchase[i])
-                    }
+                    ],
+                    page: page,
+                    limit: limit
                 }
-
-                return purchases
+                return await PurchaseSchema.paginate({}, options)
             } catch (error: any) {
                 throw new ApolloError(error.message)
             }
@@ -97,13 +79,13 @@ const purchase = {
         voidPurchase: async (parent: any, args: any, context: any) => {
             try {
                 verify(context.user)
-                const {id, status} = await args
+                const { id, status } = await args
 
-                const voidpurchaseDoc = {$set: {status}}
+                const voidpurchaseDoc = { $set: { status } }
 
-                const voidDoc = await PurchaseSchema.findByIdAndUpdate(id, voidpurchaseDoc, {new: true})
+                const voidDoc = await PurchaseSchema.findByIdAndUpdate(id, voidpurchaseDoc, { new: true })
 
-                if(!voidDoc){
+                if (!voidDoc) {
                     return messageError
                 }
 

@@ -1,4 +1,5 @@
-import mongoose, { Schema, Document } from "mongoose";
+import mongoose, { Schema, Document, PaginateModel } from "mongoose";
+import paginate from "mongoose-paginate-v2";
 
 export interface IUnit extends Document {
     unit_name: string,
@@ -14,6 +15,8 @@ const unit = new Schema<IUnit>({
     }
 }, {timestamps: true})
 
-const UnitSchema = mongoose.model<IUnit>("Unit", unit, "Units")
+unit.plugin(paginate)
+
+const UnitSchema = mongoose.model<IUnit, PaginateModel<IUnit>>("Unit", unit, "Units")
 
 export default UnitSchema

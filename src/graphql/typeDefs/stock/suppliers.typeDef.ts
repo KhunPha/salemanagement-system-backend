@@ -10,6 +10,24 @@ const supplier = gql`
         remark: String
     }
 
+    type Paginator {
+        slNo: Int
+        prev: Int
+        next: Int
+        perPage: Int
+        totalPosts: Int
+        totalPages: Int
+        currentPage: Int
+        hasPrevPage: Boolean
+        hasNextPage: Boolean
+        totalDocs: Int
+    }
+
+    type SupplierPagination {
+        data: [Supplier]
+        paginator: Paginator
+    }
+
     input SupplierInput {
         supplier_name: String,
         phone_number: String,
@@ -19,7 +37,7 @@ const supplier = gql`
     }
 
     type Query {
-        getSuppliers: [Supplier]
+        getSuppliers(page: Int, limit: Int, pagination: Boolean, keyword: String): [SupplierPagination]
     }
 
     type Mutation {

@@ -15,6 +15,24 @@ const user = gql`
         token: String
     }
 
+    type Paginator {
+        slNo: Int
+        prev: Int
+        next: Int
+        perPage: Int
+        totalPosts: Int
+        totalPages: Int
+        currentPage: Int
+        hasPrevPage: Boolean
+        hasNextPage: Boolean
+        totalDocs: Int
+    }
+
+    type UserPagination {
+        data: [User]
+        paginator: Paginator
+    }
+
     input UserInput {
         firstname: String
         lastname: String
@@ -30,7 +48,7 @@ const user = gql`
     }
 
     type Query {
-        getUsers(keyword: String, page: Int, limit: Int): [User]
+        getUsers(keyword: String, page: Int, limit: Int): [UserPagination]
     }
 
     type Mutation {

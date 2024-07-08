@@ -10,13 +10,12 @@ const bank = {
         getBankPagination: async (parent: any, args: any, context: any) => {
             try {
                 verify(context.user)
-                const {page, limit, pagination, keyword} = await args
+                const { page, limit, pagination, keyword } = await args
                 const options: PaginateOptions = {
                     pagination,
                     customLabels,
                     page: page,
-                    limit: limit,
-                    offset: (page - 1) * limit
+                    limit: limit
                 }
                 return await BankSchema.paginate({}, options)
             } catch (error: any) {

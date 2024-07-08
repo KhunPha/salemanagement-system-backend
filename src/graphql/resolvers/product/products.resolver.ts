@@ -6,6 +6,8 @@ import {
   messageError,
   messageLogin,
 } from "../../../helper/message.helper";
+import { PaginateOptions } from "mongoose";
+import { customLabels } from "../../../helper/customeLabels.helper";
 
 const product = {
   Query: {
@@ -14,37 +16,44 @@ const product = {
         // Verify Token
         verify(context.user);
 
-        var { page, limit, keyword, unit, category, type_of_product } = args;
+        var { page, limit, pagination, keyword, unit, category, type_of_product } = args;
+        const options: PaginateOptions = {
+          pagination,
+          customLabels,
+          page: page,
+          limit: limit
+        }
+        return await ProductSchema.paginate({}, options)
 
-        const countProduct = await ProductSchema.countDocuments();
+        // const countProduct = await ProductSchema.countDocuments();
 
-        const totalPages = Math.floor(countProduct / limit);
+        // const totalPages = Math.floor(countProduct / limit);
 
-        const skip = (page - 1) * limit;
+        // const skip = (page - 1) * limit;
 
-        const products = await ProductSchema.find({
-          $and: [
-            keyword ? { pro_name: { $regex: keyword, $options: "i" } } : {},
-            type_of_product === "All" ? {} : { type_of_product },
-            unit ? { unit } : {},
-            category ? { category } : {},
-          ],
-        })
-          .populate([
-            {
-              path: "category",
-            },
-            {
-              path: "unit",
-            },
-            {
-              path: "color",
-            },
-          ])
-          .skip(skip)
-          .limit(limit);
+        // const products = await ProductSchema.find({
+        //   $and: [
+        //     keyword ? { pro_name: { $regex: keyword, $options: "i" } } : {},
+        //     type_of_product === "All" ? {} : { type_of_product },
+        //     unit ? { unit } : {},
+        //     category ? { category } : {},
+        //   ],
+        // })
+        //   .populate([
+        //     {
+        //       path: "category",
+        //     },
+        //     {
+        //       path: "unit",
+        //     },
+        //     {
+        //       path: "color",
+        //     },
+        //   ])
+        //   .skip(skip)
+        //   .limit(limit);
 
-        return products;
+        // return products;
       } catch (error: any) {
         throw new ApolloError(error.message);
       }

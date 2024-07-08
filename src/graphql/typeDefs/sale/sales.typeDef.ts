@@ -27,6 +27,24 @@ const sales = gql`
         unit_product_discount: [UnitProductDiscount]
     }
 
+    type Paginator {
+        slNo: Int
+        prev: Int
+        next: Int
+        perPage: Int
+        totalPosts: Int
+        totalPages: Int
+        currentPage: Int
+        hasPrevPage: Boolean
+        hasNextPage: Boolean
+        totalDocs: Int
+    }
+
+    type SalesPagination {
+        data: [Sales]
+        paginator: Paginator
+    }
+
     input PayInput {
         reil: Float
         dollar: Float
@@ -51,7 +69,7 @@ const sales = gql`
     }
 
     type Query {
-        getSales(page: Int, limit: Int, keyword: String): [Sales]
+        getSales(page: Int, limit: Int, pagination: Boolean, keyword: String): [SalesPagination]
     }
 
     type Mutation {

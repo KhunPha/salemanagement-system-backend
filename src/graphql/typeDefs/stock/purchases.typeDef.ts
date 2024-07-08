@@ -22,6 +22,24 @@ const purchase = gql`
         qty: Int
     }
 
+    type Paginator {
+        slNo: Int
+        prev: Int
+        next: Int
+        perPage: Int
+        totalPosts: Int
+        totalPages: Int
+        currentPage: Int
+        hasPrevPage: Boolean
+        hasNextPage: Boolean
+        totalDocs: Int
+    }
+
+    type PurchasePagination {
+        data: [Purchase]
+        paginator: Paginator
+    }
+
     input PurchaseProductDetailsInput {
         product_details: ID
         qty: Int
@@ -42,7 +60,7 @@ const purchase = gql`
     }
 
     type Query {
-        getPurchases(page: Int, limit: Int, keyword: String, filter: String): [Purchase]
+        getPurchases(page: Int, limit: Int, pagination: Boolean, keyword: String): [PurchasePagination]
     }
 
     type Mutation {

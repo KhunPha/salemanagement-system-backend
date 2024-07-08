@@ -10,6 +10,24 @@ const customer = gql`
         remark: String
     }
 
+    type Paginator {
+        slNo: Int
+        prev: Int
+        next: Int
+        perPage: Int
+        totalPosts: Int
+        totalPages: Int
+        currentPage: Int
+        hasPrevPage: Boolean
+        hasNextPage: Boolean
+        totalDocs: Int
+    }
+
+    type CustomerPagination {
+        data: [Customer]
+        paginator: Paginator
+    }
+
     input CustomerInput {
         customer_name: String,
         phone_number: String,
@@ -19,7 +37,7 @@ const customer = gql`
     }
 
     type Query {
-        getCustomers: [Customer]
+        getCustomers: [CustomerPagination]
     }
 
     type Mutation {

@@ -1,4 +1,5 @@
-import mongoose, {Schema, Document, mongo, Date} from "mongoose";
+import mongoose, {Schema, Document, mongo, Date, PaginateModel} from "mongoose";
+import paginate from "mongoose-paginate-v2";
 
 export interface ISales extends Document {
     product_lists: object
@@ -96,6 +97,8 @@ const sale = new Schema<ISales>({
     }
 }, {timestamps: true})
 
-const SaleSchema = mongoose.model<ISales>("Sale", sale, "Sales")
+sale.plugin(paginate)
+
+const SaleSchema = mongoose.model<ISales, PaginateModel<ISales>>("Sale", sale, "Sales")
 
 export default SaleSchema

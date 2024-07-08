@@ -1,4 +1,5 @@
-import mongoose, {Schema, Document} from "mongoose";
+import mongoose, {Schema, Document, PaginateModel} from "mongoose";
+import paginate from "mongoose-paginate-v2";
 
 export interface IStocks extends Document {
     product_details: object
@@ -23,6 +24,8 @@ const stock = new Schema<IStocks>({
     }
 }, {timestamps: true})
 
-const StockSchema = mongoose.model<IStocks>("Stock", stock, "Stocks")
+stock.plugin(paginate)
+
+const StockSchema = mongoose.model<IStocks, PaginateModel<IStocks>>("Stock", stock, "Stocks")
 
 export default StockSchema

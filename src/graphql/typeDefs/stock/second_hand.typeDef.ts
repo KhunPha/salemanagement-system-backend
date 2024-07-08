@@ -9,6 +9,24 @@ const secondhand = gql`
         remark: String
     }
 
+    type Paginator {
+        slNo: Int
+        prev: Int
+        next: Int
+        perPage: Int
+        totalPosts: Int
+        totalPages: Int
+        currentPage: Int
+        hasPrevPage: Boolean
+        hasNextPage: Boolean
+        totalDocs: Int
+    }
+
+    type SecondHandPagination {
+        data: [SecondHand]
+        paginator: Paginator
+    }
+
     input SecondHandInput {
         grade_name: String
         price: Float
@@ -17,7 +35,7 @@ const secondhand = gql`
     }
 
     type Query {
-        getSecondHands(page: Int, limit: Int, keyword: String): [SecondHand]
+        getSecondHands(page: Int, limit: Int, pagination: Boolean, keyword: String): [SecondHandPagination]
     }
 
     type Mutation {

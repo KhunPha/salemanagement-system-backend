@@ -2,13 +2,22 @@ import { ApolloError } from "apollo-server-express"
 import verify from "../../../helper/verifyToken.helper"
 import SecondHandSchema from "../../../schema/stock/second_hand.schema"
 import {message, messageError, messageLogin} from "../../../helper/message.helper"
+import { PaginateOptions } from "mongoose"
+import { customLabels } from "../../../helper/customeLabels.helper"
 
 const secondhand = {
     Query: {
         getSecondHands: async (parent: any, args: any, context: any) => {
             try {
                 verify(context.user)
-                return await SecondHandSchema.find()
+                const { page, limit, pagination, keyword } = await args
+                const options: PaginateOptions = {
+                    pagination,
+                    customLabels,
+                    page: page,
+                    limit: limit
+                }
+                return await SecondHandSchema.paginate({}, options)
             } catch (error: any) {
                 throw new ApolloError(error.message)
             }

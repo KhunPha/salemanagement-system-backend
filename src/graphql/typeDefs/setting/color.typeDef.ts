@@ -8,6 +8,24 @@ const color = gql`
         remark: String
     }
 
+    type Paginator {
+        slNo: Int
+        prev: Int
+        next: Int
+        perPage: Int
+        totalPosts: Int
+        totalPages: Int
+        currentPage: Int
+        hasPrevPage: Boolean
+        hasNextPage: Boolean
+        totalDocs: Int
+    }
+
+    type ColorPagination {
+        data: [Color]
+        paginator: Paginator
+    }
+
     input ColorInput {
         color_code: String,
         color_name: String,
@@ -15,7 +33,7 @@ const color = gql`
     }
 
     type Query {
-        getColors: [Color]
+        getColors(page: Int, limit: Int, pagination: Boolean, keyword: String): [ColorPagination]
     }
 
     type Mutation {

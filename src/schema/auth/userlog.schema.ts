@@ -1,4 +1,5 @@
-import mongoose, {Schema, Document} from "mongoose";
+import mongoose, {Schema, Document, PaginateModel} from "mongoose";
+import paginate from "mongoose-paginate-v2";
 
 export interface IUserLog extends Document {
     user_details: object,
@@ -19,6 +20,8 @@ const userlog = new Schema<IUserLog>({
     }
 }, {timestamps: true})
 
-const UserLogSchema = mongoose.model<IUserLog>("UserLog", userlog, "UserLogs")
+userlog.plugin(paginate)
+
+const UserLogSchema = mongoose.model<IUserLog, PaginateModel<IUserLog>>("UserLog", userlog, "UserLogs")
 
 export default UserLogSchema

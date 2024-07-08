@@ -11,6 +11,8 @@ import { message, messageError, messageLogin } from "../../../helper/message.hel
 import UserLogSchema from "../../../schema/auth/userlog.schema"
 import { UserLoginRules, UserRegisterationRules } from "../../../validators/auth.validation"
 import { PubSub } from "graphql-subscriptions"
+import { PaginateOptions } from "mongoose"
+import { customLabels } from "../../../helper/customeLabels.helper"
 
 const pubsub = new PubSub()
 
@@ -21,27 +23,14 @@ const user = {
         getUsers: async (parent: any, args: any, context: any) => {
             try {
                 verify(context.user)
-                var { keyword, page, limit } = args
-
-                if (!keyword) {
-                    keyword = ""
+                const { page, limit, pagination, keyword } = await args
+                const options: PaginateOptions = {
+                    pagination,
+                    customLabels,
+                    page: page,
+                    limit: limit
                 }
-
-                const TUsers = await UserShcema.find()
-
-                const totalPages = Math.floor(TUsers.length / limit)
-
-                const skip = (page - 1) * limit
-
-                const users = await UserShcema.find({
-                    $or: [
-                        { firstname: { $regex: keyword, $options: "i" } },
-                        { lastname: { $regex: keyword, $options: "i" } },
-                        { username: { $regex: keyword, $options: "i" } }
-                    ]
-                }).skip(skip).limit(limit)
-
-                return users
+                return await UserShcema.paginate({}, options)
             } catch (error: any) {
                 throw new ApolloError(error.message)
             }
@@ -50,107 +39,99 @@ const user = {
 
     Mutation: {
         createUser: async (parent: any, args: any) => {
-            const { firstname, lastname, username, password, roles, remark } = await args.input
-            var newfilename = "profile.png"
+            try {
+                const { firstname, lastname, username, password, roles, remark } = await args.input
+                var newfilename = "profile.png"
 
-            await UserRegisterationRules.validate({
-                firstname,
-                lastname,
-                username,
-                password
-            }, {
-                abortEarly: false
-            })
+                const dupUser = await UserShcema.findOne({ username })
 
-            const dupUser = await UserShcema.findOne({ username })
+                if (dupUser) {
+                    return messageError
+                }
 
-            if (dupUser) {
-                return messageError
+                const salt = await bcrypt.genSaltSync()
+                const hashpassword = await bcrypt.hashSync(password, salt)
+
+                if (args.file) {
+                    const { createReadStream, filename, mimetype } = await args.file
+                    let name = filename
+                    const ext = name.split(".")[1]
+                    name = `${Math.floor((Math.random() * 10000) + 1000)}`
+                    newfilename = `${name}-${Date.now()}.${ext}`;
+                    const localtion = path.join(__dirname, `../../../../public/images/${newfilename}`)
+                    const stream = createReadStream()
+
+                    await stream.pipe(fs.createWriteStream(localtion))
+                }
+
+                const newuser = new UserShcema({
+                    firstname,
+                    lastname,
+                    username,
+                    password: hashpassword,
+                    roles,
+                    image: `http://localhost:8080/public/images/${newfilename}`,
+                    remark
+                })
+
+                await newuser.save()
+
+                // WebScoket
+                pubsub.publish("NEW_USER", { getnewUser: newuser })
+
+                if (!newuser) {
+                    return messageError
+                }
+
+                return message
+            } catch (error: any) {
+                throw new ApolloError(error.message)
             }
-
-            const salt = await bcrypt.genSaltSync()
-            const hashpassword = await bcrypt.hashSync(password, salt)
-
-            if (args.file) {
-                const { createReadStream, filename, mimetype } = await args.file
-                let name = filename
-                const ext = name.split(".")[1]
-                name = `${Math.floor((Math.random() * 10000) + 1000)}`
-                newfilename = `${name}-${Date.now()}.${ext}`;
-                const localtion = path.join(__dirname, `../../../../public/images/${newfilename}`)
-                const stream = createReadStream()
-
-                await stream.pipe(fs.createWriteStream(localtion))
-            }
-
-            const newuser = new UserShcema({
-                firstname,
-                lastname,
-                username,
-                password: hashpassword,
-                roles,
-                image: `http://localhost:8080/public/images/${newfilename}`,
-                remark
-            })
-
-            await newuser.save()
-
-            // WebScoket
-            pubsub.publish("NEW_USER", { getnewUser: newuser })
-
-            if (!newuser) {
-                return messageError
-            }
-
-            return message
         },
         login: async (parent: any, args: any, context: any) => {
-            const { username, password } = await args.input
+            try {
+                const { username, password } = await args.input
 
-            await UserLoginRules.validate({
-                username,
-                password
-            }, {
-                abortEarly: false
-            })
+                const userfound = await UserShcema.findOne({ username })
 
-            const userfound = await UserShcema.findOne({ username })
+                if (!userfound) {
+                    throw new ApolloError("User not found!")
+                }
 
-            if (!userfound) {
-                throw new ApolloError("User not found!")
-            }
+                const passTrue = await bcrypt.compareSync(password, userfound.password)
 
-            const passTrue = await bcrypt.compareSync(password, userfound.password)
+                if (!passTrue) {
+                    throw new ApolloError("Incorrect password!")
+                }
 
-            if (!passTrue) {
-                throw new ApolloError("Incorrect password!")
-            }
+                const user_ip_address: any = context.client
 
-            const user_ip_address: any = context.client
-
-            const findlog = await UserLogSchema.findOne({
-                $and: [
-                    { user_details: `${userfound._id}` },
-                    { user_ip_address: `${user_ip_address}` }
-                ]
-            })
-
-            if (findlog) {
-                var log_count = findlog.log_count + 1
-                const updateDoc = { $set: { log_count } }
-                await UserLogSchema.findByIdAndUpdate(findlog._id, updateDoc, { new: true })
-            } else {
-                const newlog = new UserLogSchema({
-                    user_details: userfound._id,
-                    user_ip_address: context.client,
-                    log_count: 1
+                const findlog = await UserLogSchema.findOne({
+                    $and: [
+                        { user_details: `${userfound._id}` },
+                        { user_ip_address: `${user_ip_address}` }
+                    ]
                 })
-                await newlog.save()
+
+                if (findlog) {
+                    var log_count = findlog.log_count + 1
+                    const updateDoc = { $set: { log_count } }
+                    await UserLogSchema.findByIdAndUpdate(findlog._id, updateDoc, { new: true })
+                } else {
+                    const newlog = new UserLogSchema({
+                        user_details: userfound._id,
+                        user_ip_address: context.client,
+                        log_count: 1
+                    })
+                    await newlog.save()
+                }
+
+                messageLogin.token = await getToken(userfound)
+
+                return messageLogin
+            } catch (error: any) {
+                throw new ApolloError(error.message)
             }
-
-            messageLogin.token = await getToken(userfound)
-
-            return messageLogin
         },
         updateUser: async (parent: any, args: any, context: any) => {
             try {

@@ -1,4 +1,5 @@
-import mongoose, { Schema, Document } from "mongoose";
+import mongoose, { Schema, Document, PaginateModel } from "mongoose";
+import paginate from "mongoose-paginate-v2";
 
 export interface ISecondHand extends Document {
     grade_name: string
@@ -22,6 +23,8 @@ const secondhand = new Schema<ISecondHand>({
     }
 })
 
-const SecondHandSchema = mongoose.model<ISecondHand>("SecondHand", secondhand, "SecondHands")
+secondhand.plugin(paginate)
+
+const SecondHandSchema = mongoose.model<ISecondHand, PaginateModel<ISecondHand>>("SecondHand", secondhand, "SecondHands")
 
 export default SecondHandSchema

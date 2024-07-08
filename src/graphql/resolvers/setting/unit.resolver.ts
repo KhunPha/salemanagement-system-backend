@@ -2,32 +2,22 @@ import { ApolloError } from "apollo-server-express"
 import verify from "../../../helper/verifyToken.helper"
 import UnitSchema from "../../../schema/setting/unit.shema"
 import {message, messageError, messageLogin} from "../../../helper/message.helper"
+import { PaginateOptions } from "mongoose"
+import { customLabels } from "../../../helper/customeLabels.helper"
 
 const unit = {
     Query: {
         getUnits: async (parent: any, args: any, context: any) => {
             try {
                 verify(context.user)
-                var { page, limit, keyword } = args
-
-                if (!keyword) {
-                    keyword = ""
+                const { page, limit, pagination, keyword } = await args
+                const options: PaginateOptions = {
+                    pagination,
+                    customLabels,
+                    page: page,
+                    limit: limit
                 }
-
-                const TUnits = await UnitSchema.find()
-
-                const totalPages = Math.floor(TUnits.length / limit)
-
-                const skip = (page - 1) * limit
-
-                const units = await UnitSchema.find({
-                    $or: [
-                        { unit_name: { $regex: keyword, $options: "i" } },
-                        { remark: { $regex: keyword, $options: "i" } }
-                    ]
-                }).skip(skip).limit(limit)
-
-                return units
+                return await UnitSchema.paginate({}, options)
             } catch (error: any) {
                 throw new ApolloError(error.message)
             }

@@ -7,13 +7,31 @@ const category = gql`
         remark: String
     }
 
+    type Paginator {
+        slNo: Int
+        prev: Int
+        next: Int
+        perPage: Int
+        totalPosts: Int
+        totalPages: Int
+        currentPage: Int
+        hasPrevPage: Boolean
+        hasNextPage: Boolean
+        totalDocs: Int
+    }
+
+    type CategoryPagination {
+        data: [Category]
+        paginator: Paginator
+    }
+
     input CateInput {
         category_name: String,
         remark: String
     }
 
     type Query {
-        getCategories: [Category]
+        getCategories(page: Int, limit: Int, pagination: Boolean, keyword: String): [CategoryPagination]
     }
 
     type Mutation {

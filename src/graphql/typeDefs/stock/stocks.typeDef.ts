@@ -9,6 +9,24 @@ const stock = gql`
         cost: Float
     }
 
+    type Paginator {
+        slNo: Int
+        prev: Int
+        next: Int
+        perPage: Int
+        totalPosts: Int
+        totalPages: Int
+        currentPage: Int
+        hasPrevPage: Boolean
+        hasNextPage: Boolean
+        totalDocs: Int
+    }
+
+    type StockPagination {
+        data: [Stock]
+        paginator: Paginator
+    }
+
     input StockInput {
         product_details: ID
         stock_in_hand: Int
@@ -17,7 +35,7 @@ const stock = gql`
     }
 
     type Query {
-        getStocks(page: Int, limit: Int, keyword: String): [Stock]
+        getStocks(page: Int, limit: Int, pagination: Boolean, keyword: String): [StockPagination]
     }
 
     type Mutation {

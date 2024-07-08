@@ -1,21 +1,39 @@
 import { ApolloError } from "apollo-server-express"
 import SupplierSchema from "../../../schema/stock/suppliers.schema"
-import {message, messageError, messageLogin} from "../../../helper/message.helper"
+import { message, messageError, messageLogin } from "../../../helper/message.helper"
+import verify from "../../../helper/verifyToken.helper"
+import { PaginateOptions } from "mongoose"
+import { customLabels } from "../../../helper/customeLabels.helper"
 
 const supplier = {
     Query: {
-        getSuppliers: async () => await SupplierSchema.find()
+        getSuppliers: async (parent: any, args: any, context: any) => {
+            try {
+                verify(context.user)
+                const { page, limit, pagination, keyword } = await args
+                const options: PaginateOptions = {
+                    pagination,
+                    customLabels,
+                    page: page,
+                    limit: limit
+                }
+                return await SupplierSchema.paginate({}, options)
+            } catch (error: any) {
+                throw new ApolloError(error.message)
+            }
+        }
     },
     Mutation: {
-        createSupplier: async (parent: any, args: any) => {
+        createSupplier: async (parent: any, args: any, context: any) => {
             try {
+                verify(context.user)
                 const newsupplier = new SupplierSchema({
                     ...args.input
                 })
 
                 await newsupplier.save()
 
-                if(!newsupplier){
+                if (!newsupplier) {
                     return messageError
                 }
 
@@ -24,16 +42,17 @@ const supplier = {
                 throw new ApolloError(error.message)
             }
         },
-        updateSupplier: async (parent: any, args: any) => {
+        updateSupplier: async (parent: any, args: any, context: any) => {
             try {
-                const {supplier_name, phone_number, email, address, remark} = args.input
-                const {id} = args
+                verify(context.user)
+                const { supplier_name, phone_number, email, address, remark } = args.input
+                const { id } = args
 
-                const supplierDoc = {$set: {supplier_name, phone_number, email, address, remark}}
+                const supplierDoc = { $set: { supplier_name, phone_number, email, address, remark } }
 
                 const updateDoc = await SupplierSchema.findByIdAndUpdate(id, supplierDoc)
 
-                if(!updateDoc){
+                if (!updateDoc) {
                     return messageError
                 }
 
@@ -42,13 +61,14 @@ const supplier = {
                 throw new ApolloError(error.message)
             }
         },
-        deleteSupplier: async (parent: any, args: any) => {
+        deleteSupplier: async (parent: any, args: any, context: any) => {
             try {
-                const {id} = args
+                verify(context.user)
+                const { id } = args
 
                 const deleteSupplier = await SupplierSchema.findByIdAndDelete(id)
 
-                if(!deleteSupplier){
+                if (!deleteSupplier) {
                     return messageError
                 }
 

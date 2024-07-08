@@ -15,6 +15,24 @@ const product = gql`
         price: Float
     }
 
+    type Paginator {
+        slNo: Int
+        prev: Int
+        next: Int
+        perPage: Int
+        totalPosts: Int
+        totalPages: Int
+        currentPage: Int
+        hasPrevPage: Boolean
+        hasNextPage: Boolean
+        totalDocs: Int
+    }
+
+    type ProductPagination {
+        data: [Product]
+        paginator: Paginator
+    }
+
     input ProductInput {
         pro_name: String,
         brand: String
@@ -29,7 +47,7 @@ const product = gql`
     }
 
     type Query {
-        getProducts(page: Int, limit: Int, keyword: String, unit: String, category: String, filter: String): [Product]
+        getProducts(page: Int, limit: Int, pagination: Boolean, keyword: String, unit: String, category: String, type_of_product: String): [ProductPagination]
     }
 
     type Mutation {

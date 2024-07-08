@@ -1,4 +1,5 @@
-import mongoose, {Schema, Document} from "mongoose";
+import mongoose, {Schema, Document, PaginateModel} from "mongoose";
+import paginate from "mongoose-paginate-v2";
 
 export interface IMarketing extends Document {
     title: string,
@@ -23,6 +24,8 @@ const marketing = new Schema<IMarketing>({
     }]
 }, {timestamps: true})
 
-const MarketingSchema = mongoose.model<IMarketing>("Marketing", marketing, "Marketings")
+marketing.plugin(paginate)
+
+const MarketingSchema = mongoose.model<IMarketing, PaginateModel<IMarketing>>("Marketing", marketing, "Marketings")
 
 export default MarketingSchema

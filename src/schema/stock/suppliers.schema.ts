@@ -1,4 +1,5 @@
-import mongoose, {Schema, Document} from "mongoose";
+import mongoose, {Schema, Document, PaginateModel} from "mongoose";
+import paginate from "mongoose-paginate-v2";
 
 export interface ISuppliers extends Document {
     supplier_name: string,
@@ -26,6 +27,8 @@ const supplier = new Schema<ISuppliers>({
     }
 }, {timestamps: true})
 
-const SupplierSchema = mongoose.model<ISuppliers>("Supplier", supplier, "Suppliers")
+supplier.plugin(paginate)
+
+const SupplierSchema = mongoose.model<ISuppliers, PaginateModel<ISuppliers>>("Supplier", supplier, "Suppliers")
 
 export default SupplierSchema

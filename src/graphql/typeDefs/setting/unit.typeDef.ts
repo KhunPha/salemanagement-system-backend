@@ -7,13 +7,31 @@ const unit = gql`
         remark: String
     }
 
+    type Paginator {
+        slNo: Int
+        prev: Int
+        next: Int
+        perPage: Int
+        totalPosts: Int
+        totalPages: Int
+        currentPage: Int
+        hasPrevPage: Boolean
+        hasNextPage: Boolean
+        totalDocs: Int
+    }
+
+    type UnitPagination {
+        data: [Unit]
+        paginator: Paginator
+    }
+
     input UnitInput {
         unit_name: String,
         remark: String
     }
 
     type Query {
-        getUnits(page: Int, limit: Int, keyword: String): [Unit]
+        getUnits(page: Int, limit: Int, pagination: Boolean, keyword: String): [UnitPagination]
     }
 
     type Mutation {

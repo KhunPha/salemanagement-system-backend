@@ -2,13 +2,22 @@ import { ApolloError } from "apollo-server-express";
 import ColorSchema from "../../../schema/setting/color.schema";
 import verify from "../../../helper/verifyToken.helper";
 import {message, messageError, messageLogin} from "../../../helper/message.helper"
+import { PaginateOptions } from "mongoose";
+import { customLabels } from "../../../helper/customeLabels.helper";
 
 const color = {
     Query: {
         getColors: async (parent: any, args: any, context: any) => {
             try {
                 verify(context.user)
-                return await ColorSchema.find()
+                const { page, limit, pagination, keyword } = await args
+                const options: PaginateOptions = {
+                    pagination,
+                    customLabels,
+                    page: page,
+                    limit: limit
+                }
+                return await ColorSchema.paginate({}, options)
             } catch (error: any) {
 
             }

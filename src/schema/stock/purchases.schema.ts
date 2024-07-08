@@ -1,4 +1,5 @@
-import mongoose, { Schema, Document } from "mongoose";
+import mongoose, { Schema, Document, PaginateModel } from "mongoose";
+import paginate from "mongoose-paginate-v2";
 
 export interface IPurchase extends Document {
     supplier_details: object,
@@ -67,6 +68,8 @@ const purchase = new Schema<IPurchase>({
     }
 }, { timestamps: true })
 
-const PurchaseSchema = mongoose.model<IPurchase>("Purchase", purchase, "Purchases")
+purchase.plugin(paginate)
+
+const PurchaseSchema = mongoose.model<IPurchase, PaginateModel<IPurchase>>("Purchase", purchase, "Purchases")
 
 export default PurchaseSchema

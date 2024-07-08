@@ -2,13 +2,22 @@ import { ApolloError } from "apollo-server-express";
 import CustomerSchema from "../../../schema/marketing/customers.schema";
 import verify from "../../../helper/verifyToken.helper";
 import {message, messageError, messageLogin} from "../../../helper/message.helper"
+import { PaginateOptions } from "mongoose";
+import { customLabels } from "../../../helper/customeLabels.helper";
 
 const customer = {
     Query: {
         getCustomers: async (parent: any, args: any, context: any) => {
             try {
                 verify(context.user)
-                return await CustomerSchema.find()
+                const { page, limit, pagination, keyword } = await args
+                const options: PaginateOptions = {
+                    pagination,
+                    customLabels,
+                    page: page,
+                    limit: limit
+                }
+                return await CustomerSchema.paginate({}, options)
             } catch (error: any) {
                 throw new ApolloError(error.message)
             }

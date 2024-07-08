@@ -9,6 +9,24 @@ const marketing = gql`
         customer: [Customer]
     }
 
+    type Paginator {
+        slNo: Int
+        prev: Int
+        next: Int
+        perPage: Int
+        totalPosts: Int
+        totalPages: Int
+        currentPage: Int
+        hasPrevPage: Boolean
+        hasNextPage: Boolean
+        totalDocs: Int
+    }
+
+    type MarketingPagination {
+        data: [Marketing]
+        paginator: Paginator
+    }
+
     input MarketingInput {
         title: String
         description: String,
@@ -17,7 +35,7 @@ const marketing = gql`
     }
 
     type Query {
-        getMarketings(page: Int, limit: Int, keyword: String): [Marketing]
+        getMarketings(page: Int, limit: Int, keyword: String): [MarketingPagination]
     }
 
     type Mutation {

@@ -1,4 +1,5 @@
-import mongoose, {Schema, Document} from "mongoose"
+import mongoose, {Schema, Document, PaginateModel} from "mongoose"
+import paginate from "mongoose-paginate-v2"
 
 export interface ICustomer extends Document {
     customer_name: string,
@@ -27,6 +28,8 @@ const customer = new Schema<ICustomer>({
     }
 }, {timestamps: true})
 
-const CustomerSchema = mongoose.model<ICustomer>("Customer", customer, "Customers")
+customer.plugin(paginate)
+
+const CustomerSchema = mongoose.model<ICustomer, PaginateModel<ICustomer>>("Customer", customer, "Customers")
 
 export default CustomerSchema

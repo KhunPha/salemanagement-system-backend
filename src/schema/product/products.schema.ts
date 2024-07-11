@@ -11,7 +11,9 @@ export interface IProduct extends Document {
     unit: object,
     barcode: string,
     image: string,
-    price: number
+    price: number,
+    createdAt: string
+    updatedAt: string
 }
 
 const product = new Schema<IProduct>({
@@ -48,6 +50,12 @@ const product = new Schema<IProduct>({
     },
     price: {
         type: Number
+    },
+    createdAt: {
+        type: String
+    },
+    updatedAt: {
+        type: String
     }
 }, {timestamps: true})
 

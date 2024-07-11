@@ -4,7 +4,9 @@ export interface IExchange extends Document {
     exchange_rate_name: string
     exchange_rate: number,
     status: boolean
-    remark: string
+    remark: string,
+    createdAt: string
+    updatedAt: string
 }
 
 const exchange = new Schema<IExchange>({
@@ -18,6 +20,12 @@ const exchange = new Schema<IExchange>({
         type: Boolean
     },
     remark: {
+        type: String
+    },
+    createdAt: {
+        type: String
+    },
+    updatedAt: {
         type: String
     }
 }, {timestamps: true})

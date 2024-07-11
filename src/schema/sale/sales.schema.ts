@@ -16,7 +16,9 @@ export interface ISales extends Document {
     remind_status: boolean
     date_remind: Date,
     pay: object
-    bank: object
+    bank: object,
+    createdAt: string
+    updatedAt: string
 }
 
 const sale = new Schema<ISales>({
@@ -94,6 +96,12 @@ const sale = new Schema<ISales>({
     },
     bank: {
         type: mongoose.Schema.Types.ObjectId
+    },
+    createdAt: {
+        type: String
+    },
+    updatedAt: {
+        type: String
     }
 }, {timestamps: true})
 

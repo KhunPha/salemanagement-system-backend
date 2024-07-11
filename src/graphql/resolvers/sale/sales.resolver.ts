@@ -34,7 +34,8 @@ const sales = {
                         }
                     ],
                     page: page,
-                    limit: limit
+                    limit: limit,
+                    sort: { createdAt: -1 }
                 }
                 return await SaleSchema.paginate({}, options)
             } catch (error: any) {

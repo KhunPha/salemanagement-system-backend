@@ -4,7 +4,9 @@ import paginate from "mongoose-paginate-v2";
 export interface IColor extends Document {
     color_name: string,
     color_code: string,
-    remark: string
+    remark: string,
+    createdAt: string
+    updatedAt: string
 }
 
 const color = new Schema<IColor>({
@@ -15,6 +17,12 @@ const color = new Schema<IColor>({
         type: String
     },
     remark: {
+        type: String
+    },
+    createdAt: {
+        type: String
+    },
+    updatedAt: {
         type: String
     }
 }, {timestamps: true})

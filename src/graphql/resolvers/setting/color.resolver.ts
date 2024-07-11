@@ -15,7 +15,8 @@ const color = {
                     pagination,
                     customLabels,
                     page: page,
-                    limit: limit
+                    limit: limit,
+                    sort: { createdAt: -1 }
                 }
 
                 const query = {

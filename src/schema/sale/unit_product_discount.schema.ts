@@ -3,7 +3,9 @@ import mongoose, { Schema, Document } from "mongoose";
 export interface IUPDiscount extends Document {
     product_details: object,
     discount_type: string,
-    discount: number
+    discount: number,
+    createdAt: string
+    updatedAt: string
 }
 
 const unit_product_discount = new Schema<IUPDiscount>({
@@ -16,6 +18,12 @@ const unit_product_discount = new Schema<IUPDiscount>({
     },
     discount: {
         type: Number
+    },
+    createdAt: {
+        type: String
+    },
+    updatedAt: {
+        type: String
     }
 }, {timestamps: true})
 

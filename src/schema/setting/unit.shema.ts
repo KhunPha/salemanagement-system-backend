@@ -3,7 +3,9 @@ import paginate from "mongoose-paginate-v2";
 
 export interface IUnit extends Document {
     unit_name: string,
-    remark: string
+    remark: string,
+    createdAt: string,
+    updatedAt: string
 }
 
 const unit = new Schema<IUnit>({
@@ -11,6 +13,12 @@ const unit = new Schema<IUnit>({
         type: String
     },
     remark: {
+        type: String
+    },
+    createdAt: {
+        type: String
+    },
+    updatedAt: {
         type: String
     }
 }, {timestamps: true})

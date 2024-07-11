@@ -19,7 +19,9 @@ const unit = {
                 }
 
                 const query = {
-                    unit_name: { $regex: keyword, $options: 'i' }
+                    $and: [
+                        keyword ? { unit_name: { $regex: keyword, $options: 'i' } } : {}
+                    ]
                 }
 
                 return await UnitSchema.paginate(query, options)

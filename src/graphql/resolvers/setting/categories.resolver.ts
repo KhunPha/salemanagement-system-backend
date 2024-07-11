@@ -19,7 +19,9 @@ const category = {
                 }
 
                 const query = {
-                    category_name: { $regex: keyword, $options: 'i' }
+                    $and: [
+                        keyword ? { category_name: { $regex: keyword, $options: 'i' } } : {}
+                    ]
                 }
                 return await CategoriesSchema.paginate(query, options)
             } catch (error: any) {

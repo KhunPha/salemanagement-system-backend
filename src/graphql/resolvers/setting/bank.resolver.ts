@@ -20,7 +20,9 @@ const bank = {
                 }
 
                 const query = {
-                    bank_name: {$regex: keyword, $options: 'i'}
+                    $and: [
+                        keyword ? { bank_name: { $regex: keyword, $options: 'i' } } : {}
+                    ]
                 }
                 return await BankSchema.paginate(query, options)
             } catch (error: any) {

@@ -115,6 +115,8 @@ const product = {
           barcode,
           image,
           price,
+          discount,
+          remark
         } = args.input;
         const { id } = args;
 
@@ -130,6 +132,8 @@ const product = {
             barcode,
             image,
             price,
+            discount,
+            remark
           },
         };
 

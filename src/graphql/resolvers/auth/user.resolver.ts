@@ -149,10 +149,10 @@ const user = {
         updateUser: async (parent: any, args: any, context: any) => {
             try {
                 verify(context.user)
-                const { firstname, lastname, username, password, roles, image } = await args.input
+                const { firstname, lastname, username, password, roles, image, remark } = await args.input
                 const { id } = args
 
-                const userDoc = { $set: { firstname, lastname, username, password, roles, image } }
+                const userDoc = { $set: { firstname, lastname, username, password, roles, image, remark } }
 
                 const updateDoc = await UserShcema.findByIdAndUpdate(id, userDoc, { new: true })
 

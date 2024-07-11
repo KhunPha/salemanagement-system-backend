@@ -1,4 +1,4 @@
-import mongoose, {Schema, Document, PaginateModel} from "mongoose";
+import mongoose, { Schema, Document, PaginateModel } from "mongoose";
 import paginate from "mongoose-paginate-v2";
 
 export interface IProduct extends Document {
@@ -12,6 +12,8 @@ export interface IProduct extends Document {
     barcode: string,
     image: string,
     price: number,
+    discount: number,
+    remark: string,
     createdAt: string
     updatedAt: string
 }
@@ -32,7 +34,7 @@ const product = new Schema<IProduct>({
     },
     type_of_product: {
         type: String,
-        enum: ["New", "Second_Hand"]
+        enum: ["All", "New", "Second_Hand"]
     },
     category: {
         type: mongoose.Types.ObjectId,
@@ -51,13 +53,19 @@ const product = new Schema<IProduct>({
     price: {
         type: Number
     },
+    discount: {
+        type: Number
+    },
+    remark: {
+        type: String
+    },
     createdAt: {
         type: String
     },
     updatedAt: {
         type: String
     }
-}, {timestamps: true})
+}, { timestamps: true })
 
 product.plugin(paginate)
 

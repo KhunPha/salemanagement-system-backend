@@ -12,7 +12,9 @@ const product = gql`
         unit: Unit
         barcode: String
         image: String,
-        price: Float
+        price: Float,
+        discount: Float,
+        remark: String
     }
 
     type Paginator {
@@ -44,6 +46,8 @@ const product = gql`
         barcode: String
         image: String
         price: Float
+        discount: Float
+        remark: String
     }
 
     type Query {

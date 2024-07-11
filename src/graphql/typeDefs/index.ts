@@ -18,7 +18,7 @@ import payment_purchase from "./stock/payment_purchase.typeDef";
 import purchase from "./stock/purchases.typeDef";
 import secondhand from "./stock/second_hand.typeDef";
 import slicesecondhandhistory from "./stock/slice_second_hand_history.typeDef";
-import responemessage from "./response/response.typeDef";
+import responemessage from "./Response/Response.typeDef";
 import transferin from "./stock/transfer_in.typeDef";
 import transferout from "./stock/transfer_out.typeDef";
 

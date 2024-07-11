@@ -35,9 +35,9 @@ const unit = gql`
     }
 
     type Mutation {
-        createUnit(input: UnitInput): Response!
-        updateUnit(id: ID!, input: UnitInput): Response!
-        deleteUnit(id: ID!): Response!
+        createUnit(input: UnitInput): ResponseMessage!
+        updateUnit(id: ID!, input: UnitInput): ResponseMessage!
+        deleteUnit(id: ID!): ResponseMessage!
     }
 `
 

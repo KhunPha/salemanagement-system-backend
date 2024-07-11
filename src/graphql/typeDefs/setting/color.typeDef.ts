@@ -37,9 +37,9 @@ const color = gql`
     }
 
     type Mutation {
-        createColor(input: ColorInput): Response!
-        updateColor(id: ID, input: ColorInput): Response!
-        deleteColor(id: ID): Response!
+        createColor(input: ColorInput): ResponseMessage!
+        updateColor(id: ID, input: ColorInput): ResponseMessage!
+        deleteColor(id: ID): ResponseMessage!
     }
 `
 

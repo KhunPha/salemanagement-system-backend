@@ -17,7 +17,17 @@ const supplier = {
                     page: page,
                     limit: limit
                 }
-                return await SupplierSchema.paginate({}, options)
+
+                const query = {
+                    $and: [
+                        keyword ? { supplier_name: { $regex: keyword, $options: 'i' } } : {},
+                        keyword ? { phone_number: { $regex: keyword, $options: 'i' } } : {},
+                        keyword ? { email: { $regex: keyword, $options: 'i' } } : {},
+                        keyword ? { address: { $regex: keyword, $options: 'i' } } : {}
+                    ]
+                }
+
+                return await SupplierSchema.paginate(query, options)
             } catch (error: any) {
                 throw new ApolloError(error.message)
             }

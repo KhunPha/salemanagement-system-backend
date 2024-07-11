@@ -73,9 +73,9 @@ const sales = gql`
     }
 
     type Mutation {
-        createSales(input: SalesInput): Response!
-        updateSales(id: ID, input: SalesInput): Response!
-        deleteSales(id: ID): Response!
+        createSales(input: SalesInput): ResponseMessage!
+        updateSales(id: ID, input: SalesInput): ResponseMessage!
+        deleteSales(id: ID): ResponseMessage!
     }
 `
 export default sales

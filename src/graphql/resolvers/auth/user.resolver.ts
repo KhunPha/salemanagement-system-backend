@@ -22,14 +22,28 @@ const user = {
         getUsers: async (parent: any, args: any, context: any) => {
             try {
                 verify(context.user)
-                const { page, limit, pagination, keyword } = await args
+                const { page, limit, pagination, keyword, roles } = await args
                 const options: PaginateOptions = {
                     pagination,
                     customLabels,
                     page: page,
-                    limit: limit
+                    limit: limit,
+                    sort: { createdAt: - 1 }
                 }
-                return await UserShcema.paginate({}, options)
+
+                const query = {
+                    $and: [
+                        {
+                            $or: [
+                                keyword ? { firstname: { $regex: keyword, $options: 'i' } } : {},
+                                keyword ? { lastname: { $regex: keyword, $options: 'i' } } : {},
+                                keyword ? { username: { $regex: keyword, $options: 'i' } } : {}
+                            ]
+                        },
+                        roles === 'All' ? {} : { roles }
+                    ]
+                }
+                return await UserShcema.paginate(query, options)
             } catch (error: any) {
                 throw new ApolloError(error.message)
             }

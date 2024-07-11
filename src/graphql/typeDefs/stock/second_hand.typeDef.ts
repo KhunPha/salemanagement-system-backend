@@ -39,9 +39,9 @@ const secondhand = gql`
     }
 
     type Mutation {
-        createSecondHand(input: SecondHandInput): Response!
-        updateSecondHand(id: ID, input: SecondHandInput): Response!
-        deleteSecondHand(id: ID): Response!
+        createSecondHand(input: SecondHandInput): ResponseMessage!
+        updateSecondHand(id: ID, input: SecondHandInput): ResponseMessage!
+        deleteSecondHand(id: ID): ResponseMessage!
     }
 `
 

@@ -1,13 +1,13 @@
 import { gql } from "apollo-server-express";
 
-const responsemessage = gql`
-    type Response {
+const ResponseMessage = gql`
+    type ResponseMessage {
         message_en: String
         message_kh: String
         status: Boolean
     }
 
-    type ResponseLogin {
+    type ResponseMessageLogin {
         message_en: String
         message_kh: String
         status: Boolean
@@ -15,4 +15,4 @@ const responsemessage = gql`
     }
 `
 
-export default responsemessage
+export default ResponseMessage

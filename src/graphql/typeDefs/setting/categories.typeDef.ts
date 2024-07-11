@@ -35,9 +35,9 @@ const category = gql`
     }
 
     type Mutation {
-        createCategory(input: CateInput): Response!
-        updateCategory(id: ID!, input: CateInput): Response!
-        deleteCategory(id: ID!): Response!
+        createCategory(input: CateInput): ResponseMessage!
+        updateCategory(id: ID!, input: CateInput): ResponseMessage!
+        deleteCategory(id: ID!): ResponseMessage!
     }
 `
 

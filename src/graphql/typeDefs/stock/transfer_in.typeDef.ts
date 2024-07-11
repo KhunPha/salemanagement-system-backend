@@ -20,7 +20,7 @@ const transferin = gql`
     }
 
     type Mutation {
-        TransferIn(input: TransferInInput): Response!
+        TransferIn(input: TransferInInput): ResponseMessage!
     }
 `
 

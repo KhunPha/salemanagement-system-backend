@@ -12,7 +12,6 @@ const user = gql`
         roles: String,
         image: String,
         remark: String
-        token: String
     }
 
     type Paginator {
@@ -48,14 +47,14 @@ const user = gql`
     }
 
     type Query {
-        getUsers(keyword: String, page: Int, pagination: Boolean, limit: Int): UserPagination
+        getUsers(keyword: String, page: Int, pagination: Boolean, limit: Int, roles: String): UserPagination
     }
 
     type Mutation {
-        createUser(input: UserInput!, file: Upload): Response!
-        login(input: Login): ResponseLogin!
-        updateUser(id: ID!, input: UserInput): Response!
-        deleteUser(id: ID!): Response!
+        createUser(input: UserInput!, file: Upload): ResponseMessage!
+        login(input: Login): ResponseMessageLogin!
+        updateUser(id: ID!, input: UserInput): ResponseMessage!
+        deleteUser(id: ID!): ResponseMessage!
     }
 
     type Subscription {

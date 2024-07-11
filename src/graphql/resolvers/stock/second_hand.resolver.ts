@@ -1,7 +1,7 @@
 import { ApolloError } from "apollo-server-express"
 import verify from "../../../helper/verifyToken.helper"
 import SecondHandSchema from "../../../schema/stock/second_hand.schema"
-import {message, messageError, messageLogin} from "../../../helper/message.helper"
+import { message, messageError, messageLogin } from "../../../helper/message.helper"
 import { PaginateOptions } from "mongoose"
 import { customLabels } from "../../../helper/customeLabels.helper"
 
@@ -17,7 +17,14 @@ const secondhand = {
                     page: page,
                     limit: limit
                 }
-                return await SecondHandSchema.paginate({}, options)
+
+                const query = {
+                    $and: [
+                        keyword ? { grade_name: { $regex: keyword, $options: 'i' } } : {},
+                        keyword ? { barcode: { $regex: keyword, $options: 'i' } } : {}
+                    ]
+                }
+                return await SecondHandSchema.paginate(query, options)
             } catch (error: any) {
                 throw new ApolloError(error.message)
             }

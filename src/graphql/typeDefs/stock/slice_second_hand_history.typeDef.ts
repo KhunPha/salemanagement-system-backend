@@ -21,7 +21,7 @@ const slicesecondhandhistory = gql`
     }
 
     type Mutation {
-        SliceSecondHand(input: SliceSecondHandInput): Response!
+        SliceSecondHand(input: SliceSecondHandInput): ResponseMessage!
     }
 `
 

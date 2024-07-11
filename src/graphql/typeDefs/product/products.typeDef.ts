@@ -51,9 +51,9 @@ const product = gql`
     }
 
     type Mutation {
-        createProduct(input: ProductInput): Response!
-        updateProduct(id: ID!, input: ProductInput): Response!
-        deleteProduct(id: ID): Response!
+        createProduct(input: ProductInput): ResponseMessage!
+        updateProduct(id: ID!, input: ProductInput): ResponseMessage!
+        deleteProduct(id: ID): ResponseMessage!
     }
 `
 

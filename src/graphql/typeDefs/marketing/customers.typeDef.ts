@@ -37,13 +37,13 @@ const customer = gql`
     }
 
     type Query {
-        getCustomers: CustomerPagination
+        getCustomers(page: Int, limit: Int, pagination: Boolean, keyword: String, types: String): CustomerPagination
     }
 
     type Mutation {
-        createCustomer(input: CustomerInput): Response!
-        updateCustomer(id: ID!, input: CustomerInput): Response!
-        deleteCustomer(id: ID!): Response!
+        createCustomer(input: CustomerInput): ResponseMessage!
+        updateCustomer(id: ID!, input: CustomerInput): ResponseMessage!
+        deleteCustomer(id: ID!): ResponseMessage!
     }
 `
 

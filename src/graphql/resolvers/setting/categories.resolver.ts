@@ -1,7 +1,7 @@
 import { ApolloError } from "apollo-server-express";
 import CategoriesSchema from "../../../schema/setting/categories.schema";
 import verify from "../../../helper/verifyToken.helper";
-import {message, messageError, messageLogin} from "../../../helper/message.helper"
+import { message, messageError, messageLogin } from "../../../helper/message.helper"
 import { PaginateOptions } from "mongoose";
 import { customLabels } from "../../../helper/customeLabels.helper";
 
@@ -17,7 +17,11 @@ const category = {
                     page: page,
                     limit: limit
                 }
-                return await CategoriesSchema.paginate({}, options)
+
+                const query = {
+                    category_name: { $regex: keyword, $options: 'i' }
+                }
+                return await CategoriesSchema.paginate(query, options)
             } catch (error: any) {
                 throw new ApolloError(error.message)
             }

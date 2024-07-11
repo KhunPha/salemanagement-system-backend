@@ -1,7 +1,7 @@
 import { ApolloError } from "apollo-server-express";
 import ColorSchema from "../../../schema/setting/color.schema";
 import verify from "../../../helper/verifyToken.helper";
-import {message, messageError, messageLogin} from "../../../helper/message.helper"
+import { message, messageError, messageLogin } from "../../../helper/message.helper"
 import { PaginateOptions } from "mongoose";
 import { customLabels } from "../../../helper/customeLabels.helper";
 
@@ -17,7 +17,14 @@ const color = {
                     page: page,
                     limit: limit
                 }
-                return await ColorSchema.paginate({}, options)
+
+                const query = {
+                    $and: [
+                        keyword ? { color_code: { $regex: keyword, $options: 'i' } } : {},
+                        keyword ? { color_name: { $regex: keyword, $options: 'i' } } : {}
+                    ]
+                }
+                return await ColorSchema.paginate(query, options)
             } catch (error: any) {
 
             }

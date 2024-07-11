@@ -41,9 +41,9 @@ const supplier = gql`
     }
 
     type Mutation {
-        createSupplier(input: SupplierInput): Response!
-        updateSupplier(id: ID, input: SupplierInput): Response!
-        deleteSupplier(id: ID): Response!
+        createSupplier(input: SupplierInput): ResponseMessage!
+        updateSupplier(id: ID, input: SupplierInput): ResponseMessage!
+        deleteSupplier(id: ID): ResponseMessage!
     }
 `
 

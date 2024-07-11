@@ -1,7 +1,7 @@
 import { ApolloError } from "apollo-server-express"
 import verify from "../../../helper/verifyToken.helper"
 import UnitSchema from "../../../schema/setting/unit.shema"
-import {message, messageError, messageLogin} from "../../../helper/message.helper"
+import { message, messageError, messageLogin } from "../../../helper/message.helper"
 import { PaginateOptions } from "mongoose"
 import { customLabels } from "../../../helper/customeLabels.helper"
 
@@ -17,7 +17,12 @@ const unit = {
                     page: page,
                     limit: limit
                 }
-                return await UnitSchema.paginate({}, options)
+
+                const query = {
+                    unit_name: { $regex: keyword, $options: 'i' }
+                }
+
+                return await UnitSchema.paginate(query, options)
             } catch (error: any) {
                 throw new ApolloError(error.message)
             }

@@ -15,9 +15,14 @@ const bank = {
                     pagination,
                     customLabels,
                     page: page,
-                    limit: limit
+                    limit: limit,
+                    sort: { createdAt: -1 }
                 }
-                return await BankSchema.paginate({}, options)
+
+                const query = {
+                    bank_name: {$regex: keyword, $options: 'i'}
+                }
+                return await BankSchema.paginate(query, options)
             } catch (error: any) {
                 throw new ApolloError(error.message)
             }

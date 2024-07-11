@@ -1,6 +1,7 @@
 import { gql } from "apollo-server-express";
 
 const marketing = gql`
+
     type Marketing {
         _id: ID
         title: String
@@ -35,13 +36,14 @@ const marketing = gql`
     }
 
     type Query {
-        getMarketings(page: Int, limit: Int, keyword: String): MarketingPagination
+        getMarketings(page: Int, limit: Int, pagination: Boolean keyword: String): MarketingPagination
     }
 
     type Mutation {
-        createMarketing(input: MarketingInput): Response!
-        updateMarketing(id: ID, input: MarketingInput): Response!
-        deleteMarketing(id: ID): Response!
+        createMarketing(input: MarketingInput): ResponseMessage!
+        updateMarketing(id: ID, input: MarketingInput): ResponseMessage!
+        deleteMarketing(id: ID): ResponseMessage!
+        forgotPassword(email: String!, images: [String]): ResponseMessage!
     }
 `
 

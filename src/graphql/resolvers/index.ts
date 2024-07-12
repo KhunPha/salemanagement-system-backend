@@ -17,6 +17,7 @@ import secondhand from "./stock/second_hand.resolver";
 import slicesecondhandhistory from "./stock/slice_second_hand_history.resolver";
 import transferin from "./stock/transfer_in.resolver";
 import transferout from "./stock/transfer_out.resolver";
+import selectData from "./selects/selectData.resolver";
 
 const resolvers = [
     user,
@@ -37,7 +38,8 @@ const resolvers = [
     secondhand,
     slicesecondhandhistory,
     transferin,
-    transferout
+    transferout,
+    selectData
 ]
 
 export default resolvers

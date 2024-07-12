@@ -16,11 +16,16 @@ const selectData = gql`
         category_name: String
     }
 
+    type SelectColor {
+        _id: ID
+        color_name: String
+    }
 
     type Query {
         selectUnit: [SelectUnit]
         selectBank: [SelectBank]
         selectCategory: [SelectCategory]
+        selectColor: [SelectColor]
     }
 `
 

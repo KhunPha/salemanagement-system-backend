@@ -5,7 +5,6 @@ import { message, messageError, messageLogin } from "../../../helper/message.hel
 import { PaginateOptions } from "mongoose"
 import { customLabels } from "../../../helper/customeLabels.helper"
 import OneTimePassword from "../../../schema/onetimepassword/onetimepassword.schema"
-import { title } from "process"
 const fs = require('fs');
 const { promisify } = require('util');
 const nodemailer = require("nodemailer")

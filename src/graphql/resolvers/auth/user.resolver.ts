@@ -152,7 +152,10 @@ const user = {
                 const { firstname, lastname, username, password, roles, image, remark } = await args.input
                 const { id } = args
 
-                const userDoc = { $set: { firstname, lastname, username, password, roles, image, remark } }
+                const salt = await bcrypt.genSalt()
+                const hashpassword = await bcrypt.hashSync(password, salt)
+
+                const userDoc = { $set: { firstname, lastname, username, password: hashpassword, roles, image, remark } }
 
                 const updateDoc = await UserShcema.findByIdAndUpdate(id, userDoc, { new: true })
 

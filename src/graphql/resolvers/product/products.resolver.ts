@@ -104,38 +104,9 @@ const product = {
     updateProduct: async (parent: any, args: any, context: any) => {
       try {
         verify(context.user);
-        const {
-          pro_name,
-          brand,
-          size,
-          color,
-          type_of_product,
-          category,
-          unit,
-          barcode,
-          image,
-          price,
-          discount,
-          remark
-        } = args.input;
         const { id } = args;
 
-        const productDoc = {
-          $set: {
-            pro_name,
-            brand,
-            size,
-            color,
-            type_of_product,
-            category,
-            unit,
-            barcode,
-            image,
-            price,
-            discount,
-            remark
-          },
-        };
+        const productDoc = { $set: { ...args.input } };
 
         const updateDoc = await ProductSchema.findByIdAndUpdate(
           id,

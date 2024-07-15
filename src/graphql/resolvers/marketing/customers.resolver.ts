@@ -56,10 +56,9 @@ const customer = {
         updateCustomer: async (parent: any, args: any, context: any) => {
             try {
                 verify(context.user)
-                const { customer_name, phone_number, email, types, remark } = args.input
                 const { id } = await args
 
-                const customerDoc = { $set: { customer_name, phone_number, email, types, remark } }
+                const customerDoc = { $set: { ...args.input } }
 
                 const updateDoc = await CustomerSchema.findByIdAndUpdate(id, customerDoc)
 

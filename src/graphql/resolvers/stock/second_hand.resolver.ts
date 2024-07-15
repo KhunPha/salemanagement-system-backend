@@ -52,10 +52,9 @@ const secondhand = {
         updateSecondHand: async (parent: any, args: any, context: any) => {
             try {
                 verify(context.user)
-                const { grade_name, price, barcode, remark } = await args.input
                 const { id } = await args
 
-                const SecondHandDoc = { $set: { grade_name, price, barcode, remark } }
+                const SecondHandDoc = { $set: { ...args.input } }
 
                 const updateDoc = await SecondHandSchema.findByIdAndUpdate(id, SecondHandDoc, { new: true })
 

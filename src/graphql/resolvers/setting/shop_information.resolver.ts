@@ -36,10 +36,9 @@ const shop_information = {
         updateShopInformation: async (parent: any, args: any, context: any) => {
             try {
                 verify(context.user)
-                const { logo, store_name, phone_number, email_address, address, remark } = await args.input
                 const { id } = await args
 
-                const ShopInformationDoc = { $set: { logo, store_name, phone_number, email_address, address, remark } }
+                const ShopInformationDoc = { $set: { ...args.input } }
 
                 const updateDoc = await ShopInformationSchema.findByIdAndUpdate(id, ShopInformationDoc, { new: true })
 

@@ -55,10 +55,9 @@ const supplier = {
         updateSupplier: async (parent: any, args: any, context: any) => {
             try {
                 verify(context.user)
-                const { supplier_name, phone_number, email, address, remark } = args.input
                 const { id } = args
 
-                const supplierDoc = { $set: { supplier_name, phone_number, email, address, remark } }
+                const supplierDoc = { $set: { ...args.input } }
 
                 const updateDoc = await SupplierSchema.findByIdAndUpdate(id, supplierDoc)
 

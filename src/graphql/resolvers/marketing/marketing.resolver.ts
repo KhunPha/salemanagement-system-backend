@@ -61,10 +61,9 @@ const marketing = {
         updateMarketing: async (parent: any, args: any, context: any) => {
             try {
                 verify(context.user)
-                const { title, description, customer, image, remark } = await args.input
                 const { id } = await args
 
-                const MarketingDoc = { $set: { title, description, customer, image } }
+                const MarketingDoc = { $set: { ...args.input } }
 
                 const updateDoc = await MarketingSchema.findByIdAndUpdate(id, MarketingDoc, { new: true })
 

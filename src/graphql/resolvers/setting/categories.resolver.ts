@@ -52,10 +52,9 @@ const category = {
         updateCategory: async (parent: any, args: any, context: any) => {
             try {
                 verify(context.user)
-                const { category_name, remark } = args.input
                 const { id } = args
 
-                const cateDoc = { $set: { category_name, remark } }
+                const cateDoc = { $set: { ...args.input } }
 
                 const updateDoc = await CategoriesSchema.findByIdAndUpdate(id, cateDoc)
 

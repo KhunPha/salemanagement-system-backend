@@ -53,10 +53,9 @@ const color = {
         updateColor: async (parent: any, args: any, context: any) => {
             try {
                 verify(context.user)
-                const { color_code, color_name, remark } = args.input
                 const { id } = args
 
-                const colorDoc = { $set: { color_code, color_name, remark } }
+                const colorDoc = { $set: { ...args.input } }
 
                 const updateDoc = await ColorSchema.findByIdAndUpdate(id, colorDoc)
 

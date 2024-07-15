@@ -55,7 +55,7 @@ const bank = {
                 const { bank_name, remark } = args.input
                 const { id } = args
 
-                const bankDoc = { $set: { bank_name: bank_name, remark: remark } }
+                const bankDoc = { $set: { ...args.input } }
 
                 const updateDoc = await BankSchema.findByIdAndUpdate(id, bankDoc)
 

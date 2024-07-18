@@ -22,6 +22,7 @@ import ResponseMessage from "./response/response.typeDef";
 import transferin from "./stock/transfer_in.typeDef";
 import transferout from "./stock/transfer_out.typeDef";
 import selectData from "./selects/selectData.select";
+import brand from "./setting/brand.typeDef";
 
 const typeDefs = [
     user,
@@ -47,7 +48,8 @@ const typeDefs = [
     ResponseMessage,
     transferin,
     transferout,
-    selectData
+    selectData,
+    brand
 ]
 
 export default typeDefs

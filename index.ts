@@ -17,11 +17,9 @@ const app: any = express()
 var ip_address: any;
 
 if (os.networkInterfaces()['Ethernet']) {
-    ip_address = "localhost"
-    // ip_address = os.networkInterfaces()['Ethernet'][1]['address']
+    ip_address = os.networkInterfaces()['Ethernet'][1]['address']
 } else if (os.networkInterfaces()['Wi-Fi']) {
-    ip_address = "localhost"
-    // ip_address = os.networkInterfaces()['Wi-Fi'][1]['address']
+    ip_address = os.networkInterfaces()['Wi-Fi'][1]['address']
 } else {
     ip_address = "localhost"
 }

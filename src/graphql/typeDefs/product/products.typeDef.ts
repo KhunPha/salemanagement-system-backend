@@ -4,7 +4,7 @@ const product = gql`
     type Product {
         _id: ID
         pro_name: String
-        brand: String
+        brand: Brand
         size: Float
         color: Color
         type_of_product: String
@@ -37,7 +37,7 @@ const product = gql`
 
     input ProductInputs {
         pro_name: String,
-        brand: String
+        brand: ID
         size: Float
         color: ID
         type_of_product: String,
@@ -51,7 +51,7 @@ const product = gql`
 
     input ProductInput {
         pro_name: String,
-        brand: String
+        brand: ID
         size: Float
         color: ID
         type_of_product: String,

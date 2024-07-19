@@ -30,6 +30,9 @@ const product = {
             {
               path: "color",
             },
+            {
+              path: "brand"
+            }
           ],
           page: page,
           limit: limit,

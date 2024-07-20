@@ -2,7 +2,7 @@ import BankSchema from "../../../schema/setting/bank.schema";
 import CategoriesSchema from "../../../schema/setting/categories.schema";
 import ColorSchema from "../../../schema/setting/color.schema";
 import UnitSchema from "../../../schema/setting/unit.schema";
-import BrandSchema from "../../../schema/setting/brand.schema;
+import BrandSchema from "../../../schema/setting/brand.schema";
 
 const selectData = {
     Query: {

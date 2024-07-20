@@ -173,11 +173,6 @@ const user = {
                 verify(context.user)
 
                 const { id } = await args
-                const userLog = verifyToken(context.user)
-
-                if (id === userLog.input._id) {
-                    throw new ApolloError("Cannot delete")
-                }
 
                 const deleteUser = await UserShcema.findByIdAndDelete(id)
 

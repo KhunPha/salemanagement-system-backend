@@ -8,6 +8,7 @@ import {
 } from "../../../helper/message.helper";
 import { PaginateOptions } from "mongoose";
 import { customLabels } from "../../../helper/customeLabels.helper";
+import DiscountProductSchema from "../../../schema/product/discount_products.schema";
 
 const product = {
   Query: {
@@ -30,6 +31,9 @@ const product = {
             {
               path: "color",
             },
+            {
+              path: "brand"
+            }
           ],
           page: page,
           limit: limit,
@@ -121,6 +125,21 @@ const product = {
         return message;
       } catch (error: any) {
         throw new ApolloError(error.message);
+      }
+    },
+    discountProduct: async (parent: any, args: any, context: any) => {
+      try {
+        verify(context.user)
+
+        const discountProduct = new DiscountProductSchema({
+          ...args
+        })
+
+        await discountProduct.save()
+
+        return message
+      } catch (error: any) {
+        throw new ApolloError(error.message)
       }
     },
     deleteProduct: async (parent: any, args: any, context: any) => {

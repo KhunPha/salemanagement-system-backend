@@ -79,9 +79,10 @@ const purchase = {
         voidPurchase: async (parent: any, args: any, context: any) => {
             try {
                 verify(context.user)
-                const { id, status } = await args
+                const { id } = await args
 
-                const voidpurchaseDoc = { $set: { status } }
+
+                const voidpurchaseDoc = { $set: { isVoid: true } }
 
                 const voidDoc = await PurchaseSchema.findByIdAndUpdate(id, voidpurchaseDoc, { new: true })
 

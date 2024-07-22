@@ -49,28 +49,14 @@ const product = gql`
         remark: String
     }
 
-    input ProductInput {
-        pro_name: String,
-        brand: ID
-        size: Float
-        color: ID
-        type_of_product: String,
-        category: ID
-        unit: ID
-        barcode: String
-        image: String
-        price: Float
-        discount: Float
-        remark: String
-    }
-
     type Query {
         getProducts(page: Int, limit: Int, pagination: Boolean, keyword: String, unit: ID, category: ID, type_of_product: String): ProductPagination
     }
 
     type Mutation {
         createProduct(input: ProductInputs): ResponseMessage!
-        updateProduct(id: ID!, input: ProductInput): ResponseMessage!
+        updateProduct(id: ID!, input: ProductInputs): ResponseMessage!
+        discountProduct(id: [ID], discount: Float): ResponseMessage
         deleteProduct(id: ID): ResponseMessage!
     }
 `

@@ -30,12 +30,21 @@ const purchase = {
                                 },
                                 {
                                     path: "unit"
+                                },
+                                {
+                                    path: "brand"
                                 }
                             ]
                         }
                     ],
                     page: page,
                     limit: limit
+                }
+
+                const query = {
+                    $and: [
+                        
+                    ]
                 }
                 return await PurchaseSchema.paginate({}, options)
             } catch (error: any) {

@@ -13,9 +13,7 @@ export interface IProduct extends Document {
     image: string,
     price: number,
     discount: number,
-    remark: string,
-    createdAt: string
-    updatedAt: string
+    remark: string
 }
 
 const product = new Schema<IProduct>({
@@ -58,12 +56,6 @@ const product = new Schema<IProduct>({
         type: Number
     },
     remark: {
-        type: String
-    },
-    createdAt: {
-        type: String
-    },
-    updatedAt: {
         type: String
     }
 }, { timestamps: true })

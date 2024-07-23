@@ -7,8 +7,6 @@ export interface ICustomer extends Document {
     email: string,
     types: string,
     remark: string,
-    createdAt: string
-    updatedAt: string
 }
 
 const customer = new Schema<ICustomer>({
@@ -26,12 +24,6 @@ const customer = new Schema<ICustomer>({
         type: String
     },
     remark: {
-        type: String
-    },
-    createdAt: {
-        type: String
-    },
-    updatedAt: {
         type: String
     }
 }, {timestamps: true})

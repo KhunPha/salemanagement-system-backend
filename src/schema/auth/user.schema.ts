@@ -8,9 +8,7 @@ export interface IUser extends Document {
     password: string,
     roles: object,
     image: string,
-    remark: string,
-    createdAt: string,
-    updatedAt: string
+    remark: string
 }
 
 const user = new Schema<IUser>({
@@ -39,12 +37,6 @@ const user = new Schema<IUser>({
         default: ""
     },
     remark: {
-        type: String
-    },
-    createdAt: {
-        type: String
-    },
-    updatedAt: {
         type: String
     }
 }, { timestamps: true })

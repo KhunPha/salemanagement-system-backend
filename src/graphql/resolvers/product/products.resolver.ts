@@ -42,44 +42,18 @@ const product = {
 
         const query = {
           $and: [
-            keyword ? { pro_name: { $regex: keyword, $options: 'i' } } : {},
-            keyword ? { barcode: { $regex: keyword, $options: 'i' } } : {},
+            {
+              $or: [
+                keyword ? { pro_name: { $regex: keyword, $options: 'i' } } : {},
+                keyword ? { barcode: { $regex: keyword, $options: 'i' } } : {},
+              ]
+            },
             type_of_product === "All" ? {} : { type_of_product },
             unit ? { unit } : {},
             category ? { category } : {},
           ]
         }
         return await ProductSchema.paginate(query, options)
-
-        // const countProduct = await ProductSchema.countDocuments();
-
-        // const totalPages = Math.floor(countProduct / limit);
-
-        // const skip = (page - 1) * limit;
-
-        // const products = await ProductSchema.find({
-        //   $and: [
-        //     keyword ? { pro_name: { $regex: keyword, $options: "i" } } : {},
-        //     type_of_product === "All" ? {} : { type_of_product },
-        //     unit ? { unit } : {},
-        //     category ? { category } : {},
-        //   ],
-        // })
-        //   .populate([
-        //     {
-        //       path: "category",
-        //     },
-        //     {
-        //       path: "unit",
-        //     },
-        //     {
-        //       path: "color",
-        //     },
-        //   ])
-        //   .skip(skip)
-        //   .limit(limit);
-
-        // return products;
       } catch (error: any) {
         throw new ApolloError(error.message);
       }

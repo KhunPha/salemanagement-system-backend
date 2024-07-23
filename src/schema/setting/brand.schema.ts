@@ -4,8 +4,6 @@ import paginate from "mongoose-paginate-v2";
 export interface IBrand extends Document {
     brand_name: string
     remark: string
-    createdAt: string
-    updatedAt: string
 }
 
 const brand = new Schema<IBrand>({
@@ -13,12 +11,6 @@ const brand = new Schema<IBrand>({
         type: String
     },
     remark: {
-        type: String
-    },
-    createdAt: {
-        type: String
-    },
-    updatedAt: {
         type: String
     }
 }, {timestamps: true})

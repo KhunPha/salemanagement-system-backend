@@ -19,7 +19,7 @@ const supplier = {
                 }
 
                 const query = {
-                    $and: [
+                    $or: [
                         keyword ? { supplier_name: { $regex: keyword, $options: 'i' } } : {},
                         keyword ? { phone_number: { $regex: keyword, $options: 'i' } } : {},
                         keyword ? { email: { $regex: keyword, $options: 'i' } } : {},

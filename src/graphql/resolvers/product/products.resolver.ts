@@ -42,8 +42,13 @@ const product = {
 
         const query = {
           $and: [
-            keyword ? { pro_name: { $regex: keyword, $options: 'i' } } : {},
-            keyword ? { barcode: { $regex: keyword, $options: 'i' } } : {},
+            {
+              $or: [
+
+                keyword ? { pro_name: { $regex: keyword, $options: 'i' } } : {},
+                keyword ? { barcode: { $regex: keyword, $options: 'i' } } : {},
+              ]
+            },
             type_of_product === "All" ? {} : { type_of_product },
             unit ? { unit } : {},
             category ? { category } : {},

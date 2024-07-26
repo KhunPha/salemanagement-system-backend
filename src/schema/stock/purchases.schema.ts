@@ -11,7 +11,7 @@ export interface IPurchase extends Document {
     date: string,
     product_type: string,
     amounts: number,
-    status: boolean,
+    isVoid: boolean,
     priority: string,
     total_qty: number
     due: number
@@ -46,8 +46,9 @@ const purchase = new Schema<IPurchase>({
     amounts: {
         type: Number
     },
-    status: {
-        type: Boolean
+    isVoid: {
+        type: Boolean,
+        default: false
     },
     priority: {
         type: String,

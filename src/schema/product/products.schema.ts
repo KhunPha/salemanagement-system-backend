@@ -4,7 +4,7 @@ import paginate from "mongoose-paginate-v2";
 export interface IProduct extends Document {
     pro_name: string,
     brand: object,
-    size: number,
+    size: string,
     color: object
     type_of_product: string,
     category: object,
@@ -14,8 +14,6 @@ export interface IProduct extends Document {
     price: number,
     discount: number,
     remark: string,
-    createdAt: string
-    updatedAt: string
 }
 
 const product = new Schema<IProduct>({
@@ -23,11 +21,11 @@ const product = new Schema<IProduct>({
         type: String
     },
     brand: {
-        type:mongoose.Schema.Types.ObjectId,
+        type: mongoose.Schema.Types.ObjectId,
         ref: "Brand"
     },
     size: {
-        type: Number
+        type: String
     },
     color: {
         type: mongoose.Schema.Types.ObjectId,
@@ -58,12 +56,6 @@ const product = new Schema<IProduct>({
         type: Number
     },
     remark: {
-        type: String
-    },
-    createdAt: {
-        type: String
-    },
-    updatedAt: {
         type: String
     }
 }, { timestamps: true })

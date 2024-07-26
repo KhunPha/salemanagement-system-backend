@@ -43,7 +43,7 @@ const purchase = {
 
                 const query = {
                     $and: [
-                        
+
                     ]
                 }
                 return await PurchaseSchema.paginate({}, options)
@@ -68,7 +68,7 @@ const purchase = {
 
                 args.input.total_qty = total_qty
                 args.input.amounts = total_amount
-                args.input.date = date()
+                args.input.date = new Date(args.input.date)
 
                 const newpurchase = new PurchaseSchema({
                     ...args.input

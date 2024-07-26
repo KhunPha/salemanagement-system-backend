@@ -8,7 +8,7 @@ export interface IPurchase extends Document {
         qty: number
         unit_price: number
     },
-    date: string,
+    date: Date,
     product_type: string,
     amounts: number,
     isVoid: boolean,
@@ -36,11 +36,11 @@ const purchase = new Schema<IPurchase>({
         }
     }],
     date: {
-        type: String
+        type: Date
     },
     product_type: {
         type: String,
-        enum: ["New", "Second Hand"]
+        enum: ["New", "Second_Hand"]
     },
     amounts: {
         type: Number

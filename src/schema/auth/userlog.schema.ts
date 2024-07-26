@@ -5,8 +5,6 @@ export interface IUserLog extends Document {
     user_details: object,
     user_ip_address: string,
     log_count: number
-    createdAt: string
-    updatedAt: string
 }
 
 const userlog = new Schema<IUserLog>({
@@ -19,12 +17,6 @@ const userlog = new Schema<IUserLog>({
     },
     log_count: {
         type: Number
-    },
-    createdAt: {
-        type: String
-    },
-    updatedAt: {
-        type: String
     }
 }, {timestamps: true})
 

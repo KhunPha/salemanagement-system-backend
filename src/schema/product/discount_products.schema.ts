@@ -4,8 +4,6 @@ export interface IDiscountProducts extends Document {
     product: object
     discount: number
     remark: string
-    createdAt: string
-    updatedAt: string
 }
 
 const discountproduct = new Schema<IDiscountProducts>({
@@ -19,12 +17,6 @@ const discountproduct = new Schema<IDiscountProducts>({
         type: Number
     },
     remark: {
-        type: String
-    },
-    createdAt: {
-        type: String
-    },
-    updatedAt: {
         type: String
     }
 }, {timestamps: true})

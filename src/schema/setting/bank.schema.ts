@@ -4,8 +4,6 @@ import paginate from "mongoose-paginate-v2"
 export interface IBank extends Document {
     bank_name: string
     remark: string
-    createdAt: String
-    updatedAt: String
 }
 
 const bank = new Schema<IBank>({
@@ -14,12 +12,6 @@ const bank = new Schema<IBank>({
         require: true
     },
     remark: {
-        type: String
-    },
-    createdAt: {
-        type: String
-    },
-    updatedAt: {
         type: String
     }
 }, {timestamps: true})

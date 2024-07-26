@@ -11,7 +11,6 @@ const purchase = gql`
         product_type: String
         amounts: Float
         isVoid: Boolean
-        priority: String
         total_qty: Int
         due: Float
         remark: String
@@ -52,8 +51,6 @@ const purchase = gql`
         date: Date
         product_type: String
         amounts: Float
-        status: Boolean
-        priority: String
         total_qty: Int
         due: Float
         remark: String
@@ -65,7 +62,7 @@ const purchase = gql`
 
     type Mutation {
         createPurchase(input: PurchaseInput): ResponseMessage!
-        voidPurchase(id: ID!, status: Boolean): ResponseMessage
+        voidPurchase(id: ID): ResponseMessage
     }
 `
 

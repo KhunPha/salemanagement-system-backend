@@ -13,7 +13,7 @@ export interface IProduct extends Document {
     image: string,
     price: number,
     discount: number,
-    remark: string,
+    remark: string
 }
 
 const product = new Schema<IProduct>({

@@ -6,6 +6,7 @@ const customer = gql`
         customer_name: String,
         phone_number: String,
         email: String,
+        address: String,
         types: String,
         remark: String
     }
@@ -32,6 +33,7 @@ const customer = gql`
         customer_name: String,
         phone_number: String,
         email: String,
+        address: String,
         types: String,
         remark: String
     }

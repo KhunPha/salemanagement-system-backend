@@ -3,9 +3,7 @@ import paginate from "mongoose-paginate-v2"
 
 export interface ICate extends Document {
     category_name: string,
-    remark: string,
-    createdAt: string
-    updatedAt: string
+    remark: string
 }
 
 const cate = new Schema<ICate>({
@@ -14,12 +12,6 @@ const cate = new Schema<ICate>({
         required: true
     },
     remark: {
-        type: String
-    },
-    createdAt: {
-        type: String
-    },
-    updatedAt: {
         type: String
     }
 }, {timestamps: true})

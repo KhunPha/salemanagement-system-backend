@@ -1,14 +1,13 @@
-import mongoose, {Schema, Document, PaginateModel} from "mongoose"
+import mongoose, { Schema, Document, PaginateModel } from "mongoose"
 import paginate from "mongoose-paginate-v2"
 
 export interface ICustomer extends Document {
     customer_name: string,
     phone_number: string,
     email: string,
+    address: string,
     types: string,
     remark: string,
-    createdAt: string
-    updatedAt: string
 }
 
 const customer = new Schema<ICustomer>({
@@ -22,19 +21,17 @@ const customer = new Schema<ICustomer>({
     email: {
         type: String
     },
-    types: {
+    address: {
         type: String
+    },
+    types: {
+        type: String,
+        enum: ["VIP", "General"]
     },
     remark: {
         type: String
-    },
-    createdAt: {
-        type: String
-    },
-    updatedAt: {
-        type: String
     }
-}, {timestamps: true})
+}, { timestamps: true })
 
 customer.plugin(paginate)
 

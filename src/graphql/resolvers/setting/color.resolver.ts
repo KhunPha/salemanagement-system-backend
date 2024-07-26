@@ -20,14 +20,14 @@ const color = {
                 }
 
                 const query = {
-                    $and: [
+                    $or: [
                         keyword ? { color_code: { $regex: keyword, $options: 'i' } } : {},
                         keyword ? { color_name: { $regex: keyword, $options: 'i' } } : {}
                     ]
                 }
                 return await ColorSchema.paginate(query, options)
             } catch (error: any) {
-
+                throw new ApolloError(error.message)
             }
         }
     },

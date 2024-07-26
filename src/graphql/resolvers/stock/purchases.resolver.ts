@@ -30,12 +30,21 @@ const purchase = {
                                 },
                                 {
                                     path: "unit"
+                                },
+                                {
+                                    path: "brand"
                                 }
                             ]
                         }
                     ],
                     page: page,
                     limit: limit
+                }
+
+                const query = {
+                    $and: [
+
+                    ]
                 }
                 return await PurchaseSchema.paginate({}, options)
             } catch (error: any) {
@@ -59,7 +68,7 @@ const purchase = {
 
                 args.input.total_qty = total_qty
                 args.input.amounts = total_amount
-                args.input.date = date()
+                args.input.date = new Date(args.input.date)
 
                 const newpurchase = new PurchaseSchema({
                     ...args.input
@@ -79,9 +88,10 @@ const purchase = {
         voidPurchase: async (parent: any, args: any, context: any) => {
             try {
                 verify(context.user)
-                const { id, status } = await args
+                const { id } = await args
 
-                const voidpurchaseDoc = { $set: { status } }
+
+                const voidpurchaseDoc = { $set: { isVoid: true } }
 
                 const voidDoc = await PurchaseSchema.findByIdAndUpdate(id, voidpurchaseDoc, { new: true })
 

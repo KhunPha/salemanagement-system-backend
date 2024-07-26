@@ -26,12 +26,30 @@ const selectData = gql`
         brand_name: String
     }
 
+    type SelectProduct {
+        _id: ID
+        pro_name: String
+    }
+
+    type SelectSupplier {
+        _id: ID
+        supplier_name: String
+    }
+
+    type SelectCustomer {
+        _id: ID
+        customer_name: String
+    }
+
     type Query {
         selectUnit: [SelectUnit]
         selectBank: [SelectBank]
         selectCategory: [SelectCategory]
         selectColor: [SelectColor]
         selectBrand: [SelectBrand]
+        selectProduct: [SelectProduct]
+        selectSupplier: [SelectSupplier]
+        selectCustomer: [SelectCustomer]
     }
 `
 

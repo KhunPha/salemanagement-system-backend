@@ -19,6 +19,7 @@ const purchase = gql`
     type PurchaseProductDetails {
         product_details: Product
         qty: Int
+        unit_price: Float
     }
 
     type Paginator {

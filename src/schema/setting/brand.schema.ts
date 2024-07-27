@@ -1,4 +1,4 @@
-import mongoose, {Schema, Document, PaginateModel} from "mongoose";
+import mongoose, { Schema, Document, PaginateModel } from "mongoose";
 import paginate from "mongoose-paginate-v2";
 
 export interface IBrand extends Document {
@@ -13,7 +13,7 @@ const brand = new Schema<IBrand>({
     remark: {
         type: String
     }
-}, {timestamps: true})
+}, { timestamps: true })
 
 brand.plugin(paginate)
 

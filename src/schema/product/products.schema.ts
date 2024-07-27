@@ -4,7 +4,7 @@ import paginate from "mongoose-paginate-v2";
 export interface IProduct extends Document {
     pro_name: string,
     brand: object,
-    size: number,
+    size: string,
     color: object
     type_of_product: string,
     category: object,
@@ -21,11 +21,11 @@ const product = new Schema<IProduct>({
         type: String
     },
     brand: {
-        type:mongoose.Schema.Types.ObjectId,
+        type: mongoose.Schema.Types.ObjectId,
         ref: "Brand"
     },
     size: {
-        type: Number
+        type: String
     },
     color: {
         type: mongoose.Schema.Types.ObjectId,

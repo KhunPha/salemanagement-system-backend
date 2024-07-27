@@ -1,11 +1,12 @@
 import { gql } from "apollo-server-express";
 
 const product = gql`
+    scalar Date
     type Product {
         _id: ID
         pro_name: String
         brand: Brand
-        size: Float
+        size: String
         color: Color
         type_of_product: String
         category: Category
@@ -14,7 +15,9 @@ const product = gql`
         image: String,
         price: Float,
         discount: Float,
-        remark: String
+        remark: String,
+        createdAt: Date,
+        updatedAt: Date,
     }
 
     type Paginator {
@@ -38,7 +41,7 @@ const product = gql`
     input ProductInputs {
         pro_name: String,
         brand: ID
-        size: Float
+        size: String
         color: ID
         type_of_product: String,
         category: ID
@@ -47,6 +50,8 @@ const product = gql`
         image: String
         price: Float
         remark: String
+        createdAt: Date,
+        updatedAt: Date,
     }
 
     type Query {

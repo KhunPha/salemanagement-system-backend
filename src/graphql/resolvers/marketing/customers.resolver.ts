@@ -21,9 +21,14 @@ const customer = {
 
                 const query = {
                     $and: [
-                        keyword ? { customer_name: { $regex: keyword, $options: 'i' } } : {},
-                        keyword ? { phone_number: { $regex: keyword, $options: 'i' } } : {},
-                        keyword ? { email: { $regex: keyword, $options: 'i' } } : {},
+                        {
+                            $or: [
+                                keyword ? { customer_name: { $regex: keyword, $options: 'i' } } : {},
+                                keyword ? { phone_number: { $regex: keyword, $options: 'i' } } : {},
+                                keyword ? { email: { $regex: keyword, $options: 'i' } } : {},
+                                keyword ? { address: { $regex: keyword, $options: 'i' } } : {},
+                            ]
+                        },
                         types ? { types } : {}
                     ]
                 }

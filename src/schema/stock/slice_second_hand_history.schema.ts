@@ -1,24 +1,17 @@
 import mongoose, {Schema, Document} from "mongoose";
 
 export interface ISliceSecondHandHistory extends Document {
-    product_id: string
     grade_details: object
     qty: number
     price: number
 }
 
 const slicesecondhandhistory = new Schema<ISliceSecondHandHistory>({
-    product_id: {
-        type: String
-    },
     grade_details: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "SecondHand"
+        ref: "Product"
     },
     qty: {
-        type: Number
-    },
-    price: {
         type: Number
     }
 }, {timestamps: true})

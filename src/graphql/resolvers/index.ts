@@ -19,6 +19,7 @@ import transferin from "./stock/transfer_in.resolver";
 import transferout from "./stock/transfer_out.resolver";
 import selectData from "./selects/selectData.resolver";
 import brand from "./setting/brand.resolver";
+import receiveproduct from "./stock/receive_product.resolver";
 
 const resolvers = [
     user,
@@ -41,7 +42,8 @@ const resolvers = [
     transferin,
     transferout,
     selectData,
-    brand
+    brand,
+    receiveproduct
 ]
 
 export default resolvers

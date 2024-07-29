@@ -13,7 +13,8 @@ export interface IProduct extends Document {
     image: string,
     price: number,
     discount: number,
-    remark: string
+    remark: string,
+    status: boolean
 }
 
 const product = new Schema<IProduct>({
@@ -33,7 +34,7 @@ const product = new Schema<IProduct>({
     },
     type_of_product: {
         type: String,
-        enum: ["All", "New", "Second_Hand"]
+        enum: ["All", "New", "Second Hand"]
     },
     category: {
         type: mongoose.Types.ObjectId,
@@ -57,6 +58,10 @@ const product = new Schema<IProduct>({
     },
     remark: {
         type: String
+    },
+    status: {
+        type: Boolean,
+        default: true
     }
 }, { timestamps: true })
 

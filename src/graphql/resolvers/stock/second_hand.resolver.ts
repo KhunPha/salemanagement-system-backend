@@ -4,6 +4,8 @@ import SecondHandSchema from "../../../schema/stock/second_hand.schema"
 import { message, messageError, messageLogin } from "../../../helper/message.helper"
 import { PaginateOptions } from "mongoose"
 import { customLabels } from "../../../helper/customeLabels.helper"
+import ProductSchema from "../../../schema/product/products.schema"
+import StockSchema from "../../../schema/stock/stocks.schema"
 
 const secondhand = {
     Query: {
@@ -20,11 +22,18 @@ const secondhand = {
 
                 const query = {
                     $and: [
-                        keyword ? { grade_name: { $regex: keyword, $options: 'i' } } : {},
-                        keyword ? { barcode: { $regex: keyword, $options: 'i' } } : {}
+                        {
+                            $or: [
+                                keyword ? { pro_name: { $regex: keyword, $options: 'i' } } : {},
+                                keyword ? { barcode: { $regex: keyword, $options: 'i' } } : {}
+                            ]
+                        },
+                        {
+                            status: false
+                        }
                     ]
                 }
-                return await SecondHandSchema.paginate(query, options)
+                return await ProductSchema.paginate(query, options)
             } catch (error: any) {
                 throw new ApolloError(error.message)
             }
@@ -34,11 +43,16 @@ const secondhand = {
         createSecondHand: async (parent: any, args: any, context: any) => {
             try {
                 verify(context.user)
-                const newsecondhand = new SecondHandSchema({
+                args.input.status = false
+                const newsecondhand = new ProductSchema({
                     ...args.input
                 })
 
                 await newsecondhand.save()
+
+                await new StockSchema({
+                    product_details: newsecondhand._id
+                }).save()
 
                 if (!newsecondhand) {
                     return messageError
@@ -56,7 +70,7 @@ const secondhand = {
 
                 const SecondHandDoc = { $set: { ...args.input } }
 
-                const updateDoc = await SecondHandSchema.findByIdAndUpdate(id, SecondHandDoc, { new: true })
+                const updateDoc = await ProductSchema.findByIdAndUpdate(id, SecondHandDoc, { new: true })
 
                 if (!updateDoc) {
                     return messageError
@@ -72,7 +86,7 @@ const secondhand = {
                 verify(context.user)
                 const { id } = await args
 
-                const deleteSecondHand = await SecondHandSchema.findByIdAndDelete(id)
+                const deleteSecondHand = await ProductSchema.findByIdAndDelete(id)
 
                 if (!deleteSecondHand) {
                     return messageError

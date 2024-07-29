@@ -3,7 +3,7 @@ import { gql } from "apollo-server-express";
 const secondhand = gql`
     type SecondHand {
         _id: ID
-        grade_name: String
+        pro_name: String
         price: Float
         barcode: String
         remark: String
@@ -28,7 +28,7 @@ const secondhand = gql`
     }
 
     input SecondHandInput {
-        grade_name: String
+        pro_name: String
         price: Float
         barcode: String
         remark: String

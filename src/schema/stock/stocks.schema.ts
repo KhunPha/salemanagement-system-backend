@@ -4,6 +4,7 @@ import paginate from "mongoose-paginate-v2";
 export interface IStocks extends Document {
     product_details: object
     stock_in_hand: number
+    price: number
     discount: number
     cost: number
 }
@@ -11,16 +12,22 @@ export interface IStocks extends Document {
 const stock = new Schema<IStocks>({
     product_details: {
         type: mongoose.Types.ObjectId,
-        ref: "Product"
+        ref: "Product",
     },
     stock_in_hand: {
+        type: Number,
+        default: 0
+    },
+    price: {
         type: Number
     },
     discount: {
-        type: Number
+        type: Number,
+        default: 0
     },
     cost: {
-        type: Number
+        type: Number,
+        default: 0
     }
 }, {timestamps: true})
 

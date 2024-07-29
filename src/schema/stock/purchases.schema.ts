@@ -40,7 +40,7 @@ const purchase = new Schema<IPurchase>({
     },
     product_type: {
         type: String,
-        enum: ["New", "Second_Hand"]
+        enum: ["New", "Second Hand"]
     },
     amounts: {
         type: Number

@@ -5,46 +5,27 @@ import {message, messageError, messageLogin} from "../../../helper/message.helpe
 
 const shop_information = {
     Query: {
-        getShopInformation: async (parent: any, args: any, context: any) => {
-            try {
-                verify(context.user)
-                return await ShopInformationSchema.findOne()
-            } catch (error: any) {
-                throw new ApolloError(error.message)
-            }
-        }
+        getShopInformation: async () => await ShopInformationSchema.findOne()
     },
     Mutation: {
-        createShopInformation: async (parent: any, args: any, context: any) => {
+        shopInformation: async (parent: any, args: any, context: any) => {
             try {
                 verify(context.user)
-                const newshopinformation = new ShopInformationSchema({
-                    ...args.input
-                })
+                const getInformation: any = await ShopInformationSchema.findOne();
 
-                await newshopinformation.save()
+                if(!getInformation._id){
+                    const insert = new ShopInformationSchema({
+                        ...args
+                    })
 
-                if (!newshopinformation) {
-                    return messageError
+                    await insert.save()
+
+                    return message
                 }
 
-                return message
-            } catch (error: any) {
-                throw new ApolloError(error.message)
-            }
-        },
-        updateShopInformation: async (parent: any, args: any, context: any) => {
-            try {
-                verify(context.user)
-                const { id } = await args
+                const shopDoc = {$set: {...args.input}}
 
-                const ShopInformationDoc = { $set: { ...args.input } }
-
-                const updateDoc = await ShopInformationSchema.findByIdAndUpdate(id, ShopInformationDoc, { new: true })
-
-                if (!updateDoc) {
-                    return messageError
-                }
+                await ShopInformationSchema.findByIdAndUpdate(getInformation._id, shopDoc, {new: true})
 
                 return message
             } catch (error: any) {

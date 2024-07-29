@@ -9,6 +9,7 @@ import {
 import { PaginateOptions } from "mongoose";
 import { customLabels } from "../../../helper/customeLabels.helper";
 import DiscountProductSchema from "../../../schema/product/discount_products.schema";
+import StockSchema from "../../../schema/stock/stocks.schema";
 
 const product = {
   Query: {
@@ -48,6 +49,9 @@ const product = {
                 keyword ? { barcode: { $regex: keyword, $options: 'i' } } : {},
               ]
             },
+            {
+              status: true
+            },
             type_of_product === "All" ? {} : { type_of_product },
             unit ? { unit } : {},
             category ? { category } : {},
@@ -69,6 +73,12 @@ const product = {
         });
 
         await newproduct.save();
+
+        const newstock = new StockSchema({
+          product_details: newproduct._id,
+        })
+
+        await newstock.save()
 
         if (!newproduct) {
           return messageError;
@@ -122,6 +132,7 @@ const product = {
         const { id } = args;
 
         const deleteProduct = await ProductSchema.findByIdAndDelete(id);
+        await StockSchema.findOneAndDelete({ product_details: id })
 
         if (!deleteProduct) {
           throw new ApolloError("Delete failed");

@@ -5,6 +5,7 @@ const stock = gql`
         _id: ID
         product_details: Product
         stock_in_hand: Int
+        price: Float
         discount: Float
         cost: Float
     }
@@ -30,6 +31,7 @@ const stock = gql`
     input StockInput {
         product_details: ID
         stock_in_hand: Int
+        price: Float
         discount: Float
         cost: Float
     }

@@ -3,6 +3,7 @@ import mongoose, {Schema, Document} from "mongoose";
 export interface IReceiveProductTransaction extends Document {
     purchase_id: object
     product_lists: object
+    product_unit_type: string
 }
 
 const receiveproductT = new Schema<IReceiveProductTransaction>({
@@ -14,10 +15,20 @@ const receiveproductT = new Schema<IReceiveProductTransaction>({
             type: mongoose.Schema.Types.ObjectId,
             ref: "Product"
         },
-        qty: {
+        unit_price: {
+            type: Number
+        },
+        whole: {
+            type: Number
+        },
+        retail_in_whole: {
             type: Number
         }
-    }]
+    }],
+    product_unit_type: {
+        type: String,
+        enum: ["Whole", "Retail"]
+    }
 }, {timestamps: true})
 
 const ReceiveProductTransactionSchema = mongoose.model<IReceiveProductTransaction>("Receiveproducttransaction", receiveproductT, "Receiveproducttransactions")

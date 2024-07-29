@@ -21,18 +21,25 @@ const receiveproduct = {
         processReceiveProduct: async (parent: any, args: any, context: any) => {
             try {
                 verify(context.user)
+                let stockDoc;
                 const newproductreceive = new ReceiveProductTransactionSchema({
-                    ...args.input[1]
+                    ...args.input
                 })
 
                 await newproductreceive.save()
 
                 const product_map: any = newproductreceive.product_lists
+                console.log(args.input)
 
                 for (var i = 0; i < product_map.length; i++) {
                     const product_id = product_map[i].products
                     const getStock: any = await StockSchema.findOne({ product_details: product_id })
-                    const stockDoc = { $set: { stock_in_hand: getStock.stock_in_hand + product_map[i].qty } }
+                    if(product_map[i].retail_in_whole <= 0){
+                        stockDoc = { $set: { stock_in_hand: getStock.stock_in_hand + product_map[i].whole } }
+                    }else{
+                        stockDoc = { $set: { stock_in_hand: getStock.stock_in_hand + (product_map[i].retail_in_whole * product_map[i].whole) } }
+                    }
+
                     await StockSchema.findOneAndUpdate({ product_details: product_id }, stockDoc, { new: true })
                 }
 

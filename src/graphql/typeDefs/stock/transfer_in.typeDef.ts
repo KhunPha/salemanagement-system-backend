@@ -2,17 +2,25 @@ import { gql } from "apollo-server-express";
 
 const transferin = gql`
     type TransferIn {
-        product_details: Product
+        product_lists: [Products]
         supplier_details: Supplier
-        qty: Int
         remark: String
     }
 
-    input TransferInInput {
-        product_details: ID
-        supplier_details: ID
+    type Products {
+        products: Product
         qty: Int
+    }
+
+    input TransferInInput {
+        product_lists: [ProductsInput]
+        supplier_details: ID
         remark: String
+    }
+
+    input ProductsInput {
+        products: ID
+        qty: Int
     }
 
     type Query {

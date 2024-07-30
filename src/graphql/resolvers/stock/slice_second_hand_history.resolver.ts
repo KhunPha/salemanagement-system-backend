@@ -1,7 +1,7 @@
 import { ApolloError } from "apollo-server-express"
 import verify from "../../../helper/verifyToken.helper"
 import SliceSecondHandHistorySchema from "../../../schema/stock/slice_second_hand_history.schema"
-import { message, messageError, messageLogin } from "../../../helper/message.helper"
+import { message, messageError } from "../../../helper/message.helper"
 import StockSchema from "../../../schema/stock/stocks.schema"
 
 const slicesecondhandhistory = {
@@ -29,9 +29,9 @@ const slicesecondhandhistory = {
                         return messageError
                     }
 
-                    const getStock = await StockSchema.findOne({product_details: newslicesecondhand.grade_details})
-                    const stockDoc = {$set: {stock_in_hand: getStock?.stock_in_hand + args.input[i].qty}}
-                    await StockSchema.findOneAndUpdate({product_details: newslicesecondhand.grade_details}, stockDoc, {new: true})
+                    const getStock = await StockSchema.findOne({ product_details: newslicesecondhand.grade_details })
+                    const stockDoc = { $set: { stock_in_hand: getStock?.stock_in_hand + args.input[i].qty } }
+                    await StockSchema.findOneAndUpdate({ product_details: newslicesecondhand.grade_details }, stockDoc, { new: true })
                 }
 
                 return message

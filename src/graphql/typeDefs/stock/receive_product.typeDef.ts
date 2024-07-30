@@ -5,6 +5,7 @@ const receiveproduct = gql`
         _id: ID
         purchase_id: ID
         product_lists: [Products]
+        product_unit_type: String
     }
 
     type Products {
@@ -24,10 +25,11 @@ const receiveproduct = gql`
     input ReceiveProductInput {
         purchase_id: ID
         product_lists: [ProductsInput]
+        product_unit_type: String
     }
 
     type Query {
-        getReceiveProduct(id: ID): [ReceiveProduct]
+        getReceiveProductTransac(id: ID): [ReceiveProduct]
     }
 
     type Mutation {

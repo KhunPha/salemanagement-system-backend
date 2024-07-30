@@ -1,23 +1,25 @@
 import mongoose, {Schema, Document, mongo} from "mongoose";
 
 export interface ITransferOut extends Document {
-    product_details: object
+    product_lists: object
     supplier_details: object
-    qty: number
     remark: string
 }
 
 const transferout = new Schema<ITransferOut>({
-    product_details: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Product"
-    },
+    product_lists: [{
+        products: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Product"
+        },
+        qty: {
+            type: Number,
+            default: 0
+        }
+    }],
     supplier_details: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Supplier"
-    },
-    qty: {
-        type: Number
     },
     remark: {
         type: String

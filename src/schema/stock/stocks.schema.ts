@@ -19,7 +19,8 @@ const stock = new Schema<IStocks>({
         default: 0
     },
     price: {
-        type: Number
+        type: Number,
+        default: 0
     },
     discount: {
         type: Number,

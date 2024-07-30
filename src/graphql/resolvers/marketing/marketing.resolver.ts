@@ -9,6 +9,10 @@ const fs = require('fs');
 const { promisify } = require('util');
 const nodemailer = require("nodemailer")
 const otpGenerator = require('otp-generator')
+import { TelegramClient } from "telegram";
+import { StringSession } from "telegram/sessions";
+import readline from "readline";
+const TelegramBot = require('node-telegram-bot-api');
 
 
 const readFileAsync = promisify(fs.readFile);
@@ -201,6 +205,67 @@ const marketing = {
                 throw new ApolloError(error.message)
             }
 
+        },
+        // telegramBot: async (parent: any) => {
+        // Replace with your bot token
+        //     const token = '7379106987:AAHcVqipFKoz-YKp9x-FIRvlyAUoOtunSYo';
+
+        // Create a bot instance
+        //     const bot = new TelegramBot(token);
+
+        // Replace with your chat ID
+        //     const chatId = '1249267290';
+
+        // Define the message
+        //     const message = 'Hello, this is a test message from my Telegram bot!';
+
+        // Send the message
+        //     bot.sendMessage(chatId, message)
+        //     return message
+        // }
+        telegramBot: async (parent: any) => {
+            const apiId = 28257415;
+            const apiHash = "5c3bd09c79301ab6119faff84a4675c0";
+            const stringSession = new StringSession("1BQANOTEuMTA4LjU2LjE2NwG7JuU6Kr5e8RI9WLHzK5IZmQG3Yr1BzjS9RuX0st90mQl6amrjOHJMnbm5wlY5WHpunMX2Ta2yzKvX8gnzwsvsj5jRxhGTgKfLQZaG9vZxXmW3ItEClgSjgE51jeSZenJacnChpPA8I1j0pukyvNOdviJWj/PibFO9j2PJ0Dl5JCCv5hHDXzLLxCbmy3dQX3jkL4mvwKyQfG1SS8WN7OmzdZVnKZxTP5bM/yj18H0GHEv11VC6tLea84bC+pGw5a0/hLyGwrb6c4Cq3sDuJbDze3plElhyUrkS8CYkBf+7cr2zK/5gdUdqsBJe7IW1GCpBvXR4j/ooRIvMr+n3KMTDKQ=="); // fill this later with the value from session.save()
+
+            const rl = readline.createInterface({
+                input: process.stdin,
+                output: process.stdout,
+            });
+
+            (async () => {
+                console.log("Loading interactive example...");
+                const client = new TelegramClient(stringSession, apiId, apiHash, {
+                    connectionRetries: 5,
+                });
+                await client.start({
+                    phoneNumber: async () =>
+                        new Promise((resolve) =>
+                            rl.question("Please enter your number: ", resolve)
+                        ),
+                    password: async () =>
+                        new Promise((resolve) =>
+                            rl.question("Please enter your password: ", resolve)
+                        ),
+                    phoneCode: async () =>
+                        new Promise((resolve) =>
+                            rl.question("Please enter the code you received: ", resolve)
+                        ),
+                    onError: (err) => console.log(err),
+                });
+                // console.log(client.session.save());
+                // console.log('Sending message...');
+                const recipientUsername = "@L_iiii_zzzz";
+                const message = 'Hello from my Telegram account!';
+
+                // Send the message
+                await client.sendMessage(recipientUsername, { message });
+
+                // console.log('Message sent successfully!');
+            })();
+
+
+            return message
         }
     }
 }

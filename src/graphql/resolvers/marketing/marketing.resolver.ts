@@ -12,6 +12,8 @@ const otpGenerator = require('otp-generator')
 import { TelegramClient } from "telegram";
 import { StringSession } from "telegram/sessions";
 import readline from "readline";
+import CustomerSchema from "../../../schema/marketing/customers.schema"
+import TelegramSendHIstorySchema from "../../../schema/marketing/telegramSendHistory.schema"
 const TelegramBot = require('node-telegram-bot-api');
 
 
@@ -226,7 +228,8 @@ const marketing = {
         telegramMarketing: async (parent: any, args: any, context: any) => {
             try {
                 verify(context.user)
-                const { phone_number, messages } = await args
+                const { customer_lists, messages } = await args.input
+                var recipientUsername, sendSuccess;
 
                 const apiId = 28257415;
                 const apiHash: any = process.env.apiHash;
@@ -257,26 +260,41 @@ const marketing = {
                             ),
                         onError: (err) => console.log(err),
                     });
-                    // console.log(client.session.save());
+                    console.log(client.session.save());
                     console.log('Sending message...');
 
-                    for (var i = 0; i < phone_number.length; i++) {
-                        var phonenumber = phone_number[i];
+                    const newtelegramsendhistory: any = new TelegramSendHIstorySchema({
+                        message: messages
+                    })
 
-                        if (phone_number[i][0] == 0) {
-                            phonenumber = phone_number[i].substr(1)
+                    await newtelegramsendhistory.save()
+
+                    for (var i = 0; i < customer_lists.length; i++) {
+                        const getCustomer = await CustomerSchema.findById(customer_lists[i].customer)
+
+                        var phonenumber = getCustomer?.phone_number;
+
+                        if (getCustomer?.phone_number[0] == "0") {
+                            phonenumber = getCustomer?.phone_number.substr(1)
+                            recipientUsername = `+855${phonenumber}`;
+                        } else if (getCustomer?.phone_number[0] === "@") {
+                            recipientUsername = `${phonenumber}`
+                        } else {
+                            recipientUsername = `+855${phonenumber}`;
                         }
 
-                        const recipientUsername = `+855${phonenumber}`;
                         const message = messages;
 
                         // Send the message
-                        await client.sendMessage(recipientUsername, { message })
+                        sendSuccess = await client.sendMessage(recipientUsername, { message }).then(function (value) { return true }).catch(function (error) { return false })
+
+                        if (!sendSuccess) {
+                            await TelegramSendHIstorySchema.updateOne({ _id: newtelegramsendhistory._id }, { $push: { customer_lists: { customer: getCustomer?._id, status: "Message send failed!" } } })
+                        } else {
+                            await TelegramSendHIstorySchema.updateOne({ _id: newtelegramsendhistory._id }, { $push: { customer_lists: { customer: getCustomer?._id, status: "Message sent successfully!" } } })
+                        }
                     }
-
-                    console.log('Message sent successfully!');
                 })();
-
 
                 return message
             } catch (error: any) {

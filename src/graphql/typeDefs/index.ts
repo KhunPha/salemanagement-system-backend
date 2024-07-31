@@ -1,5 +1,5 @@
 import bank from "./setting/bank.typeDef";
-import user from "./auth/user.typeDef";
+import user from "./user/user.typeDef";
 import category from "./setting/categories.typeDef";
 import color from "./setting/color.typeDef";
 import supplier from "./stock/suppliers.typeDef";

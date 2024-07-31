@@ -95,7 +95,7 @@ const marketing = {
                 throw new ApolloError(error.message)
             }
         },
-        forgotPassword: async (parent: any, args: any) => {
+        emailMarketing: async (parent: any, args: any) => {
             try {
                 let attachments: any = [], imageWrite: any = []
                 const { email, images } = await args
@@ -151,7 +151,7 @@ const marketing = {
 
                     //email message options
                     let mailOptions = {
-                        from: 'no-reply@fbis.com',
+                        from: 'no-reply@tvsr.com',
                         to: email,
                         subject: 'Password Recovery OTP',
                         html: `
@@ -223,7 +223,7 @@ const marketing = {
         //     bot.sendMessage(chatId, message)
         //     return message
         // }
-        telegramBot: async (parent: any, args: any, context: any) => {
+        telegramMarketing: async (parent: any, args: any, context: any) => {
             try {
                 verify(context.user)
                 const { phone_number, messages } = await args

@@ -1,4 +1,4 @@
-import user from "./auth/user.resolver";
+import user from "./user/user.resolver";
 import bank from "./setting/bank.resolver";
 import category from "./setting/categories.resolver";
 import color from "./setting/color.resolver";

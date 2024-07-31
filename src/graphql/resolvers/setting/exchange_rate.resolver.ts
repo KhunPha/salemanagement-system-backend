@@ -8,43 +8,48 @@ const exchange_rate = {
         getExchangeRate: async (parent: any, args: any, context: any) => {
             try {
                 verify(context.user)
-                return await ExchangeRateSchema.findOne({ status: true })
+                return await ExchangeRateSchema.findOne({ isActive: true })
             } catch (error: any) {
                 throw new ApolloError(error.message)
             }
-        }
+        },
+        getAllExchangeRate: async () => await ExchangeRateSchema.find()
     },
     Mutation: {
-        createExchangeRate: async (parent: any, args: any, context: any) => {
+        exchangeRate: async (parent: any, args: any, context: any) => {
             try {
                 verify(context.user)
-                const newexchangerate = new ExchangeRateSchema({
-                    ...args.input
-                })
+                const getExchangeRate = await ExchangeRateSchema.findOne({ type: args.input.type });
 
-                await newexchangerate.save()
+                if (!getExchangeRate?._id) {
+                    const newexchangerate = new ExchangeRateSchema({
+                        ...args.input
+                    })
 
-                if (!newexchangerate) {
-                    return messageError
+                    await newexchangerate.save()
+
+                    return message
                 }
+
+                const exchangeRateDoc = { $set: { ...args.input } }
+
+                await ExchangeRateSchema.findByIdAndUpdate(getExchangeRate._id, exchangeRateDoc, { new: true })
 
                 return message
             } catch (error: any) {
                 throw new ApolloError(error.message)
             }
         },
-        updateExchangeRate: async (parent: any, args: any, context: any) => {
+        applyUse: async (parent: any, args: any, context: any) => {
             try {
                 verify(context.user)
                 const { id } = await args
 
-                const ExchangeRateDoc = { $set: { ...args.input } }
+                const getExchangeRate_True = await ExchangeRateSchema.findOne({ _id: { $ne: id } })
 
-                const updateDoc = await ExchangeRateSchema.findByIdAndUpdate(id, ExchangeRateDoc, { new: true })
+                await ExchangeRateSchema.findByIdAndUpdate(id, { $set: { isActive: true } })
 
-                if (!updateDoc) {
-                    return messageError
-                }
+                await ExchangeRateSchema.findByIdAndUpdate(getExchangeRate_True?._id, { $set: { isActive: false } })
 
                 return message
             } catch (error: any) {

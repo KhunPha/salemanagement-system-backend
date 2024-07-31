@@ -5,24 +5,27 @@ const exchange_rate = gql`
         _id: ID
         exchange_rate_name: String
         exchange_rate: Float
-        status: Boolean
+        isActive: Boolean
+        type: String
         remark: String
     }
 
     input ExchangeRateInput {
         exchange_rate_name: String
         exchange_rate: Float
-        status: Boolean
+        isActive: Boolean
+        type: String
         remark: String
     }
 
     type Query {
         getExchangeRate: ExchangeRate
+        getAllExchangeRate: [ExchangeRate]
     }
 
     type Mutation {
-        createExchangeRate(input: ExchangeRateInput): ResponseMessage!
-        updateExchangeRate(id: ID, input: ExchangeRateInput): ResponseMessage!
+        exchangeRate(input: ExchangeRateInput): ResponseMessage!
+        applyUse(id: ID): ResponseMessage
     }
 `
 

@@ -43,8 +43,8 @@ const marketing = gql`
         createMarketing(input: MarketingInput): ResponseMessage!
         updateMarketing(id: ID, input: MarketingInput): ResponseMessage!
         deleteMarketing(id: ID): ResponseMessage!
-        forgotPassword(email: String!, images: [String]): ResponseMessage!
-        telegramBot(phone_number: [String], messages: String): ResponseMessage!
+        emailMarketing(email: String!, images: [String]): ResponseMessage!
+        telegramMarketing(phone_number: [String], messages: String): ResponseMessage!
     }
 `
 

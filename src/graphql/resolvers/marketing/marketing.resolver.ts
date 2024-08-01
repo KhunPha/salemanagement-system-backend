@@ -9,11 +9,12 @@ const fs = require('fs');
 const { promisify } = require('util');
 const nodemailer = require("nodemailer")
 const otpGenerator = require('otp-generator')
-import { TelegramClient } from "telegram";
+import { Api, TelegramClient } from "telegram";
 import { StringSession } from "telegram/sessions";
 import readline from "readline";
 import CustomerSchema from "../../../schema/marketing/customers.schema"
 import TelegramSendHIstorySchema from "../../../schema/marketing/telegramSendHistory.schema"
+import { UploadFileParams } from "telegram/client/uploads"
 
 
 const readFileAsync = promisify(fs.readFile);
@@ -45,7 +46,7 @@ const marketing = {
         getTelegramSend: async (parent: any, args: any, context: any) => {
             try {
                 verify(context.user)
-                return await TelegramSendHIstorySchema.find().populate("customer_lists.customer").sort({createdAt: -1})
+                return await TelegramSendHIstorySchema.find().populate("customer_lists.customer").sort({ createdAt: -1 })
             } catch (error: any) {
                 throw new ApolloError(error.message)
             }
@@ -112,7 +113,7 @@ const marketing = {
                 let imageRead: any = []
                 let email: any = []
 
-                customer.map( async (value: any) => {
+                customer.map(async (value: any) => {
                     const getCustomer = await CustomerSchema.findById(value)
                     email.push(getCustomer?.email)
                 })
@@ -224,7 +225,7 @@ const marketing = {
         telegramMarketing: async (parent: any, args: any, context: any) => {
             try {
                 verify(context.user)
-                const { customer_lists, messages } = await args.input
+                const { customer, messages } = await args
                 var recipientUsername, sendSuccess;
 
                 const apiId = 28257415;
@@ -265,8 +266,8 @@ const marketing = {
 
                     await newtelegramsendhistory.save()
 
-                    for (var i = 0; i < customer_lists.length; i++) {
-                        const getCustomer = await CustomerSchema.findById(customer_lists[i].customer)
+                    for (var i = 0; i < customer.length; i++) {
+                        const getCustomer = await CustomerSchema.findById(customer[i])
 
                         var phonenumber = getCustomer?.phone_number;
 
@@ -281,8 +282,9 @@ const marketing = {
 
                         const message = messages;
 
-                        // Send the message
-                        sendSuccess = await client.sendMessage(recipientUsername, { message }).then(function (value) { return true }).catch(function (error) { return false })
+                        sendSuccess = await client.sendMessage(recipientUsername, {
+                            message
+                        }).then(function (value) { return true }).catch(function (error) { return false })
 
                         if (!sendSuccess) {
                             await TelegramSendHIstorySchema.updateOne({ _id: newtelegramsendhistory._id }, { $push: { customer_lists: { customer: getCustomer?._id, status: "Message send failed!" } } })
@@ -300,5 +302,6 @@ const marketing = {
         }
     }
 }
+
 
 export default marketing

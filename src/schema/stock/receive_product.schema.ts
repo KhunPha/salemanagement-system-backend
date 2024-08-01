@@ -31,6 +31,6 @@ const receiveproductT = new Schema<IReceiveProductTransaction>({
     }
 }, {timestamps: true})
 
-const ReceiveProductTransactionSchema = mongoose.model<IReceiveProductTransaction>("Receiveproducttransaction", receiveproductT, "Receiveproducttransactions")
+const ReceiveProductTransactionSchema = mongoose.model<IReceiveProductTransaction>("ReceiveProductTransaction", receiveproductT, "ReceivProductTransactions")
 
 export default ReceiveProductTransactionSchema

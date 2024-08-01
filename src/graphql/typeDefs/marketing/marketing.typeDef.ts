@@ -10,6 +10,16 @@ const marketing = gql`
         customer: [Customer]
     }
 
+    type SendDetails {
+        customer_lists: [Customers]
+        message: String
+    }
+
+    type Customers {
+        customer: Customer
+        status: String
+    }
+
     type Paginator {
         slNo: Int
         prev: Int
@@ -46,13 +56,14 @@ const marketing = gql`
 
     type Query {
         getMarketings(page: Int, limit: Int, pagination: Boolean keyword: String): MarketingPagination
+        getTelegramSend: [SendDetails]
     }
 
     type Mutation {
         createMarketing(input: MarketingInput): ResponseMessage!
         updateMarketing(id: ID, input: MarketingInput): ResponseMessage!
         deleteMarketing(id: ID): ResponseMessage!
-        emailMarketing(email: String!, images: [String]): ResponseMessage!
+        emailMarketing(customer: [ID], images: [String]): ResponseMessage!
         telegramMarketing(input: SendDetailsInput): ResponseMessage!
     }
 `

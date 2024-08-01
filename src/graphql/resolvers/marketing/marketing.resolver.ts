@@ -14,7 +14,6 @@ import { StringSession } from "telegram/sessions";
 import readline from "readline";
 import CustomerSchema from "../../../schema/marketing/customers.schema"
 import TelegramSendHIstorySchema from "../../../schema/marketing/telegramSendHistory.schema"
-const TelegramBot = require('node-telegram-bot-api');
 
 
 const readFileAsync = promisify(fs.readFile);
@@ -39,6 +38,14 @@ const marketing = {
                     title: { $regex: keyword, $options: 'i' }
                 }
                 return await MarketingSchema.paginate(query, options)
+            } catch (error: any) {
+                throw new ApolloError(error.message)
+            }
+        },
+        getTelegramSend: async (parent: any, args: any, context: any) => {
+            try {
+                verify(context.user)
+                return await TelegramSendHIstorySchema.find().populate("customer_lists.customer").sort({createdAt: -1})
             } catch (error: any) {
                 throw new ApolloError(error.message)
             }
@@ -100,9 +107,15 @@ const marketing = {
         emailMarketing: async (parent: any, args: any) => {
             try {
                 let attachments: any = [], imageWrite: any = []
-                const { email, images } = await args
+                const { customer, images } = await args
                 let photos: any = []
                 let imageRead: any = []
+                let email: any = []
+
+                customer.map( async (value: any) => {
+                    const getCustomer = await CustomerSchema.findById(value)
+                    email.push(getCustomer?.email)
+                })
 
                 if (images) {
                     for (let i = 0; i < images.length; i++) {
@@ -153,7 +166,7 @@ const marketing = {
 
                     //email message options
                     let mailOptions = {
-                        from: 'no-reply@tvsr.com',
+                        from: 'researching192@gmail.com',
                         to: email,
                         subject: 'Password Recovery OTP',
                         html: `
@@ -208,23 +221,6 @@ const marketing = {
             }
 
         },
-        // telegramBot: async (parent: any) => {
-        // Replace with your bot token
-        //     const token = '7379106987:AAHcVqipFKoz-YKp9x-FIRvlyAUoOtunSYo';
-
-        // Create a bot instance
-        //     const bot = new TelegramBot(token);
-
-        // Replace with your chat ID
-        //     const chatId = '1249267290';
-
-        // Define the message
-        //     const message = 'Hello, this is a test message from my Telegram bot!';
-
-        // Send the message
-        //     bot.sendMessage(chatId, message)
-        //     return message
-        // }
         telegramMarketing: async (parent: any, args: any, context: any) => {
             try {
                 verify(context.user)
@@ -293,6 +289,7 @@ const marketing = {
                         } else {
                             await TelegramSendHIstorySchema.updateOne({ _id: newtelegramsendhistory._id }, { $push: { customer_lists: { customer: getCustomer?._id, status: "Message sent successfully!" } } })
                         }
+                        console.log("Message sent successfully")
                     }
                 })();
 

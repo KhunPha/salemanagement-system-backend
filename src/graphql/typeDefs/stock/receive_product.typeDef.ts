@@ -9,14 +9,14 @@ const receiveproduct = gql`
     }
 
     type Products {
-        products: Product
+        product_details: Product
         unit_price: Float
         whole: Int
         retail_in_whole: Int
     }
 
     input ProductsInput {
-        products: ID
+        product_details: ID
         unit_price: Float
         whole: Int
         retail_in_whole: Int

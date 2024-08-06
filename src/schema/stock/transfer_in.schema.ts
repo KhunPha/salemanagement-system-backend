@@ -8,7 +8,7 @@ export interface ITransferIn extends Document {
 
 const transferin = new Schema<ITransferIn>({
     product_lists: [{
-        products: {
+        product_details: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "Product"
         },

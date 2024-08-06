@@ -3,11 +3,7 @@ import paginate from "mongoose-paginate-v2";
 
 export interface IPurchase extends Document {
     supplier_details: object,
-    products_lists: {
-        product_details: object,
-        qty: number
-        unit_price: number
-    },
+    products_lists: object
     date: Date,
     product_type: string,
     amounts: number,

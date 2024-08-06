@@ -8,7 +8,7 @@ const transferout = gql`
     }
 
     type Products {
-        products: Product
+        product_details: Product
         qty: Int
     }
 
@@ -19,7 +19,7 @@ const transferout = gql`
     }
 
     input ProductsInput {
-        products: ID,
+        product_details: ID,
         qty: Int
     }
 

@@ -7,7 +7,7 @@ export interface ITelegramSendHistory extends Document {
 
 const telegramsendhistory = new Schema<ITelegramSendHistory>({
     customer_lists: [{
-        customer: {
+        customer_details: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "Customer"
         },

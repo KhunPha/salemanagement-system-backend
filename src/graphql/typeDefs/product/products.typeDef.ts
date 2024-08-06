@@ -2,6 +2,7 @@ import { gql } from "apollo-server-express";
 
 const product = gql`
     scalar Date
+    
     type Product {
         _id: ID
         pro_name: String

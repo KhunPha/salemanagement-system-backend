@@ -11,7 +11,7 @@ const receiveproductT = new Schema<IReceiveProductTransaction>({
         type: mongoose.Schema.Types.ObjectId
     },
     product_lists: [{
-        products: {
+        product_details: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "Product"
         },

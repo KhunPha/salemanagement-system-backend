@@ -3,16 +3,14 @@ import paginate from "mongoose-paginate-v2";
 
 export interface ISales extends Document {
     product_lists: object
-    cashier: string
+    cashier: object
     customer: object
     paymethod: string
     total_qty: number
     total_amount: number
     exchange_rate: number
     discount_type: string
-    product_add: object
     discount: number
-    unit_product_discount: object
     remind_status: boolean
     date_remind: Date,
     pay: object
@@ -33,7 +31,8 @@ const sale = new Schema<ISales>({
         }
     }],
     cashier: {
-        type: String
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User"
     },
     customer: {
         type: mongoose.Schema.Types.ObjectId,
@@ -57,27 +56,6 @@ const sale = new Schema<ISales>({
     discount: {
         type: Number
     },
-    product_add: [{
-        product_details: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "Product"
-        },
-        qty: {
-            type: Number
-        }
-    }],
-    unit_product_discount: [{
-        product_details: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "Product"
-        },
-        discount_type: {
-            type: String
-        },
-        discount: {
-            type: Number
-        }
-    }],
     remind_status: {
         type: Boolean
     },
@@ -93,7 +71,8 @@ const sale = new Schema<ISales>({
         }
     },
     bank: {
-        type: mongoose.Schema.Types.ObjectId
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Bank"
     }
 }, {timestamps: true})
 

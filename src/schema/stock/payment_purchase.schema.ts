@@ -1,7 +1,7 @@
 import mongoose, {Schema, Document} from "mongoose"
 
 export interface IPaymentPurchase extends Document {
-    purchase_id: string
+    purchase_id: object
     total_dollar: number
     total_riel: number
     payment_method: string
@@ -11,7 +11,7 @@ export interface IPaymentPurchase extends Document {
 
 const payment_purchase = new Schema<IPaymentPurchase>({
     purchase_id: {
-        type: String
+        type: mongoose.Schema.Types.ObjectId
     },
     total_dollar: {
         type: Number

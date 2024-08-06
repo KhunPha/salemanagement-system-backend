@@ -16,7 +16,7 @@ const marketing = gql`
     }
 
     type Customers {
-        customer: Customer
+        customer_details: Customer
         status: String
     }
 

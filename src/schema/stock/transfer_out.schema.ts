@@ -8,7 +8,7 @@ export interface ITransferOut extends Document {
 
 const transferout = new Schema<ITransferOut>({
     product_lists: [{
-        products: {
+        product_details: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "Product"
         },

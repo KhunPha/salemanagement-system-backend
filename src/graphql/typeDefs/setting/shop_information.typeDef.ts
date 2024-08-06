@@ -6,7 +6,7 @@ const shop_information = gql`
         logo: String,
         store_name: String
         phone_number: String
-        email_address: String
+        email: String
         address: String
         remark: String
     }
@@ -15,7 +15,7 @@ const shop_information = gql`
         logo: String
         store_name: String
         phone_number: String
-        email_address: String
+        email: String
         address: String
         remark: String
     }

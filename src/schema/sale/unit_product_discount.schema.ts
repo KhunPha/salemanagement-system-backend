@@ -1,12 +1,16 @@
 import mongoose, { Schema, Document } from "mongoose";
 
 export interface IUPDiscount extends Document {
+    sale_id: object
     product_details: object,
     discount_type: string,
     discount: number
 }
 
 const unit_product_discount = new Schema<IUPDiscount>({
+    sale_id: {
+        type: mongoose.Schema.Types.ObjectId
+    },
     product_details: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Product"
@@ -19,6 +23,6 @@ const unit_product_discount = new Schema<IUPDiscount>({
     }
 }, {timestamps: true})
 
-const UPDiscountSchema = mongoose.model<IUPDiscount>("UProductDiscount", unit_product_discount, "UProductDiscounts")
+const UPDiscountSchema = mongoose.model<IUPDiscount>("UnitProductDiscount", unit_product_discount, "UnitProductDiscounts")
 
 export default UPDiscountSchema

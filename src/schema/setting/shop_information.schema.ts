@@ -4,7 +4,7 @@ export interface IShop extends Document {
     logo: string,
     store_name: string,
     phone_number: string,
-    email_address: string,
+    email: string,
     address: string,
     remark: string
 }
@@ -19,7 +19,7 @@ const shop = new Schema<IShop>({
     phone_number: {
         type: String
     },
-    email_address: {
+    email: {
         type: String
     },
     address: {

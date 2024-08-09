@@ -54,8 +54,8 @@ const marketing = gql`
         createMarketing(input: MarketingInput): ResponseMessage!
         updateMarketing(id: ID, input: MarketingInput): ResponseMessage!
         deleteMarketing(id: ID): ResponseMessage!
-        emailMarketing(customer: [ID], images: [String]): ResponseMessage!
-        telegramMarketing(customer: [ID], messages: String): ResponseMessage!
+        emailMarketing(customer: [ID], messages: String, images: [String]): ResponseMessage!
+        telegramMarketing(customer: [ID], messages: String, file: String): ResponseMessage!
     }
 `
 

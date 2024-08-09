@@ -108,7 +108,7 @@ const marketing = {
         emailMarketing: async (parent: any, args: any) => {
             try {
                 let attachments: any = [], imageWrite: any = []
-                const { customer, images } = await args
+                const { customer, messages, images } = await args
                 let photos: any = []
                 let imageRead: any = []
                 let email: any = []
@@ -131,13 +131,7 @@ const marketing = {
                         imageWrite += `<img src='cid:uniqueCID${i}'>\n`
                     }
                 }
-                //Check this email is has in system
-                // const getUserByEmail = await User.findOne({ email })
 
-                // if (!getUserByEmail) {
-                //     throw new ApolloError(`${ email } not found!, ${ email } មិនមានក្នុងប្រព័ន្ធ`)
-                // }
-                //Function for add minutes
                 function addMinutes(date: Date, minutes: number) {
                     date.setMinutes(date.getMinutes() + minutes);
                     return date;
@@ -167,40 +161,103 @@ const marketing = {
 
                     //email message options
                     let mailOptions = {
-                        from: 'researching192@gmail.com',
+                        from: 'teangvireak189@gmail.com',
                         to: email,
-                        subject: 'Password Recovery OTP',
+                        subject: 'Teang Vireak Marketing',
                         html: `
-                        <!DOCTYPE html>
-                        <html lang="en">
-                        <head>
-                            <meta charset="UTF-8" />
-                            <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-                            <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-                            <title>Password Recovery OTP</title>
-                            <style type="text/css">
-                            body {
-                                margin: 0;
-                                padding: 0;
-                            }
-                            img {
-                                width: 150px;
-                                height: 150px;
-                            }
-                        </style>
-                        </head>
-                        
-                        <body>
-                            <div> Dear Sophalanh,</div>
-                            <br>
-                            ${imageWrite}
-                            <div>Your password recovery OTP is <b>${createOTP.otp}</b>. Verify and recover your password.</div>
-                            <br>
-                            <div>Yours truly,</div>
-                            <div>Smart Waste Collection & Transportation</div>
-
-                        </body>
-                        </html>
+                            <!DOCTYPE html>
+                            <html lang="en">
+                                <head>
+                                    <meta charset="UTF-8">
+                                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                                    <title>Email Marketing Sales Letter</title>
+                                    <style>
+                                        body {
+                                            font-family: Arial, sans-serif;
+                                            margin: 0;
+                                            padding: 0;
+                                            color: #333;
+                                            background-color: #f4f4f4;
+                                        }
+                                        .email-wrapper {
+                                            width: 100%;
+                                            max-width: 600px;
+                                            margin: 0 auto;
+                                            background: #ffffff;
+                                            padding: 20px;
+                                            border: 1px solid #dddddd;
+                                        }
+                                        .header {
+                                            text-align: center;
+                                            padding-bottom: 20px;
+                                        }
+                                        .header img {
+                                            max-width: 100%;
+                                            height: auto;
+                                        }
+                                        .content {
+                                            padding: 20px;
+                                        }
+                                        .content h1 {
+                                            font-size: 24px;
+                                            color: #333;
+                                        }
+                                        .content p {
+                                            font-size: 16px;
+                                            line-height: 1.6;
+                                            margin-bottom: 20px;
+                                        }
+                                        .cta-button {
+                                            display: inline-block;
+                                            padding: 10px 20px;
+                                            font-size: 16px;
+                                            color: #ffffff;
+                                            background-color: #007bff;
+                                            text-decoration: none;
+                                            border-radius: 5px;
+                                            text-align: center;
+                                        }
+                                        a .cta-button {
+                                            color: white;
+                                        }
+                                        .cta-button:hover {
+                                            background-color: #0056b3;
+                                        }
+                                        .footer {
+                                            text-align: center;
+                                            padding-top: 20px;
+                                            font-size: 14px;
+                                            color: #777;
+                                        }
+                                        .footer a {
+                                            color: #007bff;
+                                            text-decoration: none;
+                                        }
+                                        .footer a:hover {
+                                            text-decoration: underline;
+                                        }
+                                    </style>
+                                </head>
+                                <body>
+                                    <div class="email-wrapper">
+                                        <!-- Header -->
+                                        <div class="header">
+                                            <img src="cid:uniqueCID0" alt="Company Logo">
+                                        </div>
+                                        <!-- Content -->
+                                        <div class="content">
+                                            <h1>Unlock Exclusive Offers Just for You!</h1>
+                                            <p>Dear Sir/Madam,</p>
+                                            <p>${messages}</p>
+                                        </div>
+                                        <!-- Footer -->
+                                        <div class="footer">
+                                            <p>If you have any questions, feel free to <a href="mailto:teangvireak189@gmail.com">contact us</a>.</p>
+                                            <p>&copy; 2024 Teang Vireak. All rights reserved.</p>
+                                        </div>
+                                    </div>
+                                </body>
+                            </html>
                         `,
                         attachments: attachments
                     }
@@ -225,8 +282,8 @@ const marketing = {
         telegramMarketing: async (parent: any, args: any, context: any) => {
             try {
                 verify(context.user)
-                const { customer, messages } = await args
-                var recipientUsername, sendSuccess;
+                const { customer, messages, file } = await args
+                var recipientUsername: any, sendSuccess = false;
 
                 const apiId = 28257415;
                 const apiHash: any = process.env.apiHash;
@@ -282,9 +339,22 @@ const marketing = {
 
                         const message = messages;
 
-                        sendSuccess = await client.sendMessage(recipientUsername, {
-                            message
-                        }).then(function (value) { return true }).catch(function (error) { return false })
+                        const filePath = `public/images/${file}`
+
+                        new Promise(async () => {
+                            try {
+                                sendSuccess = await client.sendFile(recipientUsername, { file: filePath, caption: message }).then(function (value) { return true }).catch(function (error) { return false })
+
+                                if (!sendSuccess) {
+                                    sendSuccess = await client.sendMessage(recipientUsername, {
+                                        message
+                                    }).then(function (value) { return true }).catch(function (error) { return false })
+                                }
+
+                            } catch (error: any) {
+                                throw new ApolloError(error.message)
+                            }
+                        })
 
                         if (!sendSuccess) {
                             await TelegramSendHIstorySchema.updateOne({ _id: newtelegramsendhistory._id }, { $push: { customer_lists: { customer: getCustomer?._id, status: "Message send failed!" } } })

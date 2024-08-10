@@ -70,7 +70,7 @@ const user = {
                     const ext = name.split(".")[1]
                     name = `${Math.floor((Math.random() * 10000) + 1000)}`
                     newfilename = `${name}-${Date.now()}.${ext}`;
-                    const localtion = path.join(__dirname, `../../../../public/images/${newfilename}`)
+                    const localtion = `./public/images/${newfilename}`
                     const stream = createReadStream()
 
                     await stream.pipe(fs.createWriteStream(localtion))

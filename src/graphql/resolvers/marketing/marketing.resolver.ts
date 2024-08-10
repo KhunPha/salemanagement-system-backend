@@ -14,7 +14,6 @@ import { StringSession } from "telegram/sessions";
 import readline from "readline";
 import CustomerSchema from "../../../schema/marketing/customers.schema"
 import TelegramSendHIstorySchema from "../../../schema/marketing/telegramSendHistory.schema"
-import { UploadFileParams } from "telegram/client/uploads"
 
 
 const readFileAsync = promisify(fs.readFile);
@@ -113,6 +112,8 @@ const marketing = {
                 let imageRead: any = []
                 let email: any = []
 
+                const emailTemplate = fs.readFileSync("./public/template/marketing.html", 'utf8');
+
                 customer.map(async (value: any) => {
                     const getCustomer = await CustomerSchema.findById(value)
                     email.push(getCustomer?.email)
@@ -143,6 +144,8 @@ const marketing = {
 
                 const createOTP = await new OneTimePassword({ otp: getOTP, expireAt }).save()
 
+                const compiledTemplate = emailTemplate.replace('{{messages}}', messages);
+
                 if (createOTP) {
                     //email transport configuration
                     let transporter = nodemailer.createTransport({
@@ -161,105 +164,23 @@ const marketing = {
 
                     //email message options
                     let mailOptions = {
-                        from: 'teangvireak189@gmail.com',
+                        from: process.env.EMAIL,
                         to: email,
                         subject: 'Teang Vireak Marketing',
-                        html: `
-                            <!DOCTYPE html>
-                            <html lang="en">
-                                <head>
-                                    <meta charset="UTF-8">
-                                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                                    <title>Email Marketing Sales Letter</title>
-                                    <style>
-                                        body {
-                                            font-family: Arial, sans-serif;
-                                            margin: 0;
-                                            padding: 0;
-                                            color: #333;
-                                            background-color: #f4f4f4;
-                                        }
-                                        .email-wrapper {
-                                            width: 100%;
-                                            max-width: 600px;
-                                            margin: 0 auto;
-                                            background: #ffffff;
-                                            padding: 20px;
-                                            border: 1px solid #dddddd;
-                                        }
-                                        .header {
-                                            text-align: center;
-                                            padding-bottom: 20px;
-                                        }
-                                        .header img {
-                                            max-width: 100%;
-                                            height: auto;
-                                        }
-                                        .content {
-                                            padding: 20px;
-                                        }
-                                        .content h1 {
-                                            font-size: 24px;
-                                            color: #333;
-                                        }
-                                        .content p {
-                                            font-size: 16px;
-                                            line-height: 1.6;
-                                            margin-bottom: 20px;
-                                        }
-                                        .cta-button {
-                                            display: inline-block;
-                                            padding: 10px 20px;
-                                            font-size: 16px;
-                                            color: #ffffff;
-                                            background-color: #007bff;
-                                            text-decoration: none;
-                                            border-radius: 5px;
-                                            text-align: center;
-                                        }
-                                        a .cta-button {
-                                            color: white;
-                                        }
-                                        .cta-button:hover {
-                                            background-color: #0056b3;
-                                        }
-                                        .footer {
-                                            text-align: center;
-                                            padding-top: 20px;
-                                            font-size: 14px;
-                                            color: #777;
-                                        }
-                                        .footer a {
-                                            color: #007bff;
-                                            text-decoration: none;
-                                        }
-                                        .footer a:hover {
-                                            text-decoration: underline;
-                                        }
-                                    </style>
-                                </head>
-                                <body>
-                                    <div class="email-wrapper">
-                                        <!-- Header -->
-                                        <div class="header">
-                                            <img src="cid:uniqueCID0" alt="Company Logo">
-                                        </div>
-                                        <!-- Content -->
-                                        <div class="content">
-                                            <h1>Unlock Exclusive Offers Just for You!</h1>
-                                            <p>Dear Sir/Madam,</p>
-                                            <p>${messages}</p>
-                                        </div>
-                                        <!-- Footer -->
-                                        <div class="footer">
-                                            <p>If you have any questions, feel free to <a href="mailto:teangvireak189@gmail.com">contact us</a>.</p>
-                                            <p>&copy; 2024 Teang Vireak. All rights reserved.</p>
-                                        </div>
-                                    </div>
-                                </body>
-                            </html>
-                        `,
-                        attachments: attachments
+                        html: compiledTemplate,
+                        attachments: [
+                            {
+                                filename: "image.png",
+                                path: "./public/images/logo.png",
+                                cid: `uniqueCID0`
+                            },
+                            {
+                                filename: images[0],
+                                content: imageRead[0],
+                                encoding: 'base64',
+                                cid: `uniqueCID1`
+                            }
+                        ]
                     }
 
                     //send email
@@ -283,7 +204,7 @@ const marketing = {
             try {
                 verify(context.user)
                 const { customer, messages, file } = await args
-                var recipientUsername: any, sendSuccess = false;
+                var recipientUsername: any, sendSuccess;
 
                 const apiId = 28257415;
                 const apiHash: any = process.env.apiHash;
@@ -351,16 +272,15 @@ const marketing = {
                                     }).then(function (value) { return true }).catch(function (error) { return false })
                                 }
 
+                                if (!sendSuccess) {
+                                    await TelegramSendHIstorySchema.updateOne({ _id: newtelegramsendhistory._id }, { $push: { customer_lists: { customer: getCustomer?._id, status: "Message send failed!" } } })
+                                } else {
+                                    await TelegramSendHIstorySchema.updateOne({ _id: newtelegramsendhistory._id }, { $push: { customer_lists: { customer: getCustomer?._id, status: "Message sent successfully!" } } })
+                                }
                             } catch (error: any) {
-                                throw new ApolloError(error.message)
+                                throw new ApolloError("Send file: " + error.message)
                             }
                         })
-
-                        if (!sendSuccess) {
-                            await TelegramSendHIstorySchema.updateOne({ _id: newtelegramsendhistory._id }, { $push: { customer_lists: { customer: getCustomer?._id, status: "Message send failed!" } } })
-                        } else {
-                            await TelegramSendHIstorySchema.updateOne({ _id: newtelegramsendhistory._id }, { $push: { customer_lists: { customer: getCustomer?._id, status: "Message sent successfully!" } } })
-                        }
                         console.log("Message sent successfully")
                     }
                 })();

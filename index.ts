@@ -10,6 +10,7 @@ import { execute, subscribe } from "graphql"
 import { SubscriptionServer } from "subscriptions-transport-ws"
 import { makeExecutableSchema } from "@graphql-tools/schema"
 import { typeDefs, resolvers } from "./src/graphql"
+import path from "path"
 
 const os = require("os")
 const app: any = express()
@@ -39,6 +40,7 @@ require("./src/util/db")
 app.use(cors())
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
+app.use('/public/images', express.static(path.join(__dirname, 'public/images')));
 
 const PORT = process.env.PORT || 3000
 var client: any = null

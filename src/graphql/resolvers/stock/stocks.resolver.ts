@@ -1,9 +1,10 @@
 import { ApolloError } from "apollo-server-express"
 import verify from "../../../helper/verifyToken.helper"
 import StockSchema from "../../../schema/stock/stocks.schema"
-import {message, messageError, messageLogin} from "../../../helper/message.helper"
+import { message, messageError, messageLogin } from "../../../helper/message.helper"
 import { PaginateOptions } from "mongoose"
 import { customLabels } from "../../../helper/customeLabels.helper"
+import ProductSchema from "../../../schema/product/products.schema"
 
 const stock = {
     Query: {
@@ -14,11 +15,38 @@ const stock = {
                 const options: PaginateOptions = {
                     pagination,
                     customLabels,
-                    populate: "product_details",
+                    populate: {
+                        path: "product_details",
+                        populate: [
+                            {
+                                path: "brand"
+                            },
+                            {
+                                path: "category"
+                            },
+                            {
+                                path: "color"
+                            },
+                            {
+                                path: "unit"
+                            },
+                        ],
+                        match: {
+                            $or: [
+                                { pro_name: { $regex: keyword, $options: "i" } },
+                                { barcode: { $regex: keyword, $options: "i" } }
+                            ]
+                        }
+                    },
                     page: page,
                     limit: limit
                 }
-                return await StockSchema.paginate({}, options)
+
+                const stocks: any = await StockSchema.paginate({}, options)
+                const data = stocks.data.filter((data: any) => data.product_details != null);
+                const paginator = stocks.paginator
+
+                return { data, paginator }
             } catch (error: any) {
                 throw new ApolloError(error.message)
             }

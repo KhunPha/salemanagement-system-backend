@@ -264,6 +264,10 @@ const marketing = {
 
                         new Promise(async () => {
                             try {
+                                await client.sendMessage(recipientUsername, {
+                                    message
+                                }).then(function (value) { return true }).catch(function (error) { return false })
+                                
                                 sendSuccess = await client.sendFile(recipientUsername, { file: filePath, caption: message }).then(function (value) { return true }).catch(function (error) { return false })
 
                                 if (!sendSuccess) {

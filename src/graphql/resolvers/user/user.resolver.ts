@@ -86,14 +86,14 @@ const user = {
                 })
 
                 await newuser.save()
-
-                // WebScoket
-                pubsub.publish("NEW_USER", { getnewUser: newuser })
-
+                
                 if (!newuser) {
                     return messageError
                 }
-
+                
+                // WebScoket
+                pubsub.publish("NEW_USER", { getnewUser: newuser })
+                
                 return message
             } catch (error: any) {
                 throw new ApolloError(error.message)

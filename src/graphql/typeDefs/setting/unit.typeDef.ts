@@ -39,6 +39,10 @@ const unit = gql`
         updateUnit(id: ID!, input: UnitInput): ResponseMessage!
         deleteUnit(id: ID!): ResponseMessage!
     }
+
+    type Subscription {
+        unitAdded: Unit
+    }
 `
 
 export default unit

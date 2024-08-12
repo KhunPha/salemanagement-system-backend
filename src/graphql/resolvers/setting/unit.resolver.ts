@@ -4,6 +4,9 @@ import UnitSchema from "../../../schema/setting/unit.schema"
 import { message, messageError, messageLogin } from "../../../helper/message.helper"
 import { PaginateOptions } from "mongoose"
 import { customLabels } from "../../../helper/customeLabels.helper"
+import { PubSub } from "graphql-subscriptions"
+
+const pubsub = new PubSub()
 
 const unit = {
     Query: {
@@ -45,6 +48,8 @@ const unit = {
                     return messageError
                 }
 
+                pubsub.publish("UNIT_ADDED", { unitAdded: newunit })
+
                 return message
             } catch (error: any) {
                 throw new ApolloError(error.message)
@@ -83,6 +88,11 @@ const unit = {
             } catch (error: any) {
                 throw new ApolloError(error.message)
             }
+        }
+    },
+    Subscription: {
+        unitAdded: {
+            subscribe: () => pubsub.asyncIterator("UNIT_ADDED")
         }
     }
 }

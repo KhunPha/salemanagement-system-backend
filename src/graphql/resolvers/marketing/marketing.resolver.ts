@@ -107,7 +107,7 @@ const marketing = {
         emailMarketing: async (parent: any, args: any) => {
             try {
                 let attachments: any = [], imageWrite: any = []
-                const { customer, messages, images } = await args
+                const { customer, advertising, images } = await args
                 let photos: any = []
                 let imageRead: any = []
                 let email: any = []
@@ -144,7 +144,9 @@ const marketing = {
 
                 const createOTP = await new OneTimePassword({ otp: getOTP, expireAt }).save()
 
-                const compiledTemplate = emailTemplate.replace('{{messages}}', messages);
+                const compiledTemplate = emailTemplate.replace('{{messages}}', advertising.messages);
+
+                const lastTemplate = compiledTemplate.replace('{{title}}', advertising.title)
 
                 if (createOTP) {
                     //email transport configuration
@@ -167,7 +169,7 @@ const marketing = {
                         from: process.env.EMAIL,
                         to: email,
                         subject: 'Teang Vireak Marketing',
-                        html: compiledTemplate,
+                        html: lastTemplate,
                         attachments: [
                             {
                                 filename: "image.png",
@@ -203,7 +205,7 @@ const marketing = {
         telegramMarketing: async (parent: any, args: any, context: any) => {
             try {
                 verify(context.user)
-                const { customer, messages, file } = await args
+                const { customer, advertising, image } = await args
                 var recipientUsername: any, sendSuccess;
 
                 const apiId = 28257415;
@@ -239,7 +241,7 @@ const marketing = {
                     console.log('Sending message...');
 
                     const newtelegramsendhistory: any = new TelegramSendHIstorySchema({
-                        message: messages
+                        message: advertising.message
                     })
 
                     await newtelegramsendhistory.save()
@@ -258,16 +260,20 @@ const marketing = {
                             recipientUsername = `+855${phonenumber}`;
                         }
 
-                        const message = messages;
+                        var emojis = [
+                            '📣','📢','🔊','🎉','📌'
+                        ];
+                        
+                        const emote = emojis[Math.floor(Math.random() * emojis.length)];
 
-                        const filePath = `public/images/${file}`
+                        const title = `${emote} ` +  advertising.title + ` ${emote}\n\n`
+
+                        const message = title + "✈️ 🛍️ 📸 🎧 🎫 " + advertising.messages;
+
+                        const filePath = `public/images/${image}`
 
                         new Promise(async () => {
                             try {
-                                await client.sendMessage(recipientUsername, {
-                                    message
-                                }).then(function (value) { return true }).catch(function (error) { return false })
-                                
                                 sendSuccess = await client.sendFile(recipientUsername, { file: filePath, caption: message }).then(function (value) { return true }).catch(function (error) { return false })
 
                                 if (!sendSuccess) {

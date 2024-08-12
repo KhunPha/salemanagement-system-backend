@@ -45,6 +45,11 @@ const marketing = gql`
         customer: [ID]
     }
 
+    input adver {
+        title: String
+        messages: String
+    }
+
     type Query {
         getMarketings(page: Int, limit: Int, pagination: Boolean keyword: String): MarketingPagination
         getTelegramSend: [SendDetails]
@@ -54,8 +59,8 @@ const marketing = gql`
         createMarketing(input: MarketingInput): ResponseMessage!
         updateMarketing(id: ID, input: MarketingInput): ResponseMessage!
         deleteMarketing(id: ID): ResponseMessage!
-        emailMarketing(customer: [ID], messages: String, images: [String]): ResponseMessage!
-        telegramMarketing(customer: [ID], messages: String, file: String): ResponseMessage!
+        emailMarketing(customer: [ID], advertising: adver, images: [String]): ResponseMessage!
+        telegramMarketing(customer: [ID], advertising: adver, image: String): ResponseMessage!
     }
 `
 

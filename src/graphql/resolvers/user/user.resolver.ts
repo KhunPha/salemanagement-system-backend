@@ -3,7 +3,6 @@ import UserShcema from "../../../schema/user/user.schema"
 import bcrypt from "bcrypt"
 import { getToken } from "../../../helper"
 import { FileUpload, GraphQLUpload } from "graphql-upload-ts"
-import path from "path"
 import fs from "fs"
 import verify from "../../../helper/verifyToken.helper"
 import { message, messageError, messageLogin } from "../../../helper/message.helper"
@@ -70,7 +69,7 @@ const user = {
                     const ext = name.split(".")[1]
                     name = `${Math.floor((Math.random() * 10000) + 1000)}`
                     newfilename = `${name}-${Date.now()}.${ext}`;
-                    const localtion = `./public/images/${newfilename}`
+                    const localtion = `./public/user/${newfilename}`
                     const stream = createReadStream()
 
                     await stream.pipe(fs.createWriteStream(localtion))

@@ -1,7 +1,7 @@
 import { gql } from "apollo-server-express";
 
 const product = gql`
-    scalar Date
+    scalar Upload
     
     type Product {
         _id: ID
@@ -60,7 +60,7 @@ const product = gql`
     }
 
     type Mutation {
-        createProduct(input: ProductInputs): ResponseMessage!
+        createProduct(input: ProductInputs, file: Upload): ResponseMessage!
         updateProduct(id: ID!, input: ProductInputs): ResponseMessage!
         discountProduct(id: [ID], discount: Float): ResponseMessage
         deleteProduct(id: ID): ResponseMessage!

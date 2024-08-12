@@ -10,6 +10,7 @@ import { PaginateOptions } from "mongoose";
 import { customLabels } from "../../../helper/customeLabels.helper";
 import DiscountProductSchema from "../../../schema/product/discount_products.schema";
 import StockSchema from "../../../schema/stock/stocks.schema";
+import fs from "fs"
 
 const product = {
   Query: {
@@ -67,6 +68,22 @@ const product = {
     createProduct: async (parent: any, args: any, context: any) => {
       try {
         verify(context.user);
+        
+        var newfilename = "profile.png"
+
+        if (args.file) {
+          const { createReadStream, filename, mimetype } = await args.file
+          let name = filename
+          const ext = name.split(".")[1]
+          name = `${Math.floor((Math.random() * 10000) + 1000)}`
+          newfilename = `${name}-${Date.now()}.${ext}`;
+          const localtion = `./public/product/${newfilename}`
+          const stream = createReadStream()
+
+          await stream.pipe(fs.createWriteStream(localtion))
+        }
+
+        args.input.image = `http://localhost:8080/public/product/${newfilename}`
 
         const newproduct = new ProductSchema({
           ...args.input,

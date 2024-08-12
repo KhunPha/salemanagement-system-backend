@@ -11,8 +11,6 @@ import { SubscriptionServer } from "subscriptions-transport-ws"
 import { makeExecutableSchema } from "@graphql-tools/schema"
 import { typeDefs, resolvers } from "./src/graphql"
 import path from "path"
-import fs from "fs"
-const multer = require("multer")
 
 const os = require("os")
 const app: any = express()

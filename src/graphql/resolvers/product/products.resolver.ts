@@ -11,6 +11,7 @@ import { customLabels } from "../../../helper/customeLabels.helper";
 import DiscountProductSchema from "../../../schema/product/discount_products.schema";
 import StockSchema from "../../../schema/stock/stocks.schema";
 import fs from "fs"
+import sharp from "sharp";
 
 const product = {
   Query: {
@@ -68,8 +69,8 @@ const product = {
     createProduct: async (parent: any, args: any, context: any) => {
       try {
         verify(context.user);
-        
-        var newfilename = "profile.png"
+
+        var newfilename = "product.png"
 
         if (args.file) {
           const { createReadStream, filename, mimetype } = await args.file
@@ -77,10 +78,25 @@ const product = {
           const ext = name.split(".")[1]
           name = `${Math.floor((Math.random() * 10000) + 1000)}`
           newfilename = `${name}-${Date.now()}.${ext}`;
-          const localtion = `./public/product/${newfilename}`
-          const stream = createReadStream()
 
-          await stream.pipe(fs.createWriteStream(localtion))
+          const chunks: Buffer[] = [];
+          const readStream = createReadStream();
+
+          readStream.on('data', (chunk: Buffer) => chunks.push(chunk));
+          readStream.on('end', async () => {
+            const buffer = Buffer.concat(chunks);
+
+            try {
+              // Process the image with sharp
+              await sharp(buffer)
+                .resize({ width: 512 }) // Resize as needed
+                .jpeg({ quality: 70 }) // Compress JPEG image
+                .toFile(`./public/product/${newfilename}`)
+            } catch (error) {
+              console.error('Error processing image:', error);
+              throw new Error('Error processing image');
+            }
+          });
         }
 
         args.input.image = `http://localhost:8080/public/product/${newfilename}`

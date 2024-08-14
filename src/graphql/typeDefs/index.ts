@@ -24,6 +24,8 @@ import transferout from "./stock/transfer_out.typeDef";
 import selectData from "./selects/selectData.select";
 import brand from "./setting/brand.typeDef";
 import receiveproduct from "./stock/receive_product.typeDef";
+import getstocksale from "./sale/stocksale.typeDef";
+import report from "./reports/report.typeDef";
 
 const typeDefs = [
     user,
@@ -51,7 +53,9 @@ const typeDefs = [
     transferout,
     selectData,
     brand,
-    receiveproduct
+    receiveproduct,
+    getstocksale,
+    report
 ]
 
 export default typeDefs

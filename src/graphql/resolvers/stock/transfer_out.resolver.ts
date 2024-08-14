@@ -35,7 +35,7 @@ const transferout = {
 
                     await newtransferout.save()
 
-                    const stockDoc = { $set: { stock_in_hand: getStock.stock_in_hand - transferoutproduct_map[i].qty } }
+                    const stockDoc = { $set: { stock_on_hand: getStock.stock_on_hand - transferoutproduct_map[i].qty } }
 
                     await StockSchema.findOneAndUpdate({ product_lists: product_id }, stockDoc, { new: true })
                 }

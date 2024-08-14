@@ -10,6 +10,8 @@ import UserLogSchema from "../../../schema/user/userlog.schema"
 import { PubSub } from "graphql-subscriptions"
 import { PaginateOptions } from "mongoose"
 import { customLabels } from "../../../helper/customeLabels.helper"
+import sharp from "sharp"
+import path from "path"
 
 const pubsub = new PubSub()
 
@@ -69,10 +71,29 @@ const user = {
                     const ext = name.split(".")[1]
                     name = `${Math.floor((Math.random() * 10000) + 1000)}`
                     newfilename = `${name}-${Date.now()}.${ext}`;
-                    const localtion = `./public/user/${newfilename}`
-                    const stream = createReadStream()
+                    // const localtion = `./public/user/${newfilename}`
+                    // const stream = createReadStream()
 
-                    await stream.pipe(fs.createWriteStream(localtion))
+                    // await stream.pipe(fs.createWriteStream(localtion))
+                    const chunks: Buffer[] = [];
+                    const readStream = createReadStream();
+
+                    readStream.on('data', (chunk: Buffer) => chunks.push(chunk));
+                    readStream.on('end', async () => {
+                        const buffer = Buffer.concat(chunks);
+
+                        try {
+                            // Process the image with sharp
+                            await sharp(buffer)
+                                .resize({ width: 512 }) // Resize as needed
+                                .jpeg({ quality: 70 }) // Compress JPEG image
+                                .toFile(`./public/user/${newfilename}`)
+
+                        } catch (error) {
+                            console.error('Error processing image:', error);
+                            throw new Error('Error processing image');
+                        }
+                    });
                 }
 
                 const newuser = new UserShcema({
@@ -86,14 +107,14 @@ const user = {
                 })
 
                 await newuser.save()
-                
+
                 if (!newuser) {
                     return messageError
                 }
-                
+
                 // WebScoket
                 pubsub.publish("NEW_USER", { getnewUser: newuser })
-                
+
                 return message
             } catch (error: any) {
                 throw new ApolloError(error.message)

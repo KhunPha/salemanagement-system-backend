@@ -30,7 +30,7 @@ const slicesecondhandhistory = {
                     }
 
                     const getStock = await StockSchema.findOne({ product_details: newslicesecondhand.grade_details })
-                    const stockDoc = { $set: { stock_in_hand: getStock?.stock_in_hand + args.input[i].qty } }
+                    const stockDoc = { $set: { stock_on_hand: getStock?.stock_on_hand + args.input[i].qty } }
                     await StockSchema.findOneAndUpdate({ product_details: newslicesecondhand.grade_details }, stockDoc, { new: true })
                 }
 

@@ -16,20 +16,9 @@ const stock = {
                     customLabels,
                     populate: {
                         path: "product_details",
-                        populate: [
-                            {
-                                path: "brand"
-                            },
-                            {
-                                path: "category"
-                            },
-                            {
-                                path: "color"
-                            },
-                            {
-                                path: "unit"
-                            },
-                        ],
+                        populate: {
+                            path: "category brand color unit"
+                        },
                         match: {
                             $or: [
                                 { pro_name: { $regex: keyword, $options: "i" } },

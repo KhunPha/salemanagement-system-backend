@@ -20,6 +20,7 @@ import transferout from "./stock/transfer_out.resolver";
 import selectData from "./selects/selectData.resolver";
 import brand from "./setting/brand.resolver";
 import receiveproduct from "./stock/receive_product.resolver";
+import getstocksale from "./sale/stocksale.resolver";
 
 const resolvers = [
     user,
@@ -43,7 +44,8 @@ const resolvers = [
     transferout,
     selectData,
     brand,
-    receiveproduct
+    receiveproduct,
+    getstocksale
 ]
 
 export default resolvers

@@ -2,6 +2,7 @@ import mongoose, { Schema, Document, PaginateModel } from "mongoose";
 import paginate from "mongoose-paginate-v2";
 
 export interface IPurchase extends Document {
+    invoice_number: string
     supplier_details: object,
     products_lists: object
     date: Date,
@@ -15,6 +16,9 @@ export interface IPurchase extends Document {
 }
 
 const purchase = new Schema<IPurchase>({
+    invoice_number: {
+        type: String
+    },
     supplier_details: {
         type: mongoose.Types.ObjectId,
         ref: "Supplier"

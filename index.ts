@@ -84,7 +84,7 @@ const startServer = async () => {
             {
                 schema,
                 execute,
-                subscribe,
+                subscribe
             },
             {
                 server: httpServer,

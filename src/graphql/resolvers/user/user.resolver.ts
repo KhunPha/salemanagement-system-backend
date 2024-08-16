@@ -12,6 +12,8 @@ import { PaginateOptions } from "mongoose"
 import { customLabels } from "../../../helper/customeLabels.helper"
 import sharp from "sharp"
 import path from "path"
+import { buffer } from "stream/consumers"
+import cloudinary from "../../../util/cloudinary"
 
 const pubsub = new PubSub()
 
@@ -54,7 +56,7 @@ const user = {
         createUser: async (parent: any, args: any) => {
             try {
                 const { firstname, lastname, username, password, roles, remark } = await args.input
-                var newfilename = "profile.png"
+                const img = "https://res.cloudinary.com/duuux4gv5/image/upload/v1723769658/rv8ojwv6bmlkkvok2nih.png"
 
                 const dupUser = await UserShcema.findOne({ username })
 
@@ -67,33 +69,27 @@ const user = {
 
                 if (args.file) {
                     const { createReadStream, filename, mimetype } = await args.file
-                    let name = filename
-                    const ext = name.split(".")[1]
-                    name = `${Math.floor((Math.random() * 10000) + 1000)}`
-                    newfilename = `${name}-${Date.now()}.${ext}`;
+                    // let name = filename
+                    // const ext = name.split(".")[1]
+                    // name = `${Math.floor((Math.random() * 10000) + 1000)}`
+                    // newfilename = `${name}-${Date.now()}.${ext}`;
+
+                    const result: any = await new Promise((resolve, reject) => {
+                        createReadStream()
+                            .pipe(cloudinary.uploader.upload_stream({ resource_type: 'image' }, (error, result) => {
+                                if (error) return reject(error);
+                                resolve(result);
+                            }));
+                    });
+
                     // const localtion = `./public/user/${newfilename}`
                     // const stream = createReadStream()
 
                     // await stream.pipe(fs.createWriteStream(localtion))
-                    const chunks: Buffer[] = [];
-                    const readStream = createReadStream();
 
-                    readStream.on('data', (chunk: Buffer) => chunks.push(chunk));
-                    readStream.on('end', async () => {
-                        const buffer = Buffer.concat(chunks);
-
-                        try {
-                            // Process the image with sharp
-                            await sharp(buffer)
-                                .resize({ width: 512 }) // Resize as needed
-                                .jpeg({ quality: 70 }) // Compress JPEG image
-                                .toFile(`./public/user/${newfilename}`)
-
-                        } catch (error) {
-                            console.error('Error processing image:', error);
-                            throw new Error('Error processing image');
-                        }
-                    });
+                    args.input.image = `${result.url}`
+                } else {
+                    args.input.image = img
                 }
 
                 const newuser = new UserShcema({
@@ -102,7 +98,7 @@ const user = {
                     username,
                     password: hashpassword,
                     roles,
-                    image: `http://localhost:8080/public/images/${newfilename}`,
+                    image: args.input.image,
                     remark
                 })
 

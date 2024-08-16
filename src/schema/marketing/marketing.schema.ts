@@ -5,7 +5,6 @@ export interface IMarketing extends Document {
     title: string,
     description: string,
     image: string,
-    customer: object,
 }
 
 const marketing = new Schema<IMarketing>({
@@ -17,11 +16,7 @@ const marketing = new Schema<IMarketing>({
     },
     image: {
         type: String
-    },
-    customer: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Customer"
-    }]
+    }
 }, {timestamps: true})
 
 marketing.plugin(paginate)

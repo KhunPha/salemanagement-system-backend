@@ -12,6 +12,8 @@ import DiscountProductSchema from "../../../schema/product/discount_products.sch
 import StockSchema from "../../../schema/stock/stocks.schema";
 import fs from "fs"
 import sharp from "sharp";
+import cloudinary from "../../../util/cloudinary";
+import bot from "../../../..";
 
 const product = {
   Query: {
@@ -69,37 +71,50 @@ const product = {
     createProduct: async (parent: any, args: any, context: any) => {
       try {
         verify(context.user);
-
-        var newfilename = "product.png"
+        const img = "https://res.cloudinary.com/duuux4gv5/image/upload/v1723769668/pyss4ndvbe2w2asi2rsy.png"
 
         if (args.file) {
           const { createReadStream, filename, mimetype } = await args.file
-          let name = filename
-          const ext = name.split(".")[1]
-          name = `${Math.floor((Math.random() * 10000) + 1000)}`
-          newfilename = `${name}-${Date.now()}.${ext}`;
 
-          const chunks: Buffer[] = [];
-          const readStream = createReadStream();
-
-          readStream.on('data', (chunk: Buffer) => chunks.push(chunk));
-          readStream.on('end', async () => {
-            const buffer = Buffer.concat(chunks);
-
-            try {
-              // Process the image with sharp
-              await sharp(buffer)
-                .resize({ width: 512 }) // Resize as needed
-                .jpeg({ quality: 70 }) // Compress JPEG image
-                .toFile(`./public/product/${newfilename}`)
-            } catch (error) {
-              console.error('Error processing image:', error);
-              throw new Error('Error processing image');
-            }
+          const result: any = await new Promise((resolve, reject) => {
+            createReadStream()
+              .pipe(cloudinary.uploader.upload_stream({ resource_type: 'image' }, (error, result) => {
+                if (error) return reject(error);
+                resolve(result);
+              }));
           });
-        }
 
-        args.input.image = `http://localhost:8080/public/product/${newfilename}`
+          // const chunks: Buffer[] = [];
+          // const readStream = createReadStream();
+
+          // readStream.on('data', (chunk: Buffer) => chunks.push(chunk));
+          // readStream.on('end', async () => {
+          //   const buffer = Buffer.concat(chunks);
+
+          //   try {
+          //     // Process the image with sharp
+          //     // const imageBuffer = await sharp(buffer)
+          //     //   .resize({ width: 128 })
+          //     //   .jpeg({ quality: 100 }) // Compress JPEG image
+          //     //   .toBuffer()
+
+          //     // newfilename = `data:image/jpeg;base64,${imageBuffer.toString('base64')}`;
+
+          //     await sharp(buffer)
+          //       .resize({ width: 512 })
+          //       .jpeg({ quality: 90 })
+          //       .toFile(`./public/product/${newfilename}`)
+          //   } catch (error) {
+          //     console.error('Error processing image:', error);
+          //     throw new Error('Error processing image');
+          //   }
+          // });
+
+          args.input.image = `${result.url}`
+
+        } else {
+          args.input.image = img
+        }
 
         const newproduct = new ProductSchema({
           ...args.input,

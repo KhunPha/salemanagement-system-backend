@@ -27,7 +27,8 @@ const stock = {
                         }
                     },
                     page: page,
-                    limit: limit
+                    limit: limit,
+                    sort: { createdAt: -1 }
                 }
 
                 const stocks: any = await StockSchema.paginate({}, options)

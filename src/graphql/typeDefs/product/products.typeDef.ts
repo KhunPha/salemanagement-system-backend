@@ -59,8 +59,16 @@ const product = gql`
         getProducts(page: Int, limit: Int, pagination: Boolean, keyword: String, unit: ID, category: ID, type_of_product: String): ProductPagination
     }
 
+    type imageUpload {
+        url: String,
+        publicId: String,
+        status: Boolean
+    }
+
     type Mutation {
-        createProduct(input: ProductInputs, file: Upload): ResponseMessage!
+        uploadImage(file: Upload): imageUpload
+        deleteImage(publicId: String): Boolean
+        createProduct(input: ProductInputs): ResponseMessage!
         updateProduct(id: ID!, input: ProductInputs): ResponseMessage!
         discountProduct(id: [ID], discount: Float): ResponseMessage
         deleteProduct(id: ID): ResponseMessage!

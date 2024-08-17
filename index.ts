@@ -109,50 +109,50 @@ const startServer = async () => {
 startServer()
 
 // Replace with your Telegram bot token
-const botToken = '6982086313:AAHYKBg8AexdmsEoDiIYcu6HLN2BIWCsr50';
+// const botToken = '6982086313:AAHYKBg8AexdmsEoDiIYcu6HLN2BIWCsr50';
 
-// Create a bot instance
-const bot = new TelegramBot(botToken, { polling: true });
+// // Create a bot instance
+// const bot = new TelegramBot(botToken, { polling: true });
 
-// Handle new chat members and group updates
-bot.on('message', (msg: any) => {
-    const chat = msg.chat;
+// // Handle new chat members and group updates
+// bot.on('message', (msg: any) => {
+//     const chat = msg.chat;
 
-    // Check if the chat type is 'group' or 'supergroup'
-    if (chat.type === 'group' || chat.type === 'supergroup') {
-        console.log('Group ID:', chat.id);
-        console.log('Group Name:', chat.title || 'Unnamed');
-    }
-});
+//     // Check if the chat type is 'group' or 'supergroup'
+//     if (chat.type === 'group' || chat.type === 'supergroup') {
+//         console.log('Group ID:', chat.id);
+//         console.log('Group Name:', chat.title || 'Unnamed');
+//     }
+// });
 
-// Handle the /start command
-bot.onText(/\/start/, (msg: any) => {
-    const chatId = msg.chat.id;
-    bot.sendMessage(chatId, 'Welcome! This bot is now active in this group.');
-    console.log('Received /start in chat:', chatId);
-});
+// // Handle the /start command
+// bot.onText(/\/start/, (msg: any) => {
+//     const chatId = msg.chat.id;
+//     bot.sendMessage(chatId, 'Welcome! This bot is now active in this group.');
+//     console.log('Received /start in chat:', chatId);
+// });
 
-bot.onText(/\/hi/, (msg: any) => {
-    const chatId = msg.chat.id;
-    bot.sendMessage(chatId, 'Hello My friend welcome to my channel')
-})
+// bot.onText(/\/hi/, (msg: any) => {
+//     const chatId = msg.chat.id;
+//     bot.sendMessage(chatId, 'Hello My friend welcome to my channel')
+// })
 
-bot.onText(/\/myid/, (msg: any) => {
-    const chatId = msg.chat.id;
-    if(msg.chat.type == 'group'){
-        bot.sendMessage(chatId, 'Your cannot check your id in group please chat to me @testme33bot')
-    }else{
-        bot.sendMessage(chatId, `Your chat id: ${chatId}`)
-    }
-})
+// bot.onText(/\/myid/, (msg: any) => {
+//     const chatId = msg.chat.id;
+//     if(msg.chat.type == 'group'){
+//         bot.sendMessage(chatId, 'Your cannot check your id in group please chat to me @testme33bot')
+//     }else{
+//         bot.sendMessage(chatId, `Your chat id: ${chatId}`)
+//     }
+// })
 
-bot.onText(/\/groupid/, (msg: any) => {
-    const chatId = msg.chat.id;
-    if(msg.chat.type == 'group'){
-        bot.sendMessage(chatId, `Your group id: ${chatId}`)
-    }else {
-        bot.sendMessage(chatId, 'Your not in group')
-    }
-})
+// bot.onText(/\/groupid/, (msg: any) => {
+//     const chatId = msg.chat.id;
+//     if(msg.chat.type == 'group'){
+//         bot.sendMessage(chatId, `Your group id: ${chatId}`)
+//     }else {
+//         bot.sendMessage(chatId, 'Your not in group')
+//     }
+// })
 
-export default bot
+// export default bot

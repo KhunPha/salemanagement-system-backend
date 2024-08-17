@@ -13,7 +13,6 @@ import StockSchema from "../../../schema/stock/stocks.schema";
 import fs from "fs"
 import sharp from "sharp";
 import cloudinary from "../../../util/cloudinary";
-import bot from "../../../..";
 
 const product = {
   Query: {
@@ -68,13 +67,12 @@ const product = {
     },
   },
   Mutation: {
-    createProduct: async (parent: any, args: any, context: any) => {
+    uploadImage: async (parent: any, args: any, context: any) => {
       try {
-        verify(context.user);
-        const img = "https://res.cloudinary.com/duuux4gv5/image/upload/v1723769668/pyss4ndvbe2w2asi2rsy.png"
+        verify(context.user)
 
         if (args.file) {
-          const { createReadStream, filename, mimetype } = await args.file
+          const { createReadStream } = await args.file
 
           const result: any = await new Promise((resolve, reject) => {
             createReadStream()
@@ -84,37 +82,31 @@ const product = {
               }));
           });
 
-          // const chunks: Buffer[] = [];
-          // const readStream = createReadStream();
-
-          // readStream.on('data', (chunk: Buffer) => chunks.push(chunk));
-          // readStream.on('end', async () => {
-          //   const buffer = Buffer.concat(chunks);
-
-          //   try {
-          //     // Process the image with sharp
-          //     // const imageBuffer = await sharp(buffer)
-          //     //   .resize({ width: 128 })
-          //     //   .jpeg({ quality: 100 }) // Compress JPEG image
-          //     //   .toBuffer()
-
-          //     // newfilename = `data:image/jpeg;base64,${imageBuffer.toString('base64')}`;
-
-          //     await sharp(buffer)
-          //       .resize({ width: 512 })
-          //       .jpeg({ quality: 90 })
-          //       .toFile(`./public/product/${newfilename}`)
-          //   } catch (error) {
-          //     console.error('Error processing image:', error);
-          //     throw new Error('Error processing image');
-          //   }
-          // });
-
-          args.input.image = `${result.url}`
-
-        } else {
-          args.input.image = img
+          return { url: result?.url, publicId: result?.public_id, status: true }
         }
+
+        return { url: "https://res.cloudinary.com/duuux4gv5/image/upload/v1723769668/pyss4ndvbe2w2asi2rsy.png", publicId: "", status: true }
+      } catch (error: any) {
+        throw new ApolloError(error.message)
+      }
+    },
+    deleteImage: async (parent: any, args: any, context: any) => {
+      try {
+        verify(context.user)
+        if (args) {
+          await cloudinary.uploader.destroy(args.publicId);
+          console.log("successfully")
+          return true
+        }
+
+        return false
+      } catch (error: any) {
+        throw new ApolloError(error.message)
+      }
+    },
+    createProduct: async (parent: any, args: any, context: any) => {
+      try {
+        verify(context.user);
 
         const newproduct = new ProductSchema({
           ...args.input,

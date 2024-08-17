@@ -1,0 +1,34 @@
+// if (args.image) {
+
+
+        //   // const chunks: Buffer[] = [];
+        //   // const readStream = createReadStream();
+
+        //   // readStream.on('data', (chunk: Buffer) => chunks.push(chunk));
+        //   // readStream.on('end', async () => {
+        //   //   const buffer = Buffer.concat(chunks);
+
+        //   //   try {
+        //   //     // Process the image with sharp
+        //   //     // const imageBuffer = await sharp(buffer)
+        //   //     //   .resize({ width: 128 })
+        //   //     //   .jpeg({ quality: 100 }) // Compress JPEG image
+        //   //     //   .toBuffer()
+
+        //   //     // newfilename = `data:image/jpeg;base64,${imageBuffer.toString('base64')}`;
+
+        //   //     await sharp(buffer)
+        //   //       .resize({ width: 512 })
+        //   //       .jpeg({ quality: 90 })
+        //   //       .toFile(`./public/product/${newfilename}`)
+        //   //   } catch (error) {
+        //   //     console.error('Error processing image:', error);
+        //   //     throw new Error('Error processing image');
+        //   //   }
+        //   // });
+
+        //   args.input.image = `${result.url}`
+
+        // } else {
+        //   args.input.image = img
+        // }

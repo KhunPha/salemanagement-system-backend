@@ -1,6 +1,8 @@
 import { gql } from "apollo-server-express";
 
 const customer = gql`
+    scalar Upload
+
     type Customer {
         _id: ID,
         customer_name: String,
@@ -46,6 +48,10 @@ const customer = gql`
         createCustomer(input: CustomerInput): ResponseMessage!
         updateCustomer(id: ID!, input: CustomerInput): ResponseMessage!
         deleteCustomer(id: ID!): ResponseMessage!
+        importCustomerExcel(file: Upload!): ResponseMessage!
+        importCustomerCSV(file: Upload!): ResponseMessage!
+        exportCustomerExcel(savePath: String!): ResponseMessage!
+        exportCustomerCSV(savePath: String!): ResponseMessage!
     }
 `
 

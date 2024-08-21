@@ -55,6 +55,10 @@ const marketing = gql`
         deleteMarketing(id: ID): ResponseMessage!
         emailMarketing(customer: [ID], marketing_id: ID): ResponseMessage!
         telegramMarketing(customer: [ID], marketing_id: ID): ResponseMessage!
+        importMarketingExcel(file: Upload!): ResponseMessage!
+        importMarketingCSV(file: Upload!): ResponseMessage!
+        exportMarketingExcel(savePath: String!): ResponseMessage!
+        exportMarketingCSV(savePath: String!): ResponseMessage!
     }
 `
 

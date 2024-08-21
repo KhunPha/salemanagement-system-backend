@@ -69,10 +69,6 @@ const user = {
 
                 if (args.file) {
                     const { createReadStream, filename, mimetype } = await args.file
-                    // let name = filename
-                    // const ext = name.split(".")[1]
-                    // name = `${Math.floor((Math.random() * 10000) + 1000)}`
-                    // newfilename = `${name}-${Date.now()}.${ext}`;
 
                     const result: any = await new Promise((resolve, reject) => {
                         createReadStream()

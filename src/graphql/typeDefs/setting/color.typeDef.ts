@@ -1,6 +1,8 @@
 import { gql } from "apollo-server-express";
 
 const color = gql`
+    scalar Upload
+
     type Color {
         _id: ID
         color_code: String,
@@ -40,6 +42,10 @@ const color = gql`
         createColor(input: ColorInput): ResponseMessage!
         updateColor(id: ID, input: ColorInput): ResponseMessage!
         deleteColor(id: ID): ResponseMessage!
+        importColorExcel(file: Upload!): ResponseMessage!
+        importColorCSV(file: Upload!): ResponseMessage!
+        exportColorExcel(savePath: String!): ResponseMessage!
+        exportColorCSV(savePath: String!): ResponseMessage!
     }
 `
 

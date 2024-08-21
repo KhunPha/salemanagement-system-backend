@@ -8,7 +8,7 @@ const restoreMongoDb = {
         restoreDatabase: async (parent: any, args: any, context: any) => {
             try {
                 verify(context.user)
-                const command = `docker cp D:/Backup 51ef6c58075ce4a5c47fb063b1260f7e1f6720b1728486872c46b3adef21f0fd:/backup`;
+                const command = `mongodump --uri="mongodb+srv://khunpha:Sopha3305@salemanagement.qbm94iq.mongodb.net/salemanagement?retryWrites=true&w=majority&appName=salemanagement" --out=D:/Backup`;
 
                 // Execute the command
                 exec(command, (error, stdout, stderr) => {
@@ -30,7 +30,7 @@ const restoreMongoDb = {
         backupDatabase: async (parent: any, args: any, context: any) => {
             try {
                 verify(context.user)
-                const command = `docker cp 51ef6c58075ce4a5c47fb063b1260f7e1f6720b1728486872c46b3adef21f0fd:/backup D:/Backup`;
+                const command = `mongorestore --uri="mongodb://localhost:27017/salemanagement" --drop D:/Backup/salemanagement `;
 
                 console.log(`Running command: ${command}`);
 

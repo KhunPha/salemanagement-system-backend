@@ -1,6 +1,8 @@
 import { gql } from "apollo-server-express";
 
 const bank = gql`
+    scalar Upload
+
     type Bank {
         _id: ID,
         bank_name: String,
@@ -38,6 +40,10 @@ const bank = gql`
         createBank(input: BankInput): ResponseMessage!
         updateBank(id: ID!, input: BankInput): ResponseMessage!
         deleteBank(id: ID!): ResponseMessage!
+        importBankExcel(file: Upload!): ResponseMessage!
+        importBankCSV(file: Upload!): ResponseMessage!
+        exportBankExcel(savePath: String!): ResponseMessage!
+        exportBankCSV: String!
     }
 `
 

@@ -1,6 +1,8 @@
 import { gql } from "apollo-server-express";
 
 const unit = gql`
+    scalar Upload
+
     type Unit {
         _id: ID,
         unit_name: String,
@@ -38,6 +40,10 @@ const unit = gql`
         createUnit(input: UnitInput): ResponseMessage!
         updateUnit(id: ID!, input: UnitInput): ResponseMessage!
         deleteUnit(id: ID!): ResponseMessage!
+        importUnitExcel(file: Upload!): ResponseMessage!
+        importUnitCSV(file: Upload!): ResponseMessage!
+        exportUnitExcel(savePath: String!): ResponseMessage!
+        exportUnitCSV(savePath: String!): ResponseMessage!
     }
 
     type Subscription {

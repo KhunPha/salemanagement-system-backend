@@ -1,6 +1,8 @@
 import { gql } from "apollo-server-express";
 
 const brand = gql`
+    scalar Upload
+
     type Brand {
         _id: ID
         brand_name: String
@@ -35,9 +37,13 @@ const brand = gql`
     }
 
     type Mutation {
-        createBrand(input: BrandInput): ResponseMessage
-        updateBrand(id: ID, input: BrandInput): ResponseMessage
-        deleteBrand(id: ID): ResponseMessage
+        createBrand(input: BrandInput): ResponseMessage!
+        updateBrand(id: ID, input: BrandInput): ResponseMessage!
+        deleteBrand(id: ID): ResponseMessage!
+        importBrandExcel(file: Upload!): ResponseMessage!
+        importBrandCSV(file: Upload!): ResponseMessage!
+        exportBrandExcel(savePath: String!): ResponseMessage!
+        exportBrandCSV(savePath: String!): ResponseMessage!
     }
 `
 

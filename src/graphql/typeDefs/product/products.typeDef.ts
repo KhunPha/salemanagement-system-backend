@@ -72,6 +72,10 @@ const product = gql`
         updateProduct(id: ID!, input: ProductInputs): ResponseMessage!
         discountProduct(id: [ID], discount: Float): ResponseMessage
         deleteProduct(id: ID): ResponseMessage!
+        importProductExcel(file: Upload!): ResponseMessage!
+        importProductCSV(file: Upload!): ResponseMessage!
+        exportProductExcel(savePath: String!): ResponseMessage!
+        exportProductCSV(savePath: String!): ResponseMessage!
     }
 `
 

@@ -1,6 +1,8 @@
 import { gql } from "apollo-server-express";
 
 const category = gql`
+    scalar Upload
+
     type Category {
         _id: ID!,
         category_name: String,
@@ -38,6 +40,10 @@ const category = gql`
         createCategory(input: CateInput): ResponseMessage!
         updateCategory(id: ID!, input: CateInput): ResponseMessage!
         deleteCategory(id: ID!): ResponseMessage!
+        importCategoryExcel(file: Upload!): ResponseMessage!
+        importCategoryCSV(file: Upload!): ResponseMessage!
+        exportCategoryExcel(savePath: String!): ResponseMessage!
+        exportCategoryCSV(savePath: String!): ResponseMessage!
     }
 `
 

@@ -12,7 +12,6 @@ import { makeExecutableSchema } from "@graphql-tools/schema"
 import { typeDefs, resolvers } from "./src/graphql"
 import path from "path"
 
-const TelegramBot = require("node-telegram-bot-api")
 const os = require("os")
 const app: any = express()
 

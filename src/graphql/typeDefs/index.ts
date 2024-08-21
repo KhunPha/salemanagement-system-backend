@@ -26,6 +26,8 @@ import brand from "./setting/brand.typeDef";
 import receiveproduct from "./stock/receive_product.typeDef";
 import getstocksale from "./sale/stocksale.typeDef";
 import report from "./reports/report.typeDef";
+import shift from "./sale/shfit.typeDef";
+import restoreMongoDb from "./restoreDatabase/restoreDatabase.typeDef";
 
 const typeDefs = [
     user,
@@ -55,7 +57,9 @@ const typeDefs = [
     brand,
     receiveproduct,
     getstocksale,
-    report
+    report,
+    shift,
+    restoreMongoDb
 ]
 
 export default typeDefs

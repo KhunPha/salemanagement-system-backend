@@ -32,3 +32,10 @@
         // } else {
         //   args.input.image = img
         // }
+
+// Backup
+mongodump --uri="mongodb+srv://khunpha:Sopha3305@salemanagement.qbm94iq.mongodb.net/salemanagement?retryW
+rites=true&w=majority&appName=salemanagement" --out=D:\Backup
+
+// Restore
+mongorestore --uri="mongodb://localhost:27017/salemanagement" --drop D:\Backup\salemanagement 

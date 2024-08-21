@@ -21,6 +21,9 @@ import selectData from "./selects/selectData.resolver";
 import brand from "./setting/brand.resolver";
 import receiveproduct from "./stock/receive_product.resolver";
 import getstocksale from "./sale/stocksale.resolver";
+import report from "./reports/report.resolver";
+import shift from "./sale/shift.resolver";
+import restoreMongoDb from "./restoreDatabase/restoreDatabase.resolver";
 
 const resolvers = [
     user,
@@ -45,7 +48,10 @@ const resolvers = [
     selectData,
     brand,
     receiveproduct,
-    getstocksale
+    getstocksale,
+    report,
+    shift,
+    restoreMongoDb
 ]
 
 export default resolvers

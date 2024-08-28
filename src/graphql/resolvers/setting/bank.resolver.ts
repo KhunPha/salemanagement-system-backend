@@ -1,5 +1,5 @@
 import { ApolloError } from "apollo-server-express";
-import BankSchema from "../../../schema/setting/bank.schema";
+import BankSchema from "../../../model/setting/bank.model";
 import verify from "../../../helper/verifyToken.helper";
 import { message, messageError, messageLogin } from "../../../helper/message.helper"
 import { customLabels } from "../../../helper/customeLabels.helper";
@@ -11,6 +11,7 @@ import { GraphQLUpload } from "graphql-upload-ts";
 import { PassThrough } from "stream";
 const XLSX = require("xlsx")
 const csv = require("csv-parser")
+const fs = require("fs")
 
 const bank = {
     Upload: GraphQLUpload,
@@ -103,12 +104,19 @@ const bank = {
                 readStream.on('end', async () => {
                     const buffer: any = Buffer.concat(chunks);
 
+                    console.log(buffer)
+
                     const workbook = XLSX.read(buffer);
                     const sheetName = workbook.SheetNames[0]; // Assumes the data is in the first sheet
                     const sheet = workbook.Sheets[sheetName];
                     const data = XLSX.utils.sheet_to_json(sheet)
 
-                    await BankSchema.insertMany(data)
+                    const format = data.map((data: any) => ({
+                        ...data,
+                        _id: data._id ? data._id.replace(/"/g, "") : null
+                    }))
+
+                    await BankSchema.insertMany(format)
                 });
 
                 return message
@@ -161,7 +169,14 @@ const bank = {
         exportBankExcel: async (parent: any, args: any, context: any) => {
             try {
                 verify(context.user)
-                const data: any = await BankSchema.find().select("-_id -createdAt -updatedAt -__v");
+                const uploadPath = args.savePath ? `/app/uploads/${args.savePath}` : `/app/uploads`;
+
+                // Ensure the directory exists
+                if (!fs.existsSync(uploadPath)) {
+                    fs.mkdirSync(uploadPath, { recursive: true });
+                }
+
+                const data: any = await BankSchema.find().select("-createdAt -updatedAt -__v")
 
                 const workbook = new ExcelJS.Workbook();
                 const worksheet = workbook.addWorksheet("Teang Vireak");
@@ -202,7 +217,7 @@ const bank = {
                 const name = `${Math.floor((Math.random() * 10000) + 1000)}`
                 const newfilename = `${name}-${Date.now()}`;
 
-                const filePath = path.join(args.savePath, `teangvireak-Bank-Data-${newfilename}.xlsx`);
+                const filePath = `${uploadPath}/teangvireak-Bank-Data-${newfilename}.xlsx`;
 
                 // Write to file
                 await workbook.xlsx.writeFile(filePath);
@@ -215,7 +230,14 @@ const bank = {
         exportBankCSV: async (parent: any, args: any, context: any) => {
             try {
                 verify(context.user)
-                const data = await BankSchema.find().select("-_id -createdAt -updatedAt -__v"); // Fetch all documents
+                const uploadPath = args.savePath ? `/app/uploads/${args.savePath}` : `/app/uploads`;
+
+                // Ensure the directory exists
+                if (!fs.existsSync(uploadPath)) {
+                    fs.mkdirSync(uploadPath, { recursive: true });
+                }
+
+                const data = await BankSchema.find().select("-createdAt -updatedAt -__v") // Fetch all documents
 
                 if (data.length === 0) {
                     console.log('No data found in the collection.');
@@ -231,7 +253,7 @@ const bank = {
                 const name = `${Math.floor((Math.random() * 10000) + 1000)}`
                 const newfilename = `${name}-${Date.now()}`;
 
-                const filePath = path.join(args.savePath, `teangvireak-Bank-Data-${newfilename}.csv`);
+                const filePath = `${uploadPath}/teangvireak-Bank-Data-${newfilename}.csv`;
 
                 // Define CSV writer configuration
                 const csvWriter = createObjectCsvWriter({

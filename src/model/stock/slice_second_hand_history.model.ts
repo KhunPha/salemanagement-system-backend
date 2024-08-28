@@ -1,4 +1,4 @@
-import mongoose, {Schema, Document} from "mongoose";
+import mongoose, { Schema, Document } from "mongoose";
 
 export interface ISliceSecondHandHistory extends Document {
     grade_details: object
@@ -14,7 +14,7 @@ const slicesecondhandhistory = new Schema<ISliceSecondHandHistory>({
     qty: {
         type: Number
     }
-}, {timestamps: true})
+}, { timestamps: true })
 
 const SliceSecondHandHistorySchema = mongoose.model<ISliceSecondHandHistory>("SliceSecondHand", slicesecondhandhistory, "SliceSecondHands")
 

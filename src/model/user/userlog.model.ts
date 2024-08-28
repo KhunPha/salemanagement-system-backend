@@ -1,4 +1,4 @@
-import mongoose, {Schema, Document, PaginateModel} from "mongoose";
+import mongoose, { Schema, Document, PaginateModel } from "mongoose";
 import paginate from "mongoose-paginate-v2";
 
 export interface IUserLog extends Document {
@@ -18,7 +18,7 @@ const userlog = new Schema<IUserLog>({
     log_count: {
         type: Number
     }
-}, {timestamps: true})
+}, { timestamps: true })
 
 userlog.plugin(paginate)
 

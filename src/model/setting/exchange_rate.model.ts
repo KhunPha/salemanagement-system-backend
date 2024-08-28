@@ -1,4 +1,4 @@
-import mongoose, {Schema, Document} from "mongoose";
+import mongoose, { Schema, Document } from "mongoose";
 
 export interface IExchange extends Document {
     exchange_rate_name: string
@@ -24,7 +24,7 @@ const exchange = new Schema<IExchange>({
     remark: {
         type: String
     }
-}, {timestamps: true})
+}, { timestamps: true })
 
 const ExchangeRateSchema = mongoose.model<IExchange>("Exchange", exchange, "Exchanges")
 

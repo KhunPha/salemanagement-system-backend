@@ -19,7 +19,7 @@ const discountproduct = new Schema<IDiscountProducts>({
     remark: {
         type: String
     }
-}, {timestamps: true})
+}, { timestamps: true })
 
 const DiscountProductSchema = mongoose.model<IDiscountProducts>("DiscountProduct", discountproduct, "DiscountProducts")
 

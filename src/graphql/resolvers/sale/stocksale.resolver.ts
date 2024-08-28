@@ -2,7 +2,7 @@ import { ApolloError } from "apollo-server-express"
 import verify from "../../../helper/verifyToken.helper"
 import { PaginateOptions } from "mongoose"
 import { customLabels } from "../../../helper/customeLabels.helper"
-import StockSchema from "../../../schema/stock/stocks.schema"
+import StockSchema from "../../../model/stock/stocks.model"
 
 const getstocksale = {
     Query: {

@@ -1,4 +1,4 @@
-import mongoose, {Schema, Document, PaginateModel} from "mongoose";
+import mongoose, { Schema, Document, PaginateModel } from "mongoose";
 import paginate from "mongoose-paginate-v2";
 
 export interface ISuppliers extends Document {
@@ -25,7 +25,7 @@ const supplier = new Schema<ISuppliers>({
     remark: {
         type: String
     }
-}, {timestamps: true})
+}, { timestamps: true })
 
 supplier.plugin(paginate)
 

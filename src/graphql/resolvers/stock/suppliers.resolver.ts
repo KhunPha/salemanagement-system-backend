@@ -1,15 +1,15 @@
 import { ApolloError } from "apollo-server-express"
-import SupplierSchema from "../../../schema/stock/suppliers.schema"
+import SupplierSchema from "../../../model/stock/suppliers.model"
 import { message, messageError, messageLogin } from "../../../helper/message.helper"
 import verify from "../../../helper/verifyToken.helper"
 import { PaginateOptions } from "mongoose"
 import { customLabels } from "../../../helper/customeLabels.helper"
-import path from "path";
 import { createObjectCsvWriter } from "csv-writer";
 import ExcelJS from "exceljs"
 import { PassThrough } from "stream"
 const XLSX = require("xlsx")
 const csv = require("csv-parser")
+const fs = require("fs")
 
 const supplier = {
     Query: {
@@ -44,6 +44,7 @@ const supplier = {
         createSupplier: async (parent: any, args: any, context: any) => {
             try {
                 verify(context.user)
+
                 const newsupplier = new SupplierSchema({
                     ...args.input
                 })
@@ -110,7 +111,12 @@ const supplier = {
                     const sheet = workbook.Sheets[sheetName];
                     const data = XLSX.utils.sheet_to_json(sheet)
 
-                    await SupplierSchema.insertMany(data)
+                    const format = data.map((data: any) => ({
+                        ...data,
+                        _id: data._id ? data._id.replace(/"/g, "") : null
+                    }))
+
+                    await SupplierSchema.insertMany(format)
                 });
 
                 return message
@@ -163,7 +169,14 @@ const supplier = {
         exportSupplierExcel: async (parent: any, args: any, context: any) => {
             try {
                 verify(context.user)
-                const data: any = await SupplierSchema.find().select("-_id -createdAt -updatedAt -__v");
+                const uploadPath = args.savePath ? `${args.savePath}` : ` / app / uploads`;
+
+                // Ensure the directory exists
+                if (!fs.existsSync(uploadPath)) {
+                    fs.mkdirSync(uploadPath, { recursive: true });
+                }
+
+                const data: any = await SupplierSchema.find()
 
                 const workbook = new ExcelJS.Workbook();
                 const worksheet = workbook.addWorksheet("Teang Vireak");
@@ -188,8 +201,8 @@ const supplier = {
                 // Customize styles
                 for (var i = 0; i < headers.length; i++) {
                     worksheet.getCell(`${headerrows[i]}1`).font = { name: 'Calibra', bold: true, color: { argb: '000000' } }; // Bold red header
-                    worksheet.getCell(`${headerrows[i]}1`).alignment = { horizontal: 'center' }; // Center align header
-                    worksheet.getCell(`${headerrows[i]}1`).fill = {
+                    worksheet.getCell(`${headerrows[i]} 1`).alignment = { horizontal: 'center' }; // Center align header
+                    worksheet.getCell(`${headerrows[i]} 1`).fill = {
                         type: 'pattern',
                         pattern: 'solid',
                         fgColor: { argb: 'FDE9D9' } // Yellow fill for header
@@ -201,10 +214,10 @@ const supplier = {
                     column.width = column.width + 5; // Add padding
                 });
 
-                const name = `${Math.floor((Math.random() * 10000) + 1000)}`
+                const name = `${Math.floor((Math.random() * 10000) + 1000)} `
                 const newfilename = `${name}-${Date.now()}`;
 
-                const filePath = path.join(args.savePath, `teangvireak-Supplier-Data-${newfilename}.xlsx`);
+                const filePath = `${uploadPath}/teangvireak-Supplier-Data-${newfilename}.xlsx`;
 
                 // Write to file
                 await workbook.xlsx.writeFile(filePath);
@@ -217,7 +230,14 @@ const supplier = {
         exportSupplierCSV: async (parent: any, args: any, context: any) => {
             try {
                 verify(context.user)
-                const data = await SupplierSchema.find().select("-_id -createdAt -updatedAt -__v"); // Fetch all documents
+                const uploadPath = args.savePath ? `${args.savePath}` : ` / app / uploads`;
+
+                // Ensure the directory exists
+                if (!fs.existsSync(uploadPath)) {
+                    fs.mkdirSync(uploadPath, { recursive: true });
+                }
+
+                const data = await SupplierSchema.find().select("-createdAt -updatedAt -__v") // Fetch all documents
 
                 if (data.length === 0) {
                     console.log('No data found in the collection.');
@@ -230,10 +250,11 @@ const supplier = {
                     title: key.charAt(0) + key.slice(1) // Capitalize header title
                 }));
 
-                const name = `${Math.floor((Math.random() * 10000) + 1000)}`
-                const newfilename = `${name}-${Date.now()}`;
+                const name = `${Math.floor((Math.random() * 10000) + 1000)
+                    }`
+                const newfilename = `${name}-${Date.now()} `;
 
-                const filePath = path.join(args.savePath, `teangvireak-Supplier-Data-${newfilename}.csv`);
+                const filePath = `${uploadPath}/teangvireak-Supplier-Data-${newfilename}.csv`;
 
                 // Define CSV writer configuration
                 const csvWriter = createObjectCsvWriter({

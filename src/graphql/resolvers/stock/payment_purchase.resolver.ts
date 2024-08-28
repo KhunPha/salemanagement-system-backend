@@ -1,7 +1,7 @@
 import verify from "../../../helper/verifyToken.helper"
-import PaymentPurchaseSchema from "../../../schema/stock/payment_purchase.schema"
+import PaymentPurchaseSchema from "../../../model/stock/payment_purchase.model"
 import { ApolloError } from "apollo-server-express"
-import {message, messageError, messageLogin} from "../../../helper/message.helper"
+import { message, messageError, messageLogin } from "../../../helper/message.helper"
 
 const payment_purchase = {
     Query: {
@@ -20,6 +20,7 @@ const payment_purchase = {
         paymentPurchase: async (parent: any, args: any, context: any) => {
             try {
                 verify(context.user)
+
                 const newpaymentpurchase = new PaymentPurchaseSchema({
                     ...args.input
                 })

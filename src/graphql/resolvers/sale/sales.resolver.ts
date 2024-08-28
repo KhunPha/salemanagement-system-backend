@@ -1,11 +1,11 @@
 import { ApolloError } from "apollo-server-express"
-import SaleSchema from "../../../schema/sale/sales.schema"
+import SaleSchema from "../../../model/sale/sales.model"
 import verify from "../../../helper/verifyToken.helper"
 import { message, messageError } from "../../../helper/message.helper"
 import { PaginateOptions } from "mongoose"
 import { customLabels } from "../../../helper/customeLabels.helper"
-import ProductAddSchema from "../../../schema/sale/product_add.schema"
-import UPDiscountSchema from "../../../schema/sale/unit_product_discount.schema"
+import ProductAddSchema from "../../../model/sale/product_add.model"
+import UPDiscountSchema from "../../../model/sale/unit_product_discount.model"
 
 const sales = {
     Query: {
@@ -20,7 +20,7 @@ const sales = {
                         {
                             path: 'product_lists.product',
                             populate: {
-                                path: 'category unit'
+                                path: 'category unit color brand'
                             }
                         }
                     ],
@@ -39,13 +39,13 @@ const sales = {
         createSales: async (parent: any, args: any, context: any) => {
             try {
                 verify(context.user)
-                console.log(args.input)
+
                 const newsales = new SaleSchema({
                     ...args.input
                 })
 
                 args.input.product_add.sale_id = newsales._id
-                
+
                 const newprodcutadd = new ProductAddSchema({
                     ...args.input.product_add
                 })

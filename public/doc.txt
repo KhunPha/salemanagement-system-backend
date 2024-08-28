@@ -49,3 +49,24 @@ rites=true&w=majority&appName=salemanagement" --out=D:\Backup
 
 // Restore
 mongorestore --uri="mongodb://localhost:27017/salemanagement" --drop D:\Backup\salemanagement 
+
+const productSum: any = {};
+
+                // data.map((data: any) => {
+                //     data.products_lists.map((product: any) => {
+                //         console.log(product)
+                //         const productId = product.product_details._id.toString();
+                //         if (!productSum[productId]) {
+                //             productSum[productId] = { pro_name: product?.product_details?.pro_name, qty: 0, price: 0 }
+                //         }
+                //         productSum[productId].qty += product.qty
+                //     })
+                // })
+
+                // const summaries = Object.keys(productSum).map(productId => ({
+                //     pro_name: productSum[productId].pro_name,
+                //     qty: productSum[productId].qty,
+                //     price: productSum[productId].price
+                // }))
+
+                // console.log(summaries)

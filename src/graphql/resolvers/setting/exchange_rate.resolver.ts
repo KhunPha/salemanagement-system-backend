@@ -1,6 +1,6 @@
 import { ApolloError } from "apollo-server-express"
 import verify from "../../../helper/verifyToken.helper"
-import ExchangeRateSchema from "../../../schema/setting/exchange_rate.schema"
+import ExchangeRateSchema from "../../../model/setting/exchange_rate.model"
 import { message, messageError, messageLogin } from "../../../helper/message.helper"
 
 const exchange_rate = {
@@ -22,6 +22,7 @@ const exchange_rate = {
                 const getExchangeRate = await ExchangeRateSchema.findOne({ type: args.input.type });
 
                 if (!getExchangeRate?._id) {
+
                     const newexchangerate = new ExchangeRateSchema({
                         ...args.input
                     })

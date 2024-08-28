@@ -1,8 +1,8 @@
 import { ApolloError } from "apollo-server-express"
 import verify from "../../../helper/verifyToken.helper"
-import TransferOutSchema from "../../../schema/stock/transfer_out.schema"
+import TransferOutSchema from "../../../model/stock/transfer_out.model"
 import { message, messageError } from "../../../helper/message.helper"
-import StockSchema from "../../../schema/stock/stocks.schema"
+import StockSchema from "../../../model/stock/stocks.model"
 
 const transferout = {
     Query: {
@@ -19,6 +19,7 @@ const transferout = {
         TransferOut: async (parent: any, args: any, context: any) => {
             try {
                 verify(context.user)
+
                 const newtransferout = new TransferOutSchema({
                     ...args.input
                 })

@@ -1,5 +1,5 @@
 import { ApolloError } from "apollo-server-express";
-import ProductSchema from "../../../schema/product/products.schema";
+import ProductSchema from "../../../model/product/products.model";
 import verify from "../../../helper/verifyToken.helper";
 import {
   message,
@@ -8,8 +8,8 @@ import {
 } from "../../../helper/message.helper";
 import { PaginateOptions } from "mongoose";
 import { customLabels } from "../../../helper/customeLabels.helper";
-import DiscountProductSchema from "../../../schema/product/discount_products.schema";
-import StockSchema from "../../../schema/stock/stocks.schema";
+import DiscountProductSchema from "../../../model/product/discount_products.model";
+import StockSchema from "../../../model/stock/stocks.model";
 import cloudinary from "../../../util/cloudinary";
 import path from "path";
 import { createObjectCsvWriter } from "csv-writer";
@@ -17,6 +17,7 @@ import ExcelJS from "exceljs"
 import { PassThrough } from "stream";
 const XLSX = require("xlsx")
 const csv = require("csv-parser")
+const fs = require("fs")
 
 const product = {
   Query: {
@@ -204,7 +205,22 @@ const product = {
           const sheet = workbook.Sheets[sheetName];
           const data = XLSX.utils.sheet_to_json(sheet)
 
-          await ProductSchema.insertMany(data)
+          const format = data.map((data: any) => ({
+            ...data,
+            _id: data._id ? data._id.replace(/"/g, "") : null
+          }))
+
+          await ProductSchema.insertMany(format)
+
+          const stockData: any = []
+
+          format.map(async (product: any, index: any) => {
+            stockData.push({
+              product_details: product._id
+            })
+          })
+
+          await StockSchema.insertMany(stockData)
         });
 
         return message
@@ -237,6 +253,16 @@ const product = {
                 try {
                   // Insert data into MongoDB
                   await ProductSchema.insertMany(results);
+
+                  const stockData: any = []
+
+                  results.map(async (product: any, index: any) => {
+                    stockData.push({
+                      product_details: product._id
+                    })
+                  })
+
+                  await StockSchema.insertMany(stockData)
                   resolve('Data imported successfully');
                 } catch (err) {
                   console.error('Error inserting data into MongoDB:', err);
@@ -257,7 +283,14 @@ const product = {
     exportProductExcel: async (parent: any, args: any, context: any) => {
       try {
         verify(context.user)
-        const data: any = await ProductSchema.find().select("-_id -createdAt -updatedAt -__v");
+        const uploadPath = args.savePath ? `${args.savePath}` : `/app/uploads`;
+
+        // Ensure the directory exists
+        if (!fs.existsSync(uploadPath)) {
+          fs.mkdirSync(uploadPath, { recursive: true });
+        }
+
+        const data: any = await ProductSchema.find().select("-createdAt -updatedAt -__v")
 
         const workbook = new ExcelJS.Workbook();
         const worksheet = workbook.addWorksheet("Teang Vireak");
@@ -298,7 +331,7 @@ const product = {
         const name = `${Math.floor((Math.random() * 10000) + 1000)}`
         const newfilename = `${name}-${Date.now()}`;
 
-        const filePath = path.join(args.savePath, `teangvireak-Product-Data-${newfilename}.xlsx`);
+        const filePath = `${uploadPath}/teangvireak-Product-Data-${newfilename}.xlsx`;
 
         // Write to file
         await workbook.xlsx.writeFile(filePath);
@@ -311,7 +344,14 @@ const product = {
     exportProductCSV: async (parent: any, args: any, context: any) => {
       try {
         verify(context.user)
-        const data = await ProductSchema.find().select("-_id -createdAt -updatedAt -__v"); // Fetch all documents
+        const uploadPath = args.savePath ? `${args.savePath}` : `/app/uploads`;
+
+        // Ensure the directory exists
+        if (!fs.existsSync(uploadPath)) {
+          fs.mkdirSync(uploadPath, { recursive: true });
+        }
+
+        const data = await ProductSchema.find().select("-createdAt -updatedAt -__v") // Fetch all documents
 
         if (data.length === 0) {
           console.log('No data found in the collection.');
@@ -327,7 +367,7 @@ const product = {
         const name = `${Math.floor((Math.random() * 10000) + 1000)}`
         const newfilename = `${name}-${Date.now()}`;
 
-        const filePath = path.join(args.savePath, `teangvireak-Product-Data-${newfilename}.csv`);
+        const filePath = `${uploadPath}/teangvireak-Product-Data-${newfilename}.csv`;
 
         // Define CSV writer configuration
         const csvWriter = createObjectCsvWriter({

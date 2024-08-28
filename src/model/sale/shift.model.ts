@@ -1,4 +1,4 @@
-import mongoose, {Schema, Document} from "mongoose"
+import mongoose, { Schema, Document } from "mongoose"
 
 export interface IShift extends Document {
     deposit_money: object
@@ -24,7 +24,7 @@ const shift = new Schema<IShift>({
         type: Boolean,
         default: true
     }
-}, {timestamps: true})
+}, { timestamps: true })
 
 const ShiftSchema = mongoose.model<IShift>("Shift", shift, "Shifts")
 

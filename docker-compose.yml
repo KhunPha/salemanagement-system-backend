@@ -1,24 +1,36 @@
-version: "3"
+version: '3.8'
 
 services:
-  #MongoDB
-  mongo_db:
-    container_name: database_container
+  db:
     image: mongo:latest
+    container_name: mongo-db
+    ports:
+      - "28018:27017"
     restart: always
     volumes:
-      - mongo_db:/data/db
+      - mongo-data:/data/db
 
-  app:
-    build: .
+  graphql:
+    build:
+      context: .
+    container_name: graphql-server
+    stdin_open: true
+    tty: true
     ports:
-      - 8080:8080
-    environment:
-      APP_NAME: LearnDocker
-      PORT: 8080
-      DB_URI: mongodb://mongo_db:27017/salemanagement
+      - "8080:8080"
+    restart: always
     depends_on:
-      - mongo_db
+      - db
+    environment:
+      MONGO_URI: mongodb://db:28018/salemanagement
+    volumes:
+      - D:/:/app/uploads/
+
+  # my-service:
+  #   image: alpine
+  #   volumes:
+  #     - D:/:/mnt
+  #   command: sh -c "while true; do sleep 3600; done"
 
 volumes:
-  mongo_db: {}
+  mongo-data:

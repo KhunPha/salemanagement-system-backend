@@ -5,7 +5,7 @@ import { message } from "../../../helper/message.helper";
 
 const restoreMongoDb = {
     Mutation: {
-        restoreDatabase: async (parent: any, args: any, context: any) => {
+        backupDatabase: async (parent: any, args: any, context: any) => {
             try {
                 verify(context.user)
                 const command = `mongodump --uri="mongodb+srv://khunpha:Sopha3305@salemanagement.qbm94iq.mongodb.net/salemanagement?retryWrites=true&w=majority&appName=salemanagement" --out=D:/Backup`;
@@ -27,10 +27,12 @@ const restoreMongoDb = {
                 throw new ApolloError(error.message)
             }
         },
-        backupDatabase: async (parent: any, args: any, context: any) => {
+        restoreDatabase: async (parent: any, args: any, context: any) => {
             try {
                 verify(context.user)
-                const command = `mongorestore --uri="mongodb://localhost:27017/salemanagement" --drop D:/Backup/salemanagement `;
+                const directory = 'D:/Backup/salemanagement'
+
+                const command = `mongorestore --uri="mongodb://localhost:27017/salemanagement" --drop ${directory}`;
 
                 console.log(`Running command: ${command}`);
 

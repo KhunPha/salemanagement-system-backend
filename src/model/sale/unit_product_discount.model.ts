@@ -21,7 +21,7 @@ const unit_product_discount = new Schema<IUPDiscount>({
     discount: {
         type: Number
     }
-}, {timestamps: true})
+}, { timestamps: true })
 
 const UPDiscountSchema = mongoose.model<IUPDiscount>("UnitProductDiscount", unit_product_discount, "UnitProductDiscounts")
 

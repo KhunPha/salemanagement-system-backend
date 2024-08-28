@@ -1,4 +1,4 @@
-import mongoose, {Schema, Document} from "mongoose";
+import mongoose, { Schema, Document } from "mongoose";
 
 export interface IReceiveProductTransaction extends Document {
     purchase_id: object
@@ -29,7 +29,7 @@ const receiveproductT = new Schema<IReceiveProductTransaction>({
         type: String,
         enum: ["Whole", "Retail"]
     }
-}, {timestamps: true})
+}, { timestamps: true })
 
 const ReceiveProductTransactionSchema = mongoose.model<IReceiveProductTransaction>("ReceiveProductTransaction", receiveproductT, "ReceivProductTransactions")
 

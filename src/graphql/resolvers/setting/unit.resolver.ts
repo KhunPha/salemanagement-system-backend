@@ -1,16 +1,16 @@
 import { ApolloError } from "apollo-server-express"
 import verify from "../../../helper/verifyToken.helper"
-import UnitSchema from "../../../schema/setting/unit.schema"
+import UnitSchema from "../../../model/setting/unit.model"
 import { message, messageError, messageLogin } from "../../../helper/message.helper"
 import { PaginateOptions } from "mongoose"
 import { customLabels } from "../../../helper/customeLabels.helper"
 import { PubSub } from "graphql-subscriptions"
-import path from "path";
 import { createObjectCsvWriter } from "csv-writer";
 import ExcelJS from "exceljs"
 import { PassThrough } from "stream"
 const XLSX = require("xlsx")
 const csv = require("csv-parser")
+const fs = require("fs")
 
 const pubsub = new PubSub()
 
@@ -112,7 +112,12 @@ const unit = {
                     const sheet = workbook.Sheets[sheetName];
                     const data = XLSX.utils.sheet_to_json(sheet)
 
-                    await UnitSchema.insertMany(data)
+                    const format = data.map((data: any) => ({
+                        ...data,
+                        _id: data._id ? data._id.replace(/"/g, "") : null
+                    }))
+
+                    await UnitSchema.insertMany(format)
                 });
 
                 return message
@@ -165,7 +170,14 @@ const unit = {
         exportUnitExcel: async (parent: any, args: any, context: any) => {
             try {
                 verify(context.user)
-                const data: any = await UnitSchema.find().select("-_id -createdAt -updatedAt -__v");
+                const uploadPath = args.savePath ? `/app/uploads/${args.savePath}` : `/app/uploads`;
+
+                // Ensure the directory exists
+                if (!fs.existsSync(uploadPath)) {
+                    fs.mkdirSync(uploadPath, { recursive: true });
+                }
+
+                const data: any = await UnitSchema.find().select("-createdAt -updatedAt -__v")
 
                 const workbook = new ExcelJS.Workbook();
                 const worksheet = workbook.addWorksheet("Teang Vireak");
@@ -206,7 +218,7 @@ const unit = {
                 const name = `${Math.floor((Math.random() * 10000) + 1000)}`
                 const newfilename = `${name}-${Date.now()}`;
 
-                const filePath = path.join(args.savePath, `teangvireak-Unit-Data-${newfilename}.xlsx`);
+                const filePath = `${uploadPath}/teangvireak-Unit-Data-${newfilename}.xlsx`;
 
                 // Write to file
                 await workbook.xlsx.writeFile(filePath);
@@ -219,7 +231,14 @@ const unit = {
         exportUnitCSV: async (parent: any, args: any, context: any) => {
             try {
                 verify(context.user)
-                const data = await UnitSchema.find().select("-_id -createdAt -updatedAt -__v"); // Fetch all documents
+                const uploadPath = args.savePath ? `/app/uploads/${args.savePath}` : `/app/uploads`;
+
+                // Ensure the directory exists
+                if (!fs.existsSync(uploadPath)) {
+                    fs.mkdirSync(uploadPath, { recursive: true });
+                }
+
+                const data = await UnitSchema.find().select("-createdAt -updatedAt -__v") // Fetch all documents
 
                 if (data.length === 0) {
                     console.log('No data found in the collection.');
@@ -235,7 +254,7 @@ const unit = {
                 const name = `${Math.floor((Math.random() * 10000) + 1000)}`
                 const newfilename = `${name}-${Date.now()}`;
 
-                const filePath = path.join(args.savePath, `teangvireak-Unit-Data-${newfilename}.csv`);
+                const filePath = `${uploadPath}/teangvireak-Unit-Data-${newfilename}.csv`;
 
                 // Define CSV writer configuration
                 const csvWriter = createObjectCsvWriter({

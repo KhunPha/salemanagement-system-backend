@@ -13,7 +13,7 @@ const unit = new Schema<IUnit>({
     remark: {
         type: String
     }
-}, {timestamps: true})
+}, { timestamps: true })
 
 unit.plugin(paginate)
 

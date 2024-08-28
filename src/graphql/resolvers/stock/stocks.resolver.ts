@@ -1,6 +1,6 @@
 import { ApolloError } from "apollo-server-express"
 import verify from "../../../helper/verifyToken.helper"
-import StockSchema from "../../../schema/stock/stocks.schema"
+import StockSchema from "../../../model/stock/stocks.model"
 import { message, messageError } from "../../../helper/message.helper"
 import { PaginateOptions } from "mongoose"
 import { customLabels } from "../../../helper/customeLabels.helper"

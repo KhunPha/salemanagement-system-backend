@@ -1,4 +1,4 @@
-import mongoose, {Schema, Document} from "mongoose"
+import mongoose, { Schema, Document } from "mongoose"
 
 export interface IPaymentPurchase extends Document {
     purchase_id: object
@@ -29,7 +29,7 @@ const payment_purchase = new Schema<IPaymentPurchase>({
     remark: {
         type: String
     }
-}, {timestamps: true})
+}, { timestamps: true })
 
 const PaymentPurchaseSchema = mongoose.model<IPaymentPurchase>("PaymentPurchase", payment_purchase, "PaymentPurchases")
 

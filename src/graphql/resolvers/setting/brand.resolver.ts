@@ -2,7 +2,7 @@ import { ApolloError } from "apollo-server-express"
 import verify from "../../../helper/verifyToken.helper"
 import { PaginateOptions } from "mongoose"
 import { customLabels } from "../../../helper/customeLabels.helper"
-import BrandSchema from "../../../schema/setting/brand.schema"
+import BrandSchema from "../../../model/setting/brand.model"
 import { message, messageError } from "../../../helper/message.helper"
 import path from "path";
 import { createObjectCsvWriter } from "csv-writer";
@@ -10,6 +10,7 @@ import ExcelJS from "exceljs"
 import { PassThrough } from "stream"
 const XLSX = require("xlsx")
 const csv = require("csv-parser")
+const fs = require("fs")
 
 const brand = {
     Query: {
@@ -42,6 +43,7 @@ const brand = {
         createBrand: async (parent: any, args: any, context: any) => {
             try {
                 verify(context.user)
+
                 const newbrand = new BrandSchema({
                     ...args.input
                 })
@@ -82,7 +84,7 @@ const brand = {
 
                 const deleteBrand = await BrandSchema.findByIdAndDelete(id)
 
-                if(!deleteBrand){
+                if (!deleteBrand) {
                     return messageError
                 }
 
@@ -108,7 +110,12 @@ const brand = {
                     const sheet = workbook.Sheets[sheetName];
                     const data = XLSX.utils.sheet_to_json(sheet)
 
-                    await BrandSchema.insertMany(data)
+                    const format = data.map((data: any) => ({
+                        ...data,
+                        _id: data._id ? data._id.replace(/"/g, "") : null
+                    }))
+
+                    await BrandSchema.insertMany(format)
                 });
 
                 return message
@@ -161,7 +168,13 @@ const brand = {
         exportBrandExcel: async (parent: any, args: any, context: any) => {
             try {
                 verify(context.user)
-                const data: any = await BrandSchema.find().select("-_id -createdAt -updatedAt -__v");
+                const uploadPath = args.savePath ? `${args.savePath}` : ` / app / uploads`;
+
+                if (!fs.existsSync(uploadPath)) {
+                    fs.mkdirSync(uploadPath, { recursive: true })
+                }
+
+                const data: any = await BrandSchema.find().select("-createdAt -updatedAt -__v")
 
                 const workbook = new ExcelJS.Workbook();
                 const worksheet = workbook.addWorksheet("Teang Vireak");
@@ -186,8 +199,8 @@ const brand = {
                 // Customize styles
                 for (var i = 0; i < headers.length; i++) {
                     worksheet.getCell(`${headerrows[i]}1`).font = { name: 'Calibra', bold: true, color: { argb: '000000' } }; // Bold red header
-                    worksheet.getCell(`${headerrows[i]}1`).alignment = { horizontal: 'center' }; // Center align header
-                    worksheet.getCell(`${headerrows[i]}1`).fill = {
+                    worksheet.getCell(`${headerrows[i]} 1`).alignment = { horizontal: 'center' }; // Center align header
+                    worksheet.getCell(`${headerrows[i]} 1`).fill = {
                         type: 'pattern',
                         pattern: 'solid',
                         fgColor: { argb: 'FDE9D9' } // Yellow fill for header
@@ -199,10 +212,10 @@ const brand = {
                     column.width = column.width + 5; // Add padding
                 });
 
-                const name = `${Math.floor((Math.random() * 10000) + 1000)}`
+                const name = `${Math.floor((Math.random() * 10000) + 1000)} `
                 const newfilename = `${name}-${Date.now()}`;
 
-                const filePath = path.join(args.savePath, `teangvireak-Brand-Data-${newfilename}.xlsx`);
+                const filePath = `${uploadPath}/teangvireak-Brand-Data-${newfilename}.xlsx`;
 
                 // Write to file
                 await workbook.xlsx.writeFile(filePath);
@@ -215,7 +228,14 @@ const brand = {
         exportBrandCSV: async (parent: any, args: any, context: any) => {
             try {
                 verify(context.user)
-                const data = await BrandSchema.find().select("-_id -createdAt -updatedAt -__v"); // Fetch all documents
+                const uploadPath = args.savePath ? `${args.savePath}` : ` / app / uploads`;
+
+                // Ensure the directory exists
+                if (!fs.existsSync(uploadPath)) {
+                    fs.mkdirSync(uploadPath, { recursive: true });
+                }
+
+                const data = await BrandSchema.find().select("-createdAt -updatedAt -__v") // Fetch all documents
 
                 if (data.length === 0) {
                     console.log('No data found in the collection.');
@@ -228,10 +248,10 @@ const brand = {
                     title: key.charAt(0) + key.slice(1) // Capitalize header title
                 }));
 
-                const name = `${Math.floor((Math.random() * 10000) + 1000)}`
+                const name = `${Math.floor((Math.random() * 10000) + 1000)} `
                 const newfilename = `${name}-${Date.now()}`;
 
-                const filePath = path.join(args.savePath, `teangvireak-Brand-Data-${newfilename}.csv`);
+                const filePath = `${uploadPath}/teangvireak-Brand-Data-${newfilename}.csv`;
 
                 // Define CSV writer configuration
                 const csvWriter = createObjectCsvWriter({

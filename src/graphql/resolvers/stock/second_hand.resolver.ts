@@ -1,11 +1,11 @@
 import { ApolloError } from "apollo-server-express"
 import verify from "../../../helper/verifyToken.helper"
-import SecondHandSchema from "../../../schema/stock/second_hand.schema"
+import SecondHandSchema from "../../../model/stock/second_hand.model"
 import { message, messageError, messageLogin } from "../../../helper/message.helper"
 import { PaginateOptions } from "mongoose"
 import { customLabels } from "../../../helper/customeLabels.helper"
-import ProductSchema from "../../../schema/product/products.schema"
-import StockSchema from "../../../schema/stock/stocks.schema"
+import ProductSchema from "../../../model/product/products.model"
+import StockSchema from "../../../model/stock/stocks.model"
 
 const secondhand = {
     Query: {
@@ -44,6 +44,7 @@ const secondhand = {
             try {
                 verify(context.user)
                 args.input.status = false
+
                 const newsecondhand = new ProductSchema({
                     ...args.input
                 })

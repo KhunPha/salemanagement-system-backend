@@ -1,6 +1,6 @@
 import { ApolloError } from "apollo-server-express"
 import verify from "../../../helper/verifyToken.helper"
-import MarketingSchema from "../../../schema/marketing/marketing.schema"
+import MarketingSchema from "../../../model/marketing/marketing.model"
 import { message, messageError, messageLogin } from "../../../helper/message.helper"
 import { PaginateOptions } from "mongoose"
 import { customLabels } from "../../../helper/customeLabels.helper"
@@ -9,9 +9,9 @@ const nodemailer = require("nodemailer")
 import { Api, TelegramClient } from "telegram";
 import { StringSession } from "telegram/sessions";
 import readline from "readline";
-import CustomerSchema from "../../../schema/marketing/customers.schema"
-import TelegramSendHIstorySchema from "../../../schema/marketing/telegramSendHistory.schema"
-import EmailSendHIstorySchema from "../../../schema/marketing/emailSendHistory.schema"
+import CustomerSchema from "../../../model/marketing/customers.model"
+import TelegramSendHIstorySchema from "../../../model/marketing/telegramSendHistory.model"
+import EmailSendHIstorySchema from "../../../model/marketing/emailSendHistory.model"
 import cloudinary from "../../../util/cloudinary"
 import path from "path";
 import { createObjectCsvWriter } from "csv-writer";
@@ -271,7 +271,7 @@ const marketing = {
 
                         const message = title + "✈️ 🛍️ 📸 🎧 🎫 " + marketing?.description;
 
-                        const filePath = `.${marketing?.image.split("http://localhost:8080")[1]}`
+                        const filePath = `${marketing?.image}`
 
                         new Promise(async () => {
                             try {
@@ -318,7 +318,12 @@ const marketing = {
                     const sheet = workbook.Sheets[sheetName];
                     const data = XLSX.utils.sheet_to_json(sheet)
 
-                    await MarketingSchema.insertMany(data)
+                    const format = data.map((data: any) => ({
+                        ...data,
+                        _id: data._id ? data._id.replace(/"/g, "") : null
+                    }))
+
+                    await MarketingSchema.insertMany(format)
                 });
 
                 return message
@@ -371,7 +376,14 @@ const marketing = {
         exportMarketingExcel: async (parent: any, args: any, context: any) => {
             try {
                 verify(context.user)
-                const data: any = await MarketingSchema.find().select("-_id -createdAt -updatedAt -__v");
+                const uploadPath = args.savePath ? `/app/uploads/${args.savePath}` : `/app/uploads`;
+
+                // Ensure the directory exists
+                if (!fs.existsSync(uploadPath)) {
+                    fs.mkdirSync(uploadPath, { recursive: true });
+                }
+
+                const data: any = await MarketingSchema.find().select("-createdAt -updatedAt -__v")
 
                 const workbook = new ExcelJS.Workbook();
                 const worksheet = workbook.addWorksheet("Teang Vireak");
@@ -412,7 +424,7 @@ const marketing = {
                 const name = `${Math.floor((Math.random() * 10000) + 1000)}`
                 const newfilename = `${name}-${Date.now()}`;
 
-                const filePath = path.join(args.savePath, `teangvireak-Marketing-Data-${newfilename}.xlsx`);
+                const filePath = `${uploadPath}/teangvireak-Marketing-Data-${newfilename}.xlsx`;
 
                 // Write to file
                 await workbook.xlsx.writeFile(filePath);
@@ -425,7 +437,14 @@ const marketing = {
         exportMarketingCSV: async (parent: any, args: any, context: any) => {
             try {
                 verify(context.user)
-                const data = await MarketingSchema.find().select("-_id -createdAt -updatedAt -__v"); // Fetch all documents
+                const uploadPath = args.savePath ? `/app/uploads/${args.savePath}` : `/app/uploads`;
+
+                // Ensure the directory exists
+                if (!fs.existsSync(uploadPath)) {
+                    fs.mkdirSync(uploadPath, { recursive: true });
+                }
+
+                const data = await MarketingSchema.find().select("-createdAt -updatedAt -__v") // Fetch all documents
 
                 if (data.length === 0) {
                     console.log('No data found in the collection.');
@@ -441,7 +460,7 @@ const marketing = {
                 const name = `${Math.floor((Math.random() * 10000) + 1000)}`
                 const newfilename = `${name}-${Date.now()}`;
 
-                const filePath = path.join(args.savePath, `teangvireak-Marketing-Data-${newfilename}.csv`);
+                const filePath = `${uploadPath}/teangvireak-Marketing-Data-${newfilename}.csv`;
 
                 // Define CSV writer configuration
                 const csvWriter = createObjectCsvWriter({

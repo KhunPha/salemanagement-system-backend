@@ -1,4 +1,4 @@
-import mongoose, {Schema, Document} from "mongoose";
+import mongoose, { Schema, Document } from "mongoose";
 
 export interface IShop extends Document {
     logo: string,
@@ -28,7 +28,7 @@ const shop = new Schema<IShop>({
     remark: {
         type: String
     }
-}, {timestamps: true})
+}, { timestamps: true })
 
 const ShopInformationSchema = mongoose.model<IShop>("Shop", shop, "Shops")
 

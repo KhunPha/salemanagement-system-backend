@@ -22,7 +22,33 @@ const report = gql`
     }
 
     type StockReport {
-        message: String
+        product_details: Product
+        stock_on_hand: Int
+        price: Float
+        discount: Float
+        cost: Float
+        amount: Float
+    }
+
+    type ExpenseReport {
+        pro_name: String
+        qty: Int
+        price: Float
+        total: Float
+        discount: Float
+        amount: Float
+    }
+
+    type StockReportData {
+        data: [StockReport],
+        total: Float
+    }
+
+    type ExpenseReportData {
+        data: [ExpenseReport]
+        total_qty: Int
+        total_price: Float
+        total_amount: Float
     }
 
     type Query {
@@ -31,7 +57,9 @@ const report = gql`
         salesReport: String
         purchaseReport: String
         invoiceSaleReport: String
-        stockReport: String
+        revenueReport: String
+        expenseReport: ExpenseReportData
+        stockReport: StockReportData
     }
 `
 

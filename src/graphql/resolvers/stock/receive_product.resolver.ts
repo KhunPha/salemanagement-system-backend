@@ -1,8 +1,8 @@
 import { ApolloError } from "apollo-server-express"
 import verify from "../../../helper/verifyToken.helper"
-import ReceiveProductTransactionSchema from "../../../schema/stock/receive_product.schema"
+import ReceiveProductTransactionSchema from "../../../model/stock/receive_product.model"
 import { message, messageError } from "../../../helper/message.helper"
-import StockSchema from "../../../schema/stock/stocks.schema"
+import StockSchema from "../../../model/stock/stocks.model"
 
 const receiveproduct = {
     Query: {
@@ -22,6 +22,7 @@ const receiveproduct = {
             try {
                 verify(context.user)
                 let stockDoc;
+
                 const newproductreceive = new ReceiveProductTransactionSchema({
                     ...args.input
                 })
@@ -32,15 +33,15 @@ const receiveproduct = {
                     const product_id = product_map[i].products
                     const getStock: any = await StockSchema.findOne({ product_details: product_id })
 
-                    if(!getStock){
+                    if (!getStock) {
                         return messageError
                     }
 
                     await newproductreceive.save()
 
-                    if(args.input.product_unit_type === "Whole"){
+                    if (args.input.product_unit_type === "Whole") {
                         stockDoc = { $set: { stock_in_hand: getStock.stock_in_hand + product_map[i].whole } }
-                    }else{
+                    } else {
                         stockDoc = { $set: { stock_in_hand: getStock.stock_in_hand + (product_map[i].retail_in_whole * product_map[i].whole) } }
                     }
 

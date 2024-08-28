@@ -1,6 +1,6 @@
 import { ApolloError } from "apollo-server-express"
 import verify from "../../../helper/verifyToken.helper"
-import PurchaseSchema from "../../../schema/stock/purchases.schema"
+import PurchaseSchema from "../../../model/stock/purchases.model"
 import { message, messageError, messageLogin } from "../../../helper/message.helper"
 import { date } from "../../../helper/date.helper"
 import { PaginateOptions } from "mongoose"
@@ -38,7 +38,8 @@ const purchase = {
                         }
                     ],
                     page: page,
-                    limit: limit
+                    limit: limit,
+                    sort: { createdAt: -1 }
                 }
 
                 const query = {

@@ -1,4 +1,4 @@
-import mongoose, {Schema, Document} from "mongoose";
+import mongoose, { Schema, Document } from "mongoose";
 
 export interface IEmailSendHistory extends Document {
     customer_lists: object
@@ -13,7 +13,7 @@ const emailsendhistory = new Schema<IEmailSendHistory>({
         type: mongoose.Schema.Types.ObjectId,
         ref: "Marketing"
     }
-}, {timestamps: true})
+}, { timestamps: true })
 
 const EmailSendHIstorySchema = mongoose.model<IEmailSendHistory>("EmailSendHistory", emailsendhistory, "EmailSendHistories")
 

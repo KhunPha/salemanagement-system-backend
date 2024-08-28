@@ -43,7 +43,7 @@ const bank = gql`
         importBankExcel(file: Upload!): ResponseMessage!
         importBankCSV(file: Upload!): ResponseMessage!
         exportBankExcel(savePath: String!): ResponseMessage!
-        exportBankCSV: String!
+        exportBankCSV(savePath: String!): ResponseMessage!
     }
 `
 

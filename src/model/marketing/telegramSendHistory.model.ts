@@ -1,4 +1,4 @@
-import mongoose, {Schema, Document} from "mongoose";
+import mongoose, { Schema, Document } from "mongoose";
 
 export interface ITelegramSendHistory extends Document {
     customer_lists: object
@@ -19,7 +19,7 @@ const telegramsendhistory = new Schema<ITelegramSendHistory>({
         type: mongoose.Schema.Types.ObjectId,
         ref: "Marketing"
     }
-}, {timestamps: true})
+}, { timestamps: true })
 
 const TelegramSendHIstorySchema = mongoose.model<ITelegramSendHistory>("TelegramSendHistory", telegramsendhistory, "TelegramSendHistories")
 

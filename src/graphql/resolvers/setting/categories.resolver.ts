@@ -1,15 +1,15 @@
 import { ApolloError } from "apollo-server-express";
-import CategoriesSchema from "../../../schema/setting/categories.schema";
+import CategoriesSchema from "../../../model/setting/categories.model";
 import verify from "../../../helper/verifyToken.helper";
 import { message, messageError, messageLogin } from "../../../helper/message.helper"
 import { PaginateOptions } from "mongoose";
 import { customLabels } from "../../../helper/customeLabels.helper";
-import path from "path";
 import { createObjectCsvWriter } from "csv-writer";
 import ExcelJS from "exceljs"
 import { PassThrough } from "stream";
 const XLSX = require("xlsx")
 const csv = require("csv-parser")
+const fs = require("fs")
 
 const category = {
     Query: {
@@ -106,7 +106,12 @@ const category = {
                     const sheet = workbook.Sheets[sheetName];
                     const data = XLSX.utils.sheet_to_json(sheet)
 
-                    await CategoriesSchema.insertMany(data)
+                    const format = data.map((data: any) => ({
+                        ...data,
+                        _id: data._id ? data._id.replace(/"/g, "") : null
+                    }))
+
+                    await CategoriesSchema.insertMany(format)
                 });
 
                 return message
@@ -159,7 +164,14 @@ const category = {
         exportCategoryExcel: async (parent: any, args: any, context: any) => {
             try {
                 verify(context.user)
-                const data: any = await CategoriesSchema.find().select("-_id -createdAt -updatedAt -__v");
+                const uploadPath = args.savePath ? `${args.savePath}` : `/app/uploads`;
+
+                // Ensure the directory exists
+                if (!fs.existsSync(uploadPath)) {
+                    fs.mkdirSync(uploadPath, { recursive: true });
+                }
+
+                const data: any = await CategoriesSchema.find().select("-createdAt -updatedAt -__v")
 
                 const workbook = new ExcelJS.Workbook();
                 const worksheet = workbook.addWorksheet("Teang Vireak");
@@ -200,7 +212,7 @@ const category = {
                 const name = `${Math.floor((Math.random() * 10000) + 1000)}`
                 const newfilename = `${name}-${Date.now()}`;
 
-                const filePath = path.join(args.savePath, `teangvireak-Category-Data-${newfilename}.xlsx`);
+                const filePath = `${uploadPath}/teangvireak-Category-Data-${newfilename}.xlsx`;
 
                 // Write to file
                 await workbook.xlsx.writeFile(filePath);
@@ -213,7 +225,14 @@ const category = {
         exportCategoryCSV: async (parent: any, args: any, context: any) => {
             try {
                 verify(context.user)
-                const data = await CategoriesSchema.find().select("-_id -createdAt -updatedAt -__v"); // Fetch all documents
+                const uploadPath = args.savePath ? `/app/uploads/${args.savePath}` : `/app/uploads`;
+
+                // Ensure the directory exists
+                if (!fs.existsSync(uploadPath)) {
+                    fs.mkdirSync(uploadPath, { recursive: true });
+                }
+
+                const data = await CategoriesSchema.find().select("-createdAt -updatedAt -__v") // Fetch all documents
 
                 if (data.length === 0) {
                     console.log('No data found in the collection.');
@@ -229,7 +248,7 @@ const category = {
                 const name = `${Math.floor((Math.random() * 10000) + 1000)}`
                 const newfilename = `${name}-${Date.now()}`;
 
-                const filePath = path.join(args.savePath, `teangvireak-Category-Data-${newfilename}.csv`);
+                const filePath = `${uploadPath}/teangvireak-Category-Data-${newfilename}.csv`;
 
                 // Define CSV writer configuration
                 const csvWriter = createObjectCsvWriter({

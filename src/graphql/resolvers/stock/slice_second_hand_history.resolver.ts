@@ -1,8 +1,8 @@
 import { ApolloError } from "apollo-server-express"
 import verify from "../../../helper/verifyToken.helper"
-import SliceSecondHandHistorySchema from "../../../schema/stock/slice_second_hand_history.schema"
+import SliceSecondHandHistorySchema from "../../../model/stock/slice_second_hand_history.model"
 import { message, messageError } from "../../../helper/message.helper"
-import StockSchema from "../../../schema/stock/stocks.schema"
+import StockSchema from "../../../model/stock/stocks.model"
 
 const slicesecondhandhistory = {
     Query: {
@@ -20,6 +20,7 @@ const slicesecondhandhistory = {
             try {
                 verify(context.user)
                 for (var i = 0; i < args.input.length; i++) {
+
                     const newslicesecondhand = new SliceSecondHandHistorySchema({
                         ...args.input[i]
                     })

@@ -1,6 +1,6 @@
 import { ApolloError } from "apollo-server-express"
 import verify from "../../../helper/verifyToken.helper"
-import ShiftSchema from "../../../schema/sale/shift.schema"
+import ShiftSchema from "../../../model/sale/shift.model"
 import { message } from "../../../helper/message.helper"
 
 const shift = {
@@ -8,7 +8,7 @@ const shift = {
         getShifts: async (parent: any, args: any, context: any) => {
             try {
                 verify(context.user)
-                
+
                 return await ShiftSchema.find();
             } catch (error: any) {
                 throw new ApolloError(error.message)
@@ -44,13 +44,13 @@ const shift = {
                 const today = new Date(), startOfDay = new Date(), endOfDay = new Date()
                 const curHr = today.getHours()
 
-                if(curHr < 12){
+                if (curHr < 12) {
                     startOfDay.setHours(0, 0, 0, 0); // Set to midnight
-  
+
                     endOfDay.setHours(11, 59, 59, 999); // Set to the end of the day
-                }else{
+                } else {
                     startOfDay.setHours(12, 0, 0, 0); // Set to midnight
-    
+
                     endOfDay.setHours(23, 59, 59, 999);
                 }
 

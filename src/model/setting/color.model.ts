@@ -1,4 +1,4 @@
-import mongoose, {Schema, Document, PaginateModel} from "mongoose";
+import mongoose, { Schema, Document, PaginateModel } from "mongoose";
 import paginate from "mongoose-paginate-v2";
 
 export interface IColor extends Document {
@@ -17,7 +17,7 @@ const color = new Schema<IColor>({
     remark: {
         type: String
     }
-}, {timestamps: true})
+}, { timestamps: true })
 
 color.plugin(paginate)
 

@@ -21,7 +21,7 @@ const purchase = new Schema<IPurchase>({
     },
     supplier_details: {
         type: mongoose.Types.ObjectId,
-        ref: "Supplier"
+            ref: "Supplier"
     },
     products_lists: [{
         product_details: {

@@ -37,11 +37,11 @@ const product = new Schema<IProduct>({
         enum: ["All", "New", "Second Hand"]
     },
     category: {
-        type: mongoose.Types.ObjectId,
+        type: mongoose.Schema.Types.ObjectId,
         ref: "Category"
     },
     unit: {
-        type: mongoose.Types.ObjectId,
+        type: mongoose.Schema.Types.ObjectId,
         ref: "Unit"
     },
     barcode: {

@@ -1,6 +1,6 @@
 import { ApolloError } from "apollo-server-express"
 import verify from "../../../helper/verifyToken.helper"
-import ShopInformationSchema from "../../../schema/setting/shop_information.schema"
+import ShopInformationSchema from "../../../model/setting/shop_information.model"
 import { message, messageError, messageLogin } from "../../../helper/message.helper"
 
 const shop_information = {
@@ -14,6 +14,7 @@ const shop_information = {
                 const getInformation: any = await ShopInformationSchema.findOne();
 
                 if (!getInformation._id) {
+
                     const insert = new ShopInformationSchema({
                         ...args
                     })

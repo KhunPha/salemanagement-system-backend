@@ -81,7 +81,7 @@ const product = {
 
           const result: any = await new Promise((resolve, reject) => {
             createReadStream()
-              .pipe(cloudinary.uploader.upload_stream({ resource_type: 'image' }, (error, result) => {
+              .pipe(cloudinary.uploader.upload_stream({ resource_type: 'image', format: 'webp' }, (error, result) => {
                 if (error) return reject(error);
                 resolve(result);
               }));

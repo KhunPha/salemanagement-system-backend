@@ -64,15 +64,15 @@ const user = {
                     return messageError
                 }
 
-                const salt = await bcrypt.genSaltSync()
-                const hashpassword = await bcrypt.hashSync(password, salt)
+                const salt = await bcrypt.genSalt()
+                const hashpassword = await bcrypt.hash(password, salt)
 
                 if (args.file) {
                     const { createReadStream, filename, mimetype } = await args.file
 
                     const result: any = await new Promise((resolve, reject) => {
                         createReadStream()
-                            .pipe(cloudinary.uploader.upload_stream({ resource_type: 'image' }, (error, result) => {
+                            .pipe(cloudinary.uploader.upload_stream({ resource_type: 'image', format: 'webp' }, (error, result) => {
                                 if (error) return reject(error);
                                 resolve(result);
                             }));
@@ -122,7 +122,7 @@ const user = {
                     throw new ApolloError("User not found!")
                 }
 
-                const passTrue = await bcrypt.compareSync(password, userfound.password)
+                const passTrue = await bcrypt.compare(password, userfound.password)
 
                 if (!passTrue) {
                     throw new ApolloError("Incorrect password!")

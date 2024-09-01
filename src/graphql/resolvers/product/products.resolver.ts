@@ -72,10 +72,9 @@ const product = {
     },
   },
   Mutation: {
-    uploadImage: async (parent: any, args: any, context: any) => {
+    uploadProductImage: async (parent: any, args: any, context: any) => {
       try {
         verify(context.user)
-
         if (args.file) {
           const { createReadStream } = await args.file
 
@@ -95,7 +94,7 @@ const product = {
         throw new ApolloError(error.message)
       }
     },
-    deleteImage: async (parent: any, args: any, context: any) => {
+    deleteProductImage: async (parent: any, args: any, context: any) => {
       try {
         verify(context.user)
         if (args) {
@@ -103,7 +102,6 @@ const product = {
           console.log("successfully")
           return true
         }
-
         return false
       } catch (error: any) {
         throw new ApolloError(error.message)
@@ -141,11 +139,10 @@ const product = {
 
         const productDoc = { $set: { ...args.input } };
 
-        const updateDoc = await ProductSchema.findByIdAndUpdate(
-          id,
-          productDoc,
-          { new: true }
-        );
+        const updateDoc: any = await ProductSchema.findByIdAndUpdate(id, productDoc);
+
+        if (args.input.publicId != updateDoc.publicId)
+          await cloudinary.uploader.destroy(updateDoc.publicId);
 
         if (!updateDoc) {
           return messageError;
@@ -176,8 +173,9 @@ const product = {
         verify(context.user);
         const { id } = args;
 
-        const deleteProduct = await ProductSchema.findByIdAndDelete(id);
+        const deleteProduct: any = await ProductSchema.findByIdAndDelete(id);
         await StockSchema.findOneAndDelete({ product_details: id })
+        await cloudinary.uploader.destroy(deleteProduct?.publicId);
 
         if (!deleteProduct) {
           throw new ApolloError("Delete failed");

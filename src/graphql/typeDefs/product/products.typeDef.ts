@@ -14,6 +14,7 @@ const product = gql`
         unit: Unit
         barcode: String
         image: String,
+        publicId: String
         price: Float,
         discount: Float,
         remark: String,
@@ -44,11 +45,12 @@ const product = gql`
         brand: ID
         size: String
         color: ID
-        type_of_product: String,
+        type_of_product: String
         category: ID
         unit: ID
         barcode: String
         image: String
+        publicId: String
         price: Float
         remark: String
         createdAt: Date,
@@ -66,8 +68,8 @@ const product = gql`
     }
 
     type Mutation {
-        uploadImage(file: Upload): imageUpload
-        deleteImage(publicId: String): Boolean
+        uploadProductImage(file: Upload): imageUpload
+        deleteProductImage(publicId: String): Boolean
         createProduct(input: ProductInputs): ResponseMessage!
         updateProduct(id: ID!, input: ProductInputs): ResponseMessage!
         discountProduct(id: [ID], discount: Float): ResponseMessage

@@ -7,6 +7,7 @@ export interface IProduct extends Document {
     size: string,
     color: object
     type_of_product: string,
+    publicId: string
     category: object,
     unit: object,
     barcode: string,
@@ -35,6 +36,9 @@ const product = new Schema<IProduct>({
     type_of_product: {
         type: String,
         enum: ["All", "New", "Second Hand"]
+    },
+    publicId: {
+        type: String
     },
     category: {
         type: mongoose.Schema.Types.ObjectId,

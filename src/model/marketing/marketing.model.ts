@@ -5,6 +5,7 @@ export interface IMarketing extends Document {
     title: string,
     description: string,
     image: string,
+    publicId: string
 }
 
 const marketing = new Schema<IMarketing>({
@@ -15,6 +16,9 @@ const marketing = new Schema<IMarketing>({
         type: String
     },
     image: {
+        type: String
+    },
+    publicId: {
         type: String
     }
 }, { timestamps: true })

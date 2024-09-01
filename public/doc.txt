@@ -70,3 +70,9 @@ const productSum: any = {};
                 // }))
 
                 // console.log(summaries)
+
+                
+                    // const localtion = `./public/user/${newfilename}`
+                    // const stream = createReadStream()
+
+                    // await stream.pipe(fs.createWriteStream(localtion))

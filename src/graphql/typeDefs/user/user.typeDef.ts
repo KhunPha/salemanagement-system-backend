@@ -11,6 +11,7 @@ const user = gql`
         password: String,
         roles: String,
         image: String,
+        publicId: String
         remark: String
     }
 
@@ -37,6 +38,8 @@ const user = gql`
         lastname: String
         username: String
         password: String,
+        image: String
+        publicId: String
         roles: String
         remark: String
     }
@@ -46,11 +49,19 @@ const user = gql`
         password: String
     }
 
+    type imageUpload {
+        url: String,
+        publicId: String,
+        status: Boolean
+    }
+
     type Query {
         getUsers(keyword: String, page: Int, pagination: Boolean, limit: Int, roles: String): UserPagination
     }
 
     type Mutation {
+        uploadUserImage(file: Upload): imageUpload
+        deleteUserImage(publicId: String): Boolean
         createUser(input: UserInput!, file: Upload): ResponseMessage!
         login(input: Login): ResponseMessageLogin!
         updateUser(id: ID!, input: UserInput): ResponseMessage!

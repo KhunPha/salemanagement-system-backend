@@ -8,6 +8,7 @@ const marketing = gql`
         title: String
         description: String
         image: String
+        publicId: String
     }
 
     type SendDetails {
@@ -41,6 +42,14 @@ const marketing = gql`
     input MarketingInput {
         title: String
         description: String
+        image: String
+        publicId: String
+    }
+
+    type imageUpload {
+        url: String,
+        publicId: String,
+        status: Boolean
     }
 
     type Query {
@@ -50,6 +59,8 @@ const marketing = gql`
     }
 
     type Mutation {
+        uploadMarketingImage(file: Upload): imageUpload
+        deleteMarketingImage(publicId: String): Boolean
         createMarketing(input: MarketingInput, file: Upload): ResponseMessage!
         updateMarketing(id: ID, input: MarketingInput): ResponseMessage!
         deleteMarketing(id: ID): ResponseMessage!

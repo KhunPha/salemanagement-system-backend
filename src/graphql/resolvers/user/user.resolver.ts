@@ -53,22 +53,13 @@ const user = {
     },
 
     Mutation: {
-        createUser: async (parent: any, args: any) => {
+        uploadUserImage: async (parent: any, args: any, context: any) => {
             try {
-                const { firstname, lastname, username, password, roles, remark } = await args.input
+                verify(context.user)
                 const img = "https://res.cloudinary.com/duuux4gv5/image/upload/v1723769658/rv8ojwv6bmlkkvok2nih.png"
 
-                const dupUser = await UserShcema.findOne({ username })
-
-                if (dupUser) {
-                    return messageError
-                }
-
-                const salt = await bcrypt.genSalt()
-                const hashpassword = await bcrypt.hash(password, salt)
-
                 if (args.file) {
-                    const { createReadStream, filename, mimetype } = await args.file
+                    const { createReadStream } = await args.file
 
                     const result: any = await new Promise((resolve, reject) => {
                         createReadStream()
@@ -78,24 +69,45 @@ const user = {
                             }));
                     });
 
-                    // const localtion = `./public/user/${newfilename}`
-                    // const stream = createReadStream()
-
-                    // await stream.pipe(fs.createWriteStream(localtion))
-
-                    args.input.image = `${result.url}`
-                } else {
-                    args.input.image = img
+                    return { url: result?.url, publicId: result?.public_id, status: true }
                 }
 
+                return { url: img, publicId: "", status: true }
+            } catch (error: any) {
+                throw new ApolloError(error.message)
+            }
+        },
+        deleteUserImage: async (parent: any, args: any, context: any) => {
+            try {
+                verify(context.user)
+                if (args) {
+                    await cloudinary.uploader.destroy(args.publicId);
+                    return true;
+                }
+
+                return false;
+            } catch (error: any) {
+                throw new ApolloError(error.message)
+            }
+        },
+        createUser: async (parent: any, args: any) => {
+            try {
+                const { firstname, lastname, username, password, roles, publicId, image, remark } = await args.input
+
+                const dupUser = await UserShcema.findOne({ username })
+
+                if (dupUser) {
+                    messageError.message_kh = "ឈ្មោះអ្នកប្រើប្រាស់នេះមានរួចហើយ!"
+                    messageError.message_en = "Username already exists!"
+                    return messageError
+                }
+
+                const salt = await bcrypt.genSalt()
+                const hashpassword = await bcrypt.hash(password, salt)
+
                 const newuser = new UserShcema({
-                    firstname,
-                    lastname,
-                    username,
-                    password: hashpassword,
-                    roles,
-                    image: args.input.image,
-                    remark
+                    ...args.input,
+                    password: hashpassword
                 })
 
                 await newuser.save()
@@ -164,11 +176,14 @@ const user = {
                 const { id } = args
 
                 const salt = await bcrypt.genSalt()
-                const hashpassword = await bcrypt.hashSync(password, salt)
+                const hashpassword = await bcrypt.hash(password, salt)
 
-                const userDoc = { $set: { firstname, lastname, username, password: hashpassword, roles, image, remark } }
+                const userDoc = { $set: { ...args.input, password: hashpassword } }
 
-                const updateDoc = await UserShcema.findByIdAndUpdate(id, userDoc, { new: true })
+                const updateDoc: any = await UserShcema.findByIdAndUpdate(id, userDoc)
+
+                if (args.input.publicId != updateDoc?.publicId)
+                    await cloudinary.uploader.destroy(updateDoc?.publicId)
 
                 if (!updateDoc) {
                     return messageError
@@ -185,7 +200,8 @@ const user = {
 
                 const { id } = await args
 
-                const deleteUser = await UserShcema.findByIdAndDelete(id)
+                const deleteUser: any = await UserShcema.findByIdAndDelete(id)
+                await cloudinary.uploader.destroy(deleteUser.publicId)
 
                 if (!deleteUser) {
                     return messageError

@@ -13,7 +13,6 @@ import CustomerSchema from "../../../model/marketing/customers.model"
 import TelegramSendHIstorySchema from "../../../model/marketing/telegramSendHistory.model"
 import EmailSendHIstorySchema from "../../../model/marketing/emailSendHistory.model"
 import cloudinary from "../../../util/cloudinary"
-import path from "path";
 import { createObjectCsvWriter } from "csv-writer";
 import ExcelJS from "exceljs"
 import { PassThrough } from "stream"
@@ -55,13 +54,13 @@ const marketing = {
         }
     },
     Mutation: {
-        createMarketing: async (parent: any, args: any, context: any) => {
+        uploadMarketingImage: async (parent: any, args: any, context: any) => {
             try {
                 verify(context.user)
                 var img = "https://res.cloudinary.com/duuux4gv5/image/upload/v1723769679/aflwiado1kckthpmfg5m.png"
 
                 if (args.file) {
-                    const { createReadStream, filename, mimetype } = await args.file
+                    const { createReadStream } = await args.file
 
                     const result: any = await new Promise((resolve, reject) => {
                         createReadStream()
@@ -71,11 +70,30 @@ const marketing = {
                             }));
                     });
 
-                    args.input.image = `${result.url}`
-                } else {
-                    args.input.image = img;
+                    return { url: result?.url, publicId: result?.public_id, status: true }
                 }
 
+                return { url: img, publicId: "", status: true }
+            } catch (error: any) {
+                throw new ApolloError(error.message)
+            }
+        },
+        deleteMarketingImage: async (parent: any, args: any, context: any) => {
+            try {
+                verify(context.user)
+                if (args) {
+                    await cloudinary.uploader.destroy(args.publicId);
+                    return true;
+                }
+
+                return false
+            } catch (error: any) {
+                throw new ApolloError(error.message)
+            }
+        },
+        createMarketing: async (parent: any, args: any, context: any) => {
+            try {
+                verify(context.user)
                 const newmarketing = new MarketingSchema({
                     ...args.input
                 })
@@ -98,7 +116,10 @@ const marketing = {
 
                 const MarketingDoc = { $set: { ...args.input } }
 
-                const updateDoc = await MarketingSchema.findByIdAndUpdate(id, MarketingDoc, { new: true })
+                const updateDoc: any = await MarketingSchema.findByIdAndUpdate(id, MarketingDoc)
+
+                if (args.input.publicId != updateDoc.publicId)
+                    await cloudinary.uploader.destroy(updateDoc.publicId)
 
                 if (!updateDoc) {
                     return messageError
@@ -114,7 +135,8 @@ const marketing = {
                 verify(context.user)
                 const { id } = await args
 
-                const deleteMarketing = await MarketingSchema.findByIdAndDelete(id)
+                const deleteMarketing: any = await MarketingSchema.findByIdAndDelete(id)
+                await cloudinary.uploader.destroy(deleteMarketing.publicId)
 
                 if (!deleteMarketing) {
                     return messageError

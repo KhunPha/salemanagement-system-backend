@@ -136,7 +136,9 @@ const marketing = {
                 const { id } = await args
 
                 const deleteMarketing: any = await MarketingSchema.findByIdAndDelete(id)
-                await cloudinary.uploader.destroy(deleteMarketing.publicId)
+
+                if (deleteMarketing.publicId)
+                    await cloudinary.uploader.destroy(deleteMarketing.publicId)
 
                 if (!deleteMarketing) {
                     return messageError

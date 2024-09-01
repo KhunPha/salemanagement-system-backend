@@ -175,7 +175,9 @@ const product = {
 
         const deleteProduct: any = await ProductSchema.findByIdAndDelete(id);
         await StockSchema.findOneAndDelete({ product_details: id })
-        await cloudinary.uploader.destroy(deleteProduct?.publicId);
+
+        if (deleteProduct?.publicId)
+          await cloudinary.uploader.destroy(deleteProduct?.publicId);
 
         if (!deleteProduct) {
           throw new ApolloError("Delete failed");

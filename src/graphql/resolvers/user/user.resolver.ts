@@ -10,9 +10,6 @@ import UserLogSchema from "../../../model/user/userlog.model"
 import { PubSub } from "graphql-subscriptions"
 import { PaginateOptions } from "mongoose"
 import { customLabels } from "../../../helper/customeLabels.helper"
-import sharp from "sharp"
-import path from "path"
-import { buffer } from "stream/consumers"
 import cloudinary from "../../../util/cloudinary"
 
 const pubsub = new PubSub()
@@ -201,7 +198,9 @@ const user = {
                 const { id } = await args
 
                 const deleteUser: any = await UserShcema.findByIdAndDelete(id)
-                await cloudinary.uploader.destroy(deleteUser.publicId)
+
+                if (deleteUser.publicId)
+                    await cloudinary.uploader.destroy(deleteUser.publicId)
 
                 if (!deleteUser) {
                     return messageError

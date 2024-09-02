@@ -64,11 +64,13 @@ const marketing = {
 
                     const result: any = await new Promise((resolve, reject) => {
                         createReadStream()
-                            .pipe(cloudinary.uploader.upload_stream({ resource_type: 'image', format: 'webp' }, (error, result) => {
+                            .pipe(cloudinary.uploader.upload_stream({ resource_type: 'image', format: 'avif' }, (error, result) => {
                                 if (error) return reject(error);
                                 resolve(result);
                             }));
                     });
+
+                    console.log("Upload:", result.public_id)
 
                     return { url: result?.url, publicId: result?.public_id, status: true }
                 }
@@ -83,6 +85,7 @@ const marketing = {
                 verify(context.user)
                 if (args) {
                     await cloudinary.uploader.destroy(args.publicId);
+                    console.log("Delete:", args.publicId)
                     return true;
                 }
 
@@ -118,8 +121,14 @@ const marketing = {
 
                 const updateDoc: any = await MarketingSchema.findByIdAndUpdate(id, MarketingDoc)
 
-                if (args.input.publicId != updateDoc.publicId)
-                    await cloudinary.uploader.destroy(updateDoc.publicId)
+                if (args.input.publicId != updateDoc?.publicId)
+                    try {
+                        new Promise(async () => {
+                            await cloudinary.uploader.destroy(updateDoc?.publicId);
+                        })
+                    } catch (err: any) {
+                        throw new ApolloError(err.message)
+                    }
 
                 if (!updateDoc) {
                     return messageError
@@ -137,8 +146,14 @@ const marketing = {
 
                 const deleteMarketing: any = await MarketingSchema.findByIdAndDelete(id)
 
-                if (deleteMarketing.publicId)
-                    await cloudinary.uploader.destroy(deleteMarketing.publicId)
+                if (deleteMarketing?.publicId)
+                    try {
+                        new Promise(async () => {
+                            await cloudinary.uploader.destroy(deleteMarketing?.publicId);
+                        })
+                    } catch (err: any) {
+                        throw new ApolloError(err.message)
+                    }
 
                 if (!deleteMarketing) {
                     return messageError

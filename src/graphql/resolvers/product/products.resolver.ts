@@ -11,7 +11,6 @@ import { customLabels } from "../../../helper/customeLabels.helper";
 import DiscountProductSchema from "../../../model/product/discount_products.model";
 import StockSchema from "../../../model/stock/stocks.model";
 import cloudinary from "../../../util/cloudinary";
-import path from "path";
 import { createObjectCsvWriter } from "csv-writer";
 import ExcelJS from "exceljs"
 import { PassThrough } from "stream";
@@ -80,11 +79,13 @@ const product = {
 
           const result: any = await new Promise((resolve, reject) => {
             createReadStream()
-              .pipe(cloudinary.uploader.upload_stream({ resource_type: 'image', format: 'webp' }, (error, result) => {
+              .pipe(cloudinary.uploader.upload_stream({ resource_type: 'image', format: 'avif' }, (error, result) => {
                 if (error) return reject(error);
                 resolve(result);
               }));
           });
+
+          console.log("Upload:", result.public_id)
 
           return { url: result?.url, publicId: result?.public_id, status: true }
         }
@@ -99,7 +100,7 @@ const product = {
         verify(context.user)
         if (args) {
           await cloudinary.uploader.destroy(args.publicId);
-          console.log("successfully")
+          console.log("Delete:", args.publicId)
           return true
         }
         return false
@@ -141,8 +142,14 @@ const product = {
 
         const updateDoc: any = await ProductSchema.findByIdAndUpdate(id, productDoc);
 
-        if (args.input.publicId != updateDoc.publicId)
-          await cloudinary.uploader.destroy(updateDoc.publicId);
+        if (args.input.publicId != updateDoc?.publicId)
+          try {
+            new Promise(async () => {
+              await cloudinary.uploader.destroy(updateDoc?.publicId);
+            })
+          } catch (err: any) {
+            throw new ApolloError(err.message)
+          }
 
         if (!updateDoc) {
           return messageError;
@@ -177,7 +184,13 @@ const product = {
         await StockSchema.findOneAndDelete({ product_details: id })
 
         if (deleteProduct?.publicId)
-          await cloudinary.uploader.destroy(deleteProduct?.publicId);
+          try {
+            new Promise(async () => {
+              await cloudinary.uploader.destroy(deleteProduct?.publicId);
+            })
+          } catch (err: any) {
+            throw new ApolloError(err.message)
+          }
 
         if (!deleteProduct) {
           throw new ApolloError("Delete failed");

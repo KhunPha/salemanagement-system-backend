@@ -60,11 +60,13 @@ const user = {
 
                     const result: any = await new Promise((resolve, reject) => {
                         createReadStream()
-                            .pipe(cloudinary.uploader.upload_stream({ resource_type: 'image', format: 'webp' }, (error, result) => {
+                            .pipe(cloudinary.uploader.upload_stream({ resource_type: 'image', format: 'avif' }, (error, result) => {
                                 if (error) return reject(error);
                                 resolve(result);
                             }));
                     });
+
+                    console.log("Upload:", result.public_id)
 
                     return { url: result?.url, publicId: result?.public_id, status: true }
                 }
@@ -79,6 +81,7 @@ const user = {
                 verify(context.user)
                 if (args) {
                     await cloudinary.uploader.destroy(args.publicId);
+                    console.log("Delete:", args.publicId)
                     return true;
                 }
 
@@ -180,11 +183,33 @@ const user = {
                 const updateDoc: any = await UserShcema.findByIdAndUpdate(id, userDoc)
 
                 if (args.input.publicId != updateDoc?.publicId)
-                    await cloudinary.uploader.destroy(updateDoc?.publicId)
+                    try {
+                        new Promise(async () => {
+                            await cloudinary.uploader.destroy(updateDoc?.publicId);
+                        })
+                    } catch (err: any) {
+                        throw new ApolloError(err.message)
+                    }
 
                 if (!updateDoc) {
                     return messageError
                 }
+
+                return message
+            } catch (error: any) {
+                throw new ApolloError(error.message)
+            }
+        },
+        resetPassword: async (parent: any, args: any, context: any) => {
+            try {
+                verify(context.user)
+                const { id, newPassword } = args
+                const userDoc = { $set: { password: newPassword } }
+
+                const updateDoc = await UserShcema.findByIdAndUpdate(id, userDoc)
+
+                if (!updateDoc)
+                    return messageError
 
                 return message
             } catch (error: any) {
@@ -199,8 +224,14 @@ const user = {
 
                 const deleteUser: any = await UserShcema.findByIdAndDelete(id)
 
-                if (deleteUser.publicId)
-                    await cloudinary.uploader.destroy(deleteUser.publicId)
+                if (deleteUser?.publicId)
+                    try {
+                        new Promise(async () => {
+                            await cloudinary.uploader.destroy(deleteUser?.publicId);
+                        })
+                    } catch (err: any) {
+                        throw new ApolloError(err.message)
+                    }
 
                 if (!deleteUser) {
                     return messageError

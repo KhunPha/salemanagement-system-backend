@@ -65,6 +65,7 @@ const user = gql`
         createUser(input: UserInput!, file: Upload): ResponseMessage!
         login(input: Login): ResponseMessageLogin!
         updateUser(id: ID!, input: UserInput): ResponseMessage!
+        resetPassword(id: ID!, newPassword: String): ResponseMessage!
         deleteUser(id: ID!): ResponseMessage!
     }
 

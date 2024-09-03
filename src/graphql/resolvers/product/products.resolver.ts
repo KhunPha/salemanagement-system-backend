@@ -74,6 +74,8 @@ const product = {
     uploadProductImage: async (parent: any, args: any, context: any) => {
       try {
         verify(context.user)
+        const img = "https://res.cloudinary.com/duuux4gv5/image/upload/v1723769668/pyss4ndvbe2w2asi2rsy.png"
+
         if (args.file) {
           const { createReadStream } = await args.file
 
@@ -90,7 +92,7 @@ const product = {
           return { url: result?.url, publicId: result?.public_id, status: true }
         }
 
-        return { url: "https://res.cloudinary.com/duuux4gv5/image/upload/v1723769668/pyss4ndvbe2w2asi2rsy.png", publicId: "", status: true }
+        return { url: img, publicId: "", status: true }
       } catch (error: any) {
         throw new ApolloError(error.message)
       }
@@ -111,6 +113,9 @@ const product = {
     createProduct: async (parent: any, args: any, context: any) => {
       try {
         verify(context.user);
+
+        if (!args.input.publicId)
+          args.input.image = "https://res.cloudinary.com/duuux4gv5/image/upload/v1723769668/pyss4ndvbe2w2asi2rsy.png"
 
         const newproduct = new ProductSchema({
           ...args.input,

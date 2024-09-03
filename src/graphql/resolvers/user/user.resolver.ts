@@ -11,6 +11,7 @@ import { PubSub } from "graphql-subscriptions"
 import { PaginateOptions } from "mongoose"
 import { customLabels } from "../../../helper/customeLabels.helper"
 import cloudinary from "../../../util/cloudinary"
+import { password } from "telegram"
 
 const pubsub = new PubSub()
 
@@ -93,6 +94,9 @@ const user = {
         createUser: async (parent: any, args: any) => {
             try {
                 const { firstname, lastname, username, password, roles, publicId, image, remark } = await args.input
+
+                if (!args.input.publicId)
+                    args.input.image = "https://res.cloudinary.com/duuux4gv5/image/upload/v1723769658/rv8ojwv6bmlkkvok2nih.png"
 
                 const dupUser = await UserShcema.findOne({ username })
 
@@ -204,7 +208,11 @@ const user = {
             try {
                 verify(context.user)
                 const { id, newPassword } = args
-                const userDoc = { $set: { password: newPassword } }
+
+                const salt = await bcrypt.genSalt()
+                const hastPassword = await bcrypt.hash(newPassword, salt)
+
+                const userDoc = { $set: { password: hastPassword } }
 
                 const updateDoc = await UserShcema.findByIdAndUpdate(id, userDoc)
 

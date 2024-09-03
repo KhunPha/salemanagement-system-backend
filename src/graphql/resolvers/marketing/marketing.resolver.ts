@@ -97,6 +97,10 @@ const marketing = {
         createMarketing: async (parent: any, args: any, context: any) => {
             try {
                 verify(context.user)
+
+                if (!args.input.publicId)
+                    args.input.image = "https://res.cloudinary.com/duuux4gv5/image/upload/v1723769679/aflwiado1kckthpmfg5m.png"
+
                 const newmarketing = new MarketingSchema({
                     ...args.input
                 })
@@ -291,10 +295,9 @@ const marketing = {
 
                         var phonenumber = getCustomer?.phone_number;
 
-                        if (getCustomer?.phone_number[0] == "0") {
-                            phonenumber = getCustomer?.phone_number.substr(1)
-                            recipientUsername = `+855${phonenumber}`;
-                        } else if (getCustomer?.phone_number[0] === "@") {
+                        if (phonenumber?.startsWith("0")) {
+                            recipientUsername = `+855${phonenumber.slice(1)}`;
+                        } else if (phonenumber?.startsWith("@")) {
                             recipientUsername = `${phonenumber}`
                         } else {
                             recipientUsername = `+855${phonenumber}`;

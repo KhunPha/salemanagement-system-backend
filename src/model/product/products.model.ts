@@ -15,7 +15,11 @@ export interface IProduct extends Document {
     price: number,
     discount: number,
     remark: string,
-    status: boolean
+    status: boolean,
+    createdBy: object
+    modifiedBy: object
+    isDelete: boolean
+    deadline: Date
 }
 
 const product = new Schema<IProduct>({
@@ -66,6 +70,21 @@ const product = new Schema<IProduct>({
     status: {
         type: Boolean,
         default: true
+    },
+    createdBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User"
+    },
+    modifiedBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User"
+    },
+    isDelete: {
+        type: Boolean,
+        default: false
+    },
+    deadline: {
+        type: Date
     }
 }, { timestamps: true })
 

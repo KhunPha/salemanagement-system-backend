@@ -19,11 +19,14 @@ const bank = {
     Query: {
         getBankPagination: async (parent: any, args: any, context: any) => {
             try {
-                verify(context.user)
+                const userToken = verify(context.user)
                 const { page, limit, pagination, keyword } = await args
                 const options: PaginateOptions = {
                     pagination,
                     customLabels,
+                    populate: {
+                        path: "createdBy modifiedBy"
+                    },
                     page: page,
                     limit: limit,
                     sort: { createdAt: -1 }
@@ -32,7 +35,34 @@ const bank = {
                 const query = {
                     $and: [
                         keyword ? { bank_name: { $regex: keyword, $options: 'i' } } : {}
-                    ]
+                    ],
+                    isDelete: { $ne: true }
+                }
+                return await BankSchema.paginate(query, options)
+            } catch (error: any) {
+                throw new ApolloError(error.message)
+            }
+        },
+        getBankRecovery: async (parent: any, args: any, context: any) => {
+            try {
+                const userToken = verify(context.user)
+                const { page, limit, pagination, keyword } = await args
+                const options: PaginateOptions = {
+                    pagination,
+                    customLabels,
+                    populate: {
+                        path: "createdBy modifiedBy"
+                    },
+                    page: page,
+                    limit: limit,
+                    sort: { createdAt: -1 }
+                }
+
+                const query = {
+                    $and: [
+                        keyword ? { bank_name: { $regex: keyword, $options: 'i' } } : {}
+                    ],
+                    isDelete: { $ne: false }
                 }
                 return await BankSchema.paginate(query, options)
             } catch (error: any) {
@@ -43,9 +73,11 @@ const bank = {
     Mutation: {
         createBank: async (parent: any, args: any, context: any) => {
             try {
-                verify(context.user)
+                const userToken = verify(context.user)
                 const newbank = new BankSchema({
-                    ...args.input
+                    ...args.input,
+                    createdBy: userToken._id,
+                    modifiedBy: userToken._id
                 })
 
                 await newbank.save()
@@ -61,10 +93,10 @@ const bank = {
         },
         updateBank: async (parent: any, args: any, context: any) => {
             try {
-                verify(context.user)
+                const userToken = verify(context.user)
                 const { id } = args
 
-                const bankDoc = { $set: { ...args.input } }
+                const bankDoc = { $set: { ...args.input, modifiedBy: userToken._id } }
 
                 const updateDoc = await BankSchema.findByIdAndUpdate(id, bankDoc)
 
@@ -79,9 +111,17 @@ const bank = {
         },
         deleteBank: async (parent: any, args: any, context: any) => {
             try {
-                verify(context.user)
+                const userToken = verify(context.user)
                 const { id } = args
-                const deleteBank = await BankSchema.findByIdAndDelete(id)
+                const now = new Date()
+
+                const deadline = new Date(now)
+
+                deadline.setMinutes(now.getMinutes() + 5)
+
+                const updateDoc = { $set: { isDelete: true, modified: userToken._id, deadline } }
+
+                const deleteBank = await BankSchema.findByIdAndUpdate(id, updateDoc)
 
                 if (!deleteBank) {
                     return messageError
@@ -94,7 +134,7 @@ const bank = {
         },
         importBankExcel: async (parent: any, args: any, context: any) => {
             try {
-                verify(context.user)
+                const userToken = verify(context.user)
                 const { createReadStream } = await args.file
 
                 const chunks: Buffer[] = [];
@@ -126,7 +166,7 @@ const bank = {
         },
         importBankCSV: async (parent: any, args: any, context: any) => {
             try {
-                verify(context.user)
+                const userToken = verify(context.user)
                 const results: any = [];
                 const { createReadStream } = await args.file
 
@@ -168,7 +208,7 @@ const bank = {
         },
         exportBankExcel: async (parent: any, args: any, context: any) => {
             try {
-                verify(context.user)
+                const userToken = verify(context.user)
                 const uploadPath = args.savePath ? `/app/uploads/${args.savePath}` : `/app/uploads`;
 
                 // Ensure the directory exists
@@ -229,7 +269,7 @@ const bank = {
         },
         exportBankCSV: async (parent: any, args: any, context: any) => {
             try {
-                verify(context.user)
+                const userToken = verify(context.user)
                 const uploadPath = args.savePath ? `/app/uploads/${args.savePath}` : `/app/uploads`;
 
                 // Ensure the directory exists
@@ -263,6 +303,35 @@ const bank = {
 
                 // Write data to CSV
                 await csvWriter.writeRecords(data.map(doc => doc.toObject())); // Convert Mongoose documents to plain objects
+
+                return message
+            } catch (error: any) {
+                throw new ApolloError(error.message)
+            }
+        },
+        recoveryBank: async (parent: any, args: any, context: any) => {
+            try {
+                const userToken = verify(context.user)
+                const { id } = args
+
+                const updateDoc = { $set: { isDelete: false, modifiedBy: userToken._id } }
+
+                await BankSchema.findByIdAndUpdate(id, updateDoc)
+
+                return message
+            } catch (error: any) {
+                throw new ApolloError(error.message)
+            }
+        },
+        recoveryBankDelete: async (parent: any, args: any, context: any) => {
+            try {
+                const userToken = verify(context.user)
+                const { id } = args
+
+                const recoveryBankDelete = await BankSchema.findByIdAndDelete(id)
+
+                if (!recoveryBankDelete)
+                    return messageError
 
                 return message
             } catch (error: any) {

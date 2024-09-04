@@ -7,6 +7,8 @@ export interface IStocks extends Document {
     price: number
     discount: number
     cost: number
+    isDelete: boolean
+    deadline: Date
 }
 
 const stock = new Schema<IStocks>({
@@ -29,6 +31,13 @@ const stock = new Schema<IStocks>({
     cost: {
         type: Number,
         default: 0
+    },
+    isDelete: {
+        type: Boolean,
+        default: false
+    },
+    deadline: {
+        type: Date
     }
 }, { timestamps: true })
 

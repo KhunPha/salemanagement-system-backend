@@ -9,6 +9,8 @@ const payment_purchase = gql`
         payment_method: String
         bank: Bank
         remark: String
+        createdBy: User
+        modifiedBy: User
     }
 
     input PaymentPurchaseInput {

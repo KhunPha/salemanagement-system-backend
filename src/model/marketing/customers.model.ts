@@ -8,6 +8,10 @@ export interface ICustomer extends Document {
     address: string,
     types: string,
     remark: string,
+    createdBy: object
+    modifiedBy: object
+    isDelete: boolean
+    deadline: Date
 }
 
 const customer = new Schema<ICustomer>({
@@ -30,6 +34,21 @@ const customer = new Schema<ICustomer>({
     },
     remark: {
         type: String
+    },
+    createdBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User"
+    },
+    modifiedBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User"
+    },
+    isDelete: {
+        type: Boolean,
+        default: false
+    },
+    deadline: {
+        type: Date
     }
 }, { timestamps: true })
 

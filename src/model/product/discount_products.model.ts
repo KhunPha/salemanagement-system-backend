@@ -4,6 +4,8 @@ export interface IDiscountProducts extends Document {
     product_id: object
     discount: number
     remark: string
+    createdBy: object
+    modifiedBy: object
 }
 
 const discountproduct = new Schema<IDiscountProducts>({
@@ -18,7 +20,15 @@ const discountproduct = new Schema<IDiscountProducts>({
     },
     remark: {
         type: String
-    }
+    },
+    createdBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User"
+    },
+    modifiedBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User"
+    },
 }, { timestamps: true })
 
 const DiscountProductSchema = mongoose.model<IDiscountProducts>("DiscountProduct", discountproduct, "DiscountProducts")

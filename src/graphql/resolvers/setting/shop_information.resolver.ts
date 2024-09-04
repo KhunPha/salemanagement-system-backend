@@ -10,7 +10,7 @@ const shop_information = {
     Mutation: {
         shopInformation: async (parent: any, args: any, context: any) => {
             try {
-                verify(context.user)
+                const userToken = verify(context.user)
                 const getInformation: any = await ShopInformationSchema.findOne();
 
                 if (!getInformation._id) {

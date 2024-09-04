@@ -8,7 +8,7 @@ const slicesecondhandhistory = {
     Query: {
         getSecondHandSliceHistories: async (parent: any, args: any, context: any) => {
             try {
-                verify(context.user)
+                const userToken = verify(context.user)
                 return await SliceSecondHandHistorySchema.find().populate("grade_details")
             } catch (error: any) {
                 throw new ApolloError(error.message)
@@ -18,11 +18,13 @@ const slicesecondhandhistory = {
     Mutation: {
         SliceSecondHand: async (parent: any, args: any, context: any) => {
             try {
-                verify(context.user)
+                const userToken = verify(context.user)
                 for (var i = 0; i < args.input.length; i++) {
 
                     const newslicesecondhand = new SliceSecondHandHistorySchema({
-                        ...args.input[i]
+                        ...args.input[i],
+                        createdBy: userToken._id,
+                        modifiedBy: userToken._id
                     })
                     await newslicesecondhand.save()
 

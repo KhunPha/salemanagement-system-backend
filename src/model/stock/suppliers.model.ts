@@ -6,7 +6,11 @@ export interface ISuppliers extends Document {
     phone_number: string,
     address: string,
     email: string,
-    remark: string
+    remark: string,
+    createdBy: object
+    modifiedBy: object
+    isDelete: boolean
+    deadline: Date
 }
 
 const supplier = new Schema<ISuppliers>({
@@ -24,6 +28,21 @@ const supplier = new Schema<ISuppliers>({
     },
     remark: {
         type: String
+    },
+    isDelete: {
+        type: Boolean,
+        default: false
+    },
+    createdBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User"
+    },
+    modifiedBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User"
+    },
+    deadline: {
+        type: Date
     }
 }, { timestamps: true })
 

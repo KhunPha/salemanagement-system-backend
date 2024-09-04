@@ -23,7 +23,7 @@ const product = {
     getProducts: async (parent: any, args: any, context: any) => {
       try {
         // Verify Token
-        verify(context.user);
+        const userToken = verify(context.user);
 
         var { page, limit, pagination, keyword, unit, category, type_of_product } = args;
         const options: PaginateOptions = {
@@ -62,18 +62,69 @@ const product = {
             type_of_product === "All" ? {} : { type_of_product },
             unit ? { unit } : {},
             category ? { category } : {},
-          ]
+          ],
+          isDelete: { $ne: true }
         }
         return await ProductSchema.paginate(query, options)
       } catch (error: any) {
         throw new ApolloError(error.message);
       }
     },
+    getProductRecovery: async (parent: any, args: any, context: any) => {
+      try {
+        // Verify Token
+        const userToken = verify(context.user);
+
+        var { page, limit, pagination, keyword, unit, category, type_of_product } = args;
+        const options: PaginateOptions = {
+          pagination,
+          customLabels,
+          populate: [
+            {
+              path: "category",
+            },
+            {
+              path: "unit",
+            },
+            {
+              path: "color",
+            },
+            {
+              path: "brand"
+            }
+          ],
+          page: page,
+          limit: limit,
+          sort: { createdAt: -1 }
+        }
+
+        const query = {
+          $and: [
+            {
+              $or: [
+                keyword ? { pro_name: { $regex: keyword, $options: 'i' } } : {},
+                keyword ? { barcode: { $regex: keyword, $options: 'i' } } : {},
+              ]
+            },
+            {
+              status: true
+            },
+            type_of_product === "All" ? {} : { type_of_product },
+            unit ? { unit } : {},
+            category ? { category } : {},
+          ],
+          isDelete: { $ne: false }
+        }
+        return await ProductSchema.paginate(query, options)
+      } catch (error: any) {
+        throw new ApolloError(error.message);
+      }
+    }
   },
   Mutation: {
     uploadProductImage: async (parent: any, args: any, context: any) => {
       try {
-        verify(context.user)
+        const userToken = verify(context.user)
         const img = "https://res.cloudinary.com/duuux4gv5/image/upload/v1723769668/pyss4ndvbe2w2asi2rsy.png"
 
         if (args.file) {
@@ -99,7 +150,7 @@ const product = {
     },
     deleteProductImage: async (parent: any, args: any, context: any) => {
       try {
-        verify(context.user)
+        const userToken = verify(context.user)
         if (args) {
           await cloudinary.uploader.destroy(args.publicId);
           console.log("Delete:", args.publicId)
@@ -112,13 +163,15 @@ const product = {
     },
     createProduct: async (parent: any, args: any, context: any) => {
       try {
-        verify(context.user);
+        const userToken = verify(context.user);
 
         if (!args.input.publicId)
           args.input.image = "https://res.cloudinary.com/duuux4gv5/image/upload/v1723769668/pyss4ndvbe2w2asi2rsy.png"
 
         const newproduct = new ProductSchema({
           ...args.input,
+          createdBy: userToken._id,
+          modifiedBy: userToken._id
         });
 
         await newproduct.save();
@@ -140,10 +193,10 @@ const product = {
     },
     updateProduct: async (parent: any, args: any, context: any) => {
       try {
-        verify(context.user);
+        const userToken = verify(context.user);
         const { id } = args;
 
-        const productDoc = { $set: { ...args.input } };
+        const productDoc = { $set: { ...args.input, modifiedBy: userToken._id } };
 
         const updateDoc: any = await ProductSchema.findByIdAndUpdate(id, productDoc);
 
@@ -167,7 +220,7 @@ const product = {
     },
     discountProduct: async (parent: any, args: any, context: any) => {
       try {
-        verify(context.user)
+        const userToken = verify(context.user)
 
         const discountProduct = new DiscountProductSchema({
           ...args
@@ -182,20 +235,19 @@ const product = {
     },
     deleteProduct: async (parent: any, args: any, context: any) => {
       try {
-        verify(context.user);
+        const userToken = verify(context.user);
         const { id } = args;
 
-        const deleteProduct: any = await ProductSchema.findByIdAndDelete(id);
-        await StockSchema.findOneAndDelete({ product_details: id })
+        const now = new Date()
 
-        if (deleteProduct?.publicId)
-          try {
-            new Promise(async () => {
-              await cloudinary.uploader.destroy(deleteProduct?.publicId);
-            })
-          } catch (err: any) {
-            throw new ApolloError(err.message)
-          }
+        const deadline = new Date(now)
+
+        deadline.setMonth(now.getMonth() + 1)
+
+        const updateDoc = { $set: { isDelete: true, modifiedBy: userToken._id, deadline } }
+
+        const deleteProduct: any = await ProductSchema.findByIdAndUpdate(id, updateDoc);
+        await StockSchema.findOneAndUpdate({ product_details: id }, { $set: { isDelete: true, deadline } })
 
         if (!deleteProduct) {
           throw new ApolloError("Delete failed");
@@ -208,7 +260,7 @@ const product = {
     },
     importProductExcel: async (parent: any, args: any, context: any) => {
       try {
-        verify(context.user)
+        const userToken = verify(context.user)
         const { createReadStream } = await args.file
 
         const chunks: Buffer[] = [];
@@ -248,7 +300,7 @@ const product = {
     },
     importProductCSV: async (parent: any, args: any, context: any) => {
       try {
-        verify(context.user)
+        const userToken = verify(context.user)
         const results: any = [];
         const { createReadStream } = await args.file
 
@@ -300,7 +352,7 @@ const product = {
     },
     exportProductExcel: async (parent: any, args: any, context: any) => {
       try {
-        verify(context.user)
+        const userToken = verify(context.user)
         const uploadPath = args.savePath ? `${args.savePath}` : `/app/uploads`;
 
         // Ensure the directory exists
@@ -361,7 +413,7 @@ const product = {
     },
     exportProductCSV: async (parent: any, args: any, context: any) => {
       try {
-        verify(context.user)
+        const userToken = verify(context.user)
         const uploadPath = args.savePath ? `${args.savePath}` : `/app/uploads`;
 
         // Ensure the directory exists
@@ -395,6 +447,43 @@ const product = {
 
         // Write data to CSV
         await csvWriter.writeRecords(data.map(doc => doc.toObject())); // Convert Mongoose documents to plain objects
+
+        return message
+      } catch (error: any) {
+        throw new ApolloError(error.message)
+      }
+    },
+    recoveryProduct: async (parent: any, args: any, context: any) => {
+      try {
+        const userToken = verify(context.user)
+        const { id } = args
+
+        const updateDoc = { $set: { isDelete: false, modifiedBy: userToken._id } }
+
+        await ProductSchema.findByIdAndUpdate(id, updateDoc)
+        await StockSchema.findOneAndUpdate({ product_details: id }, updateDoc)
+
+        return message
+      } catch (error: any) {
+        throw new ApolloError(error.message)
+      }
+    },
+    recoveryProductDelete: async (parent: any, args: any, context: any) => {
+      try {
+        const userToken = verify(context.user)
+        const { id } = args
+
+        const deleteProduct: any = await ProductSchema.findByIdAndDelete(id)
+        await StockSchema.findOneAndDelete({ product_details: id })
+
+        if (deleteProduct?.publicId)
+          try {
+              new Promise(async () => {
+                  await cloudinary.uploader.destroy(deleteProduct?.publicId)
+              })
+          } catch (err: any) {
+              throw new ApolloError(err.message)
+          }
 
         return message
       } catch (error: any) {

@@ -7,7 +7,7 @@ const exchange_rate = {
     Query: {
         getExchangeRate: async (parent: any, args: any, context: any) => {
             try {
-                verify(context.user)
+                const userToken = verify(context.user)
                 return await ExchangeRateSchema.findOne({ isActive: true })
             } catch (error: any) {
                 throw new ApolloError(error.message)
@@ -18,7 +18,7 @@ const exchange_rate = {
     Mutation: {
         exchangeRate: async (parent: any, args: any, context: any) => {
             try {
-                verify(context.user)
+                const userToken = verify(context.user)
                 const getExchangeRate = await ExchangeRateSchema.findOne({ type: args.input.type });
 
                 if (!getExchangeRate?._id) {
@@ -43,7 +43,7 @@ const exchange_rate = {
         },
         applyUse: async (parent: any, args: any, context: any) => {
             try {
-                verify(context.user)
+                const userToken = verify(context.user)
                 const { id } = await args
 
                 const getExchangeRate_True = await ExchangeRateSchema.findOne({ _id: { $ne: id } })

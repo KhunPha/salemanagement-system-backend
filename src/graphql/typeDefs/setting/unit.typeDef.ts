@@ -6,7 +6,9 @@ const unit = gql`
     type Unit {
         _id: ID,
         unit_name: String,
-        remark: String
+        remark: String,
+        createdBy: User
+        modifiedBy: User
     }
 
     type Paginator {
@@ -34,6 +36,7 @@ const unit = gql`
 
     type Query {
         getUnits(page: Int, limit: Int, pagination: Boolean, keyword: String): UnitPagination
+        getUnitRecovery(page: Int, limit: Int, pagination: Boolean, keyword: String): UnitPagination
     }
 
     type Mutation {
@@ -44,6 +47,8 @@ const unit = gql`
         importUnitCSV(file: Upload!): ResponseMessage!
         exportUnitExcel(savePath: String!): ResponseMessage!
         exportUnitCSV(savePath: String!): ResponseMessage!
+        recoveryUnit(id: ID!): ResponseMessage!
+        recoveryUnitDelete(id: ID!): ResponseMessage!
     }
 
     type Subscription {

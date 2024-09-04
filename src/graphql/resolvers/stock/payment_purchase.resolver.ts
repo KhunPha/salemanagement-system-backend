@@ -7,10 +7,10 @@ const payment_purchase = {
     Query: {
         getPaymentPurchases: async (parent: any, args: any, context: any) => {
             try {
-                verify(context.user)
+                const userToken = verify(context.user)
                 const { id } = await args
 
-                return await PaymentPurchaseSchema.find({ id }).populate("bank")
+                return await PaymentPurchaseSchema.find({ id }).populate("bank createdBy modifiedBy")
             } catch (error: any) {
                 throw new ApolloError(error.message)
             }
@@ -19,10 +19,12 @@ const payment_purchase = {
     Mutation: {
         paymentPurchase: async (parent: any, args: any, context: any) => {
             try {
-                verify(context.user)
+                const userToken = verify(context.user)
 
                 const newpaymentpurchase = new PaymentPurchaseSchema({
-                    ...args.input
+                    ...args.input,
+                    createdBy: userToken._id,
+                    modifiedBy: userToken._id
                 })
 
                 await newpaymentpurchase.save()

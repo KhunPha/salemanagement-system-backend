@@ -18,11 +18,15 @@ const unit = {
     Query: {
         getUnits: async (parent: any, args: any, context: any) => {
             try {
-                verify(context.user)
+                const userToken = verify(context.user)
+
                 const { page, limit, pagination, keyword } = await args
                 const options: PaginateOptions = {
                     pagination,
                     customLabels,
+                    populate: {
+                        path: "createdBy modifiedBy"
+                    },
                     page: page,
                     limit: limit,
                     sort: { createdAt: -1 }
@@ -31,7 +35,36 @@ const unit = {
                 const query = {
                     $and: [
                         keyword ? { unit_name: { $regex: keyword, $options: 'i' } } : {}
-                    ]
+                    ],
+                    isDelete: { $ne: true }
+                }
+
+                return await UnitSchema.paginate(query, options)
+            } catch (error: any) {
+                throw new ApolloError(error.message)
+            }
+        },
+        getUnitRecovery: async (parent: any, args: any, context: any) => {
+            try {
+                const userToken = verify(context.user)
+
+                const { page, limit, pagination, keyword } = await args
+                const options: PaginateOptions = {
+                    pagination,
+                    customLabels,
+                    populate: {
+                        path: "createdBy modifiedBy"
+                    },
+                    page: page,
+                    limit: limit,
+                    sort: { createdAt: -1 }
+                }
+
+                const query = {
+                    $and: [
+                        keyword ? { unit_name: { $regex: keyword, $options: 'i' } } : {}
+                    ],
+                    isDelete: { $ne: false }
                 }
 
                 return await UnitSchema.paginate(query, options)
@@ -43,9 +76,12 @@ const unit = {
     Mutation: {
         createUnit: async (parent: any, args: any, context: any) => {
             try {
-                verify(context.user)
+                const userToken = verify(context.user)
+
                 const newunit = new UnitSchema({
-                    ...args.input
+                    ...args.input,
+                    createdBy: userToken._id,
+                    modifiedBy: userToken._id
                 })
 
                 await newunit.save()
@@ -63,10 +99,10 @@ const unit = {
         },
         updateUnit: async (parent: any, args: any, context: any) => {
             try {
-                verify(context.user)
+                const userToken = verify(context.user)
                 const { id } = await args
 
-                const unitDoc = { $set: { ...args.input } }
+                const unitDoc = { $set: { ...args.input, modifiedBy: userToken._id } }
 
                 const updateDoc = await UnitSchema.findByIdAndUpdate(id, unitDoc, { new: true })
 
@@ -81,10 +117,18 @@ const unit = {
         },
         deleteUnit: async (parent: any, args: any, context: any) => {
             try {
-                verify(context.user)
+                const userToken = verify(context.user)
                 const { id } = await args
 
-                const deleteUnit = await UnitSchema.findByIdAndDelete(id)
+                const now = new Date()
+
+                const deadline = new Date(now)
+
+                deadline.setMonth(now.getMonth() + 1)
+
+                const unitDoc = { $set: { isDelete: true, modifiedBy: userToken._id, deadline } }
+
+                const deleteUnit = await UnitSchema.findByIdAndUpdate(id, unitDoc)
 
                 if (!deleteUnit) {
                     return messageError
@@ -97,7 +141,7 @@ const unit = {
         },
         importUnitExcel: async (parent: any, args: any, context: any) => {
             try {
-                verify(context.user)
+                const userToken = verify(context.user)
                 const { createReadStream } = await args.file
 
                 const chunks: Buffer[] = [];
@@ -127,7 +171,7 @@ const unit = {
         },
         importUnitCSV: async (parent: any, args: any, context: any) => {
             try {
-                verify(context.user)
+                const userToken = verify(context.user)
                 const results: any = [];
                 const { createReadStream } = await args.file
 
@@ -169,7 +213,7 @@ const unit = {
         },
         exportUnitExcel: async (parent: any, args: any, context: any) => {
             try {
-                verify(context.user)
+                const userToken = verify(context.user)
                 const uploadPath = args.savePath ? `/app/uploads/${args.savePath}` : `/app/uploads`;
 
                 // Ensure the directory exists
@@ -230,7 +274,7 @@ const unit = {
         },
         exportUnitCSV: async (parent: any, args: any, context: any) => {
             try {
-                verify(context.user)
+                const userToken = verify(context.user)
                 const uploadPath = args.savePath ? `/app/uploads/${args.savePath}` : `/app/uploads`;
 
                 // Ensure the directory exists
@@ -264,6 +308,32 @@ const unit = {
 
                 // Write data to CSV
                 await csvWriter.writeRecords(data.map(doc => doc.toObject())); // Convert Mongoose documents to plain objects
+
+                return message
+            } catch (error: any) {
+                throw new ApolloError(error.message)
+            }
+        },
+        recoveryUnit: async (parent: any, args: any, context: any) => {
+            try {
+                const userToken = verify(context.user)
+                const { id } = args
+
+                const updateDoc = { $set: { isDelete: false, modifiedBy: userToken._id } }
+
+                await UnitSchema.findByIdAndUpdate(id, updateDoc)
+
+                return message
+            } catch (error: any) {
+                throw new ApolloError(error.message)
+            }
+        },
+        recoveryUnitDelete: async (parent: any, args: any, context: any) => {
+            try {
+                const userToken = verify(context.user)
+                const { id } = args
+
+                await UnitSchema.findByIdAndDelete(id)
 
                 return message
             } catch (error: any) {

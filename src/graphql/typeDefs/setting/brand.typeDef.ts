@@ -7,6 +7,8 @@ const brand = gql`
         _id: ID
         brand_name: String
         remark: String
+        createdBy: User
+        modifiedBy: User
     }
 
     type Paginator {
@@ -34,6 +36,7 @@ const brand = gql`
 
     type Query {
         getBrands(page: Int, limit: Int, pagination: Boolean, keyword: String): BrandPagination
+        getBrandRecovery(page: Int, limit: Int, pagination: Boolean, keyword: String): BrandPagination
     }
 
     type Mutation {
@@ -44,6 +47,8 @@ const brand = gql`
         importBrandCSV(file: Upload!): ResponseMessage!
         exportBrandExcel(savePath: String!): ResponseMessage!
         exportBrandCSV(savePath: String!): ResponseMessage!
+        recoveryBrand(id: ID!): ResponseMessage!
+        recoveryBrandDelete(id: ID!): ResponseMessage!
     }
 `
 

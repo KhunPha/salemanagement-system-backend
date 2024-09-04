@@ -8,7 +8,7 @@ const getstocksale = {
     Query: {
         getStocksSale: async (parent: any, args: any, context: any) => {
             try {
-                verify(context.user)
+                const userToken = verify(context.user)
                 const { page, limit, pagination, keyword, category } = await args
                 const options: PaginateOptions = {
                     pagination,

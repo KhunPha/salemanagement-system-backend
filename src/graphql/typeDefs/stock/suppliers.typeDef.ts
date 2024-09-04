@@ -10,6 +10,8 @@ const supplier = gql`
         email: String,
         address: String,
         remark: String
+        createdBy: User
+        modifiedBy: User
     }
 
     type Paginator {
@@ -40,6 +42,7 @@ const supplier = gql`
 
     type Query {
         getSuppliers(page: Int, limit: Int, pagination: Boolean, keyword: String): SupplierPagination
+        getSupplierRecovery(page: Int, limit: Int, pagination: Boolean, keyword: String): SupplierPagination
     }
 
     type Mutation {
@@ -50,6 +53,8 @@ const supplier = gql`
         importSupplierCSV(file: Upload!): ResponseMessage!
         exportSupplierExcel(savePath: String!): ResponseMessage!
         exportSupplierCSV(savePath: String!): ResponseMessage!
+        recoverySupplier(id: ID!): ResponseMessage!
+        recoverySupplierDelete(id: ID!): ResponseMessage!
     }
 `
 

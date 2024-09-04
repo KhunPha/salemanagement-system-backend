@@ -10,6 +10,7 @@ export interface IUser extends Document {
     image: string,
     publicId: string
     remark: string
+    isDelete: boolean
 }
 
 const user = new Schema<IUser>({
@@ -42,6 +43,10 @@ const user = new Schema<IUser>({
     },
     remark: {
         type: String
+    },
+    isDelete: {
+        type: Boolean,
+        default: false
     }
 }, { timestamps: true })
 

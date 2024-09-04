@@ -6,6 +6,8 @@ const receiveproduct = gql`
         purchase_id: ID
         product_lists: [Products]
         product_unit_type: String
+        createdBy: User
+        modifiedBy: User
     }
 
     type Products {

@@ -8,8 +8,8 @@ const transferin = {
     Query: {
         getTransferIns: async (parent: any, args: any, context: any) => {
             try {
-                verify(context.user)
-                return await TransferInSchema.find().populate(["product_lists.products", "supplier_details"])
+                const userToken = verify(context.user)
+                return await TransferInSchema.find().populate(["product_lists.products", "supplier_details", "createdBy", "modifiedBy"])
             } catch (error: any) {
                 throw new ApolloError(error.message)
             }
@@ -18,10 +18,12 @@ const transferin = {
     Mutation: {
         TransferIn: async (parent: any, args: any, context: any) => {
             try {
-                verify(context.user)
+                const userToken = verify(context.user)
 
                 const newtransferin = new TransferInSchema({
-                    ...args.input
+                    ...args.input,
+                    createdBy: userToken._id,
+                    modifiedBy: userToken._id
                 })
 
                 const transferinproduct_map: any = newtransferin.product_lists

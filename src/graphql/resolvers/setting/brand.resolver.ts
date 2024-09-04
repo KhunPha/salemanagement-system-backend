@@ -16,12 +16,15 @@ const brand = {
     Query: {
         getBrands: async (parent: any, args: any, context: any) => {
             try {
-                verify(context.user)
+                const userToken = verify(context.user)
                 const { page, limit, pagination, keyword } = await args
 
                 const options: PaginateOptions = {
                     pagination,
                     customLabels,
+                    populate: {
+                        path: "createdBy modifiedBy"
+                    },
                     page: page,
                     limit: limit,
                     sort: { createdAt: -1 }
@@ -30,7 +33,36 @@ const brand = {
                 const query = {
                     $and: [
                         keyword ? { brand_name: { $regex: keyword, $options: "i" } } : {}
-                    ]
+                    ],
+                    isDelete: { $ne: true }
+                }
+
+                return await BrandSchema.paginate(query, options);
+            } catch (error: any) {
+                throw new ApolloError(error.message)
+            }
+        },
+        getBrandRecovery: async (parent: any, args: any, context: any) => {
+            try {
+                const userToken = verify(context.user)
+                const { page, limit, pagination, keyword } = await args
+
+                const options: PaginateOptions = {
+                    pagination,
+                    customLabels,
+                    populate: {
+                        path: "createdBy modifiedBy"
+                    },
+                    page: page,
+                    limit: limit,
+                    sort: { createdAt: -1 }
+                }
+
+                const query = {
+                    $and: [
+                        keyword ? { brand_name: { $regex: keyword, $options: "i" } } : {}
+                    ],
+                    isDelete: { $ne: false }
                 }
 
                 return await BrandSchema.paginate(query, options);
@@ -42,10 +74,12 @@ const brand = {
     Mutation: {
         createBrand: async (parent: any, args: any, context: any) => {
             try {
-                verify(context.user)
+                const userToken = verify(context.user)
 
                 const newbrand = new BrandSchema({
-                    ...args.input
+                    ...args.input,
+                    createdBy: userToken._id,
+                    modifiedBy: userToken._id
                 })
 
                 await newbrand.save()
@@ -61,10 +95,10 @@ const brand = {
         },
         updateBrand: async (parent: any, args: any, context: any) => {
             try {
-                verify(context.user)
+                const userToken = verify(context.user)
                 const { id } = await args
 
-                const brandDoc = { $set: { ...args.input } }
+                const brandDoc = { $set: { ...args.input, modifiedBy: userToken._id } }
 
                 const updateDoc = await BrandSchema.findByIdAndUpdate(id, brandDoc, { new: true })
 
@@ -79,10 +113,18 @@ const brand = {
         },
         deleteBrand: async (parent: any, args: any, context: any) => {
             try {
-                verify(context.user)
+                const userToken = verify(context.user)
                 const { id } = await args
 
-                const deleteBrand = await BrandSchema.findByIdAndDelete(id)
+                const now = new Date()
+
+                const deadline = new Date(now)
+
+                deadline.setMonth(now.getMonth() + 1)
+
+                const updateDoc = { $set: { isdelete: true, modified: userToken._id, deadline } }
+
+                const deleteBrand = await BrandSchema.findByIdAndUpdate(id, updateDoc)
 
                 if (!deleteBrand) {
                     return messageError
@@ -95,7 +137,7 @@ const brand = {
         },
         importBrandExcel: async (parent: any, args: any, context: any) => {
             try {
-                verify(context.user)
+                const userToken = verify(context.user)
                 const { createReadStream } = await args.file
 
                 const chunks: Buffer[] = [];
@@ -125,7 +167,7 @@ const brand = {
         },
         importBrandCSV: async (parent: any, args: any, context: any) => {
             try {
-                verify(context.user)
+                const userToken = verify(context.user)
                 const results: any = [];
                 const { createReadStream } = await args.file
 
@@ -167,7 +209,7 @@ const brand = {
         },
         exportBrandExcel: async (parent: any, args: any, context: any) => {
             try {
-                verify(context.user)
+                const userToken = verify(context.user)
                 const uploadPath = args.savePath ? `${args.savePath}` : ` / app / uploads`;
 
                 if (!fs.existsSync(uploadPath)) {
@@ -227,7 +269,7 @@ const brand = {
         },
         exportBrandCSV: async (parent: any, args: any, context: any) => {
             try {
-                verify(context.user)
+                const userToken = verify(context.user)
                 const uploadPath = args.savePath ? `${args.savePath}` : ` / app / uploads`;
 
                 // Ensure the directory exists
@@ -261,6 +303,32 @@ const brand = {
 
                 // Write data to CSV
                 await csvWriter.writeRecords(data.map(doc => doc.toObject())); // Convert Mongoose documents to plain objects
+
+                return message
+            } catch (error: any) {
+                throw new ApolloError(error.message)
+            }
+        },
+        recoveryBrand: async (parent: any, args: any, context: any) => {
+            try {
+                const userToken = verify(context.user)
+                const { id } = args
+
+                const updateDoc = { $set: { isDelete: false, modifiedBy: userToken._id } }
+
+                await BrandSchema.findByIdAndUpdate(id, updateDoc)
+
+                return message
+            } catch (error: any) {
+                throw new ApolloError(error.message)
+            }
+        },
+        recoveryBrandDelete: async (parent: any, args: any, context: any) => {
+            try {
+                const userToken = verify(context.user)
+                const { id } = args
+
+                await BrandSchema.findByIdAndDelete(id)
 
                 return message
             } catch (error: any) {

@@ -15,11 +15,14 @@ const category = {
     Query: {
         getCategories: async (parent: any, args: any, context: any) => {
             try {
-                verify(context.user)
+                const userToken = verify(context.user)
                 const { page, limit, pagination, keyword } = await args
                 const options: PaginateOptions = {
                     pagination,
                     customLabels,
+                    populate: {
+                        path: "createdBy modifiedBy"
+                    },
                     page: page,
                     limit: limit,
                     sort: { createdAt: -1 }
@@ -28,7 +31,34 @@ const category = {
                 const query = {
                     $and: [
                         keyword ? { category_name: { $regex: keyword, $options: 'i' } } : {}
-                    ]
+                    ],
+                    isDelete: { $ne: true }
+                }
+                return await CategoriesSchema.paginate(query, options)
+            } catch (error: any) {
+                throw new ApolloError(error.message)
+            }
+        },
+        getCategoryRecovery: async (parent: any, args: any, context: any) => {
+            try {
+                const userToken = verify(context.user)
+                const { page, limit, pagination, keyword } = await args
+                const options: PaginateOptions = {
+                    pagination,
+                    customLabels,
+                    populate: {
+                        path: "createdBy modifiedBy"
+                    },
+                    page: page,
+                    limit: limit,
+                    sort: { createdAt: -1 }
+                }
+
+                const query = {
+                    $and: [
+                        keyword ? { category_name: { $regex: keyword, $options: 'i' } } : {}
+                    ],
+                    isDelete: { $ne: false }
                 }
                 return await CategoriesSchema.paginate(query, options)
             } catch (error: any) {
@@ -39,9 +69,11 @@ const category = {
     Mutation: {
         createCategory: async (parent: any, args: any, context: any) => {
             try {
-                verify(context.user)
+                const userToken = verify(context.user)
                 const newcate = new CategoriesSchema({
-                    ...args.input
+                    ...args.input,
+                    createdBy: userToken._id,
+                    modifiedBy: userToken._id
                 })
 
                 await newcate.save()
@@ -57,10 +89,10 @@ const category = {
         },
         updateCategory: async (parent: any, args: any, context: any) => {
             try {
-                verify(context.user)
+                const userToken = verify(context.user)
                 const { id } = args
 
-                const cateDoc = { $set: { ...args.input } }
+                const cateDoc = { $set: { ...args.input, modifiedBy: userToken._id } }
 
                 const updateDoc = await CategoriesSchema.findByIdAndUpdate(id, cateDoc)
 
@@ -75,10 +107,18 @@ const category = {
         },
         deleteCategory: async (parent: any, args: any, context: any) => {
             try {
-                verify(context.user)
+                const userToken = verify(context.user)
                 const { id } = args
 
-                const deleteCategory = await CategoriesSchema.findOneAndDelete(id)
+                const now = new Date()
+
+                const deadline = new Date(now)
+
+                deadline.setMonth(now.getMonth() + 1)
+
+                const updateDoc = { $set: { isDelete: true, modifiedBy: userToken._id, deadline } }
+
+                const deleteCategory = await CategoriesSchema.findByIdAndUpdate(id, updateDoc)
 
                 if (!deleteCategory) {
                     return messageError
@@ -91,7 +131,7 @@ const category = {
         },
         importCategoryExcel: async (parent: any, args: any, context: any) => {
             try {
-                verify(context.user)
+                const userToken = verify(context.user)
                 const { createReadStream } = await args.file
 
                 const chunks: Buffer[] = [];
@@ -121,7 +161,7 @@ const category = {
         },
         importCategoryCSV: async (parent: any, args: any, context: any) => {
             try {
-                verify(context.user)
+                const userToken = verify(context.user)
                 const results: any = [];
                 const { createReadStream } = await args.file
 
@@ -163,7 +203,7 @@ const category = {
         },
         exportCategoryExcel: async (parent: any, args: any, context: any) => {
             try {
-                verify(context.user)
+                const userToken = verify(context.user)
                 const uploadPath = args.savePath ? `${args.savePath}` : `/app/uploads`;
 
                 // Ensure the directory exists
@@ -224,7 +264,7 @@ const category = {
         },
         exportCategoryCSV: async (parent: any, args: any, context: any) => {
             try {
-                verify(context.user)
+                const userToken = verify(context.user)
                 const uploadPath = args.savePath ? `/app/uploads/${args.savePath}` : `/app/uploads`;
 
                 // Ensure the directory exists
@@ -258,6 +298,32 @@ const category = {
 
                 // Write data to CSV
                 await csvWriter.writeRecords(data.map(doc => doc.toObject())); // Convert Mongoose documents to plain objects
+
+                return message
+            } catch (error: any) {
+                throw new ApolloError(error.message)
+            }
+        },
+        recoveryCategory: async (parent: any, args: any, context: any) => {
+            try {
+                const userToken = verify(context.user)
+                const { id } = args
+
+                const updateDoc = { $set: { isDelete: false, modifiedBy: userToken._id } }
+
+                await CategoriesSchema.findByIdAndUpdate(id, updateDoc)
+
+                return message
+            } catch (error: any) {
+                throw new ApolloError(error.message)
+            }
+        },
+        recoveryCategoryDelete: async (parent: any, args: any, context: any) => {
+            try {
+                const userToken = verify(context.user)
+                const { id } = args
+
+                await CategoriesSchema.findByIdAndDelete(id)
 
                 return message
             } catch (error: any) {

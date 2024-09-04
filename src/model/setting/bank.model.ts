@@ -4,6 +4,10 @@ import paginate from "mongoose-paginate-v2"
 export interface IBank extends Document {
     bank_name: string
     remark: string
+    createdBy: object
+    modifiedBy: object
+    isDelete: boolean
+    deadline: Date
 }
 
 const bank = new Schema<IBank>({
@@ -13,6 +17,21 @@ const bank = new Schema<IBank>({
     },
     remark: {
         type: String
+    },
+    createdBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User"
+    },
+    modifiedBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User"
+    },
+    isDelete: {
+        type: Boolean,
+        default: false
+    },
+    deadline: {
+        type: Date
     }
 }, { timestamps: true })
 

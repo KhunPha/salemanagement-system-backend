@@ -9,7 +9,7 @@ const stock = {
     Query: {
         getStocks: async (parent: any, args: any, context: any) => {
             try {
-                verify(context.user)
+                const userToken = verify(context.user)
                 const { page, limit, pagination, keyword } = await args
                 const options: PaginateOptions = {
                     pagination,
@@ -44,7 +44,7 @@ const stock = {
     Mutation: {
         updateStock: async (parent: any, args: any, context: any) => {
             try {
-                verify(context.user)
+                const userToken = verify(context.user)
                 const { cost, discount } = await args.input
                 const { id } = await args
 

@@ -15,11 +15,14 @@ const supplier = {
     Query: {
         getSuppliers: async (parent: any, args: any, context: any) => {
             try {
-                verify(context.user)
+                const userToken = verify(context.user)
                 const { page, limit, pagination, keyword } = await args
                 const options: PaginateOptions = {
                     pagination,
                     customLabels,
+                    populate: {
+                        path: "createdBy modifiedBy"
+                    },
                     page: page,
                     limit: limit,
                     sort: { createdAt: -1 }
@@ -31,7 +34,38 @@ const supplier = {
                         keyword ? { phone_number: { $regex: keyword, $options: 'i' } } : {},
                         keyword ? { email: { $regex: keyword, $options: 'i' } } : {},
                         keyword ? { address: { $regex: keyword, $options: 'i' } } : {}
-                    ]
+                    ],
+                    isDelete: { $ne: true }
+                }
+
+                return await SupplierSchema.paginate(query, options)
+            } catch (error: any) {
+                throw new ApolloError(error.message)
+            }
+        },
+        getSupplierRecovery: async (parent: any, args: any, context: any) => {
+            try {
+                const userToken = verify(context.user)
+                const { page, limit, pagination, keyword } = await args
+                const options: PaginateOptions = {
+                    pagination,
+                    customLabels,
+                    populate: {
+                        path: "createdBy modifiedBy"
+                    },
+                    page: page,
+                    limit: limit,
+                    sort: { createdAt: -1 }
+                }
+
+                const query = {
+                    $or: [
+                        keyword ? { supplier_name: { $regex: keyword, $options: 'i' } } : {},
+                        keyword ? { phone_number: { $regex: keyword, $options: 'i' } } : {},
+                        keyword ? { email: { $regex: keyword, $options: 'i' } } : {},
+                        keyword ? { address: { $regex: keyword, $options: 'i' } } : {}
+                    ],
+                    isDelete: { $ne: false }
                 }
 
                 return await SupplierSchema.paginate(query, options)
@@ -43,10 +77,12 @@ const supplier = {
     Mutation: {
         createSupplier: async (parent: any, args: any, context: any) => {
             try {
-                verify(context.user)
+                const userToken = verify(context.user)
 
                 const newsupplier = new SupplierSchema({
-                    ...args.input
+                    ...args.input,
+                    createdBy: userToken._id,
+                    modifiedBy: userToken._id
                 })
 
                 await newsupplier.save()
@@ -62,10 +98,10 @@ const supplier = {
         },
         updateSupplier: async (parent: any, args: any, context: any) => {
             try {
-                verify(context.user)
+                const userToken = verify(context.user)
                 const { id } = args
 
-                const supplierDoc = { $set: { ...args.input } }
+                const supplierDoc = { $set: { ...args.input, modifiedBy: userToken._id } }
 
                 const updateDoc = await SupplierSchema.findByIdAndUpdate(id, supplierDoc)
 
@@ -80,10 +116,18 @@ const supplier = {
         },
         deleteSupplier: async (parent: any, args: any, context: any) => {
             try {
-                verify(context.user)
+                const userToken = verify(context.user)
                 const { id } = args
 
-                const deleteSupplier = await SupplierSchema.findByIdAndDelete(id)
+                const now = new Date()
+
+                const deadline = new Date(now)
+
+                deadline.setMonth(now.getMonth() + 1)
+
+                const updateDoc = { $set: { isDelete: true, modifiedBy: userToken._id, deadline } }
+
+                const deleteSupplier = await SupplierSchema.findByIdAndUpdate(id, updateDoc)
 
                 if (!deleteSupplier) {
                     return messageError
@@ -96,7 +140,7 @@ const supplier = {
         },
         importSupplierExcel: async (parent: any, args: any, context: any) => {
             try {
-                verify(context.user)
+                const userToken = verify(context.user)
                 const { createReadStream } = await args.file
 
                 const chunks: Buffer[] = [];
@@ -126,7 +170,7 @@ const supplier = {
         },
         importSupplierCSV: async (parent: any, args: any, context: any) => {
             try {
-                verify(context.user)
+                const userToken = verify(context.user)
                 const results: any = [];
                 const { createReadStream } = await args.file
 
@@ -168,7 +212,7 @@ const supplier = {
         },
         exportSupplierExcel: async (parent: any, args: any, context: any) => {
             try {
-                verify(context.user)
+                const userToken = verify(context.user)
                 const uploadPath = args.savePath ? `${args.savePath}` : ` / app / uploads`;
 
                 // Ensure the directory exists
@@ -229,7 +273,7 @@ const supplier = {
         },
         exportSupplierCSV: async (parent: any, args: any, context: any) => {
             try {
-                verify(context.user)
+                const userToken = verify(context.user)
                 const uploadPath = args.savePath ? `${args.savePath}` : ` / app / uploads`;
 
                 // Ensure the directory exists
@@ -264,6 +308,32 @@ const supplier = {
 
                 // Write data to CSV
                 await csvWriter.writeRecords(data.map(doc => doc.toObject())); // Convert Mongoose documents to plain objects
+
+                return message
+            } catch (error: any) {
+                throw new ApolloError(error.message)
+            }
+        },
+        recoverySupplier: async (parent: any, args: any, context: any) => {
+            try {
+                const userToken = verify(context.user)
+                const { id } = args
+
+                const updateDoc = { $set: { isDelete: false, modifiedBy: userToken._id } }
+
+                await SupplierSchema.findByIdAndUpdate(id, updateDoc)
+
+                return message
+            } catch (error: any) {
+                throw new ApolloError(error.message)
+            }
+        },
+        recoverySupplierDelete: async (parent: any, args: any, context: any) => {
+            try {
+                const userToken = verify(context.user)
+                const { id } = args
+
+                await SupplierSchema.findByIdAndDelete(id)
 
                 return message
             } catch (error: any) {

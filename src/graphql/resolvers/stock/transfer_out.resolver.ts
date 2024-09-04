@@ -8,8 +8,8 @@ const transferout = {
     Query: {
         getTransferOuts: async (parent: any, args: any, context: any) => {
             try {
-                verify(context.user)
-                return await TransferOutSchema.find().populate(["product_lists.products", "supplier_details"])
+                const userToken = verify(context.user)
+                return await TransferOutSchema.find().populate(["product_lists.products", "supplier_details", "createdBy", "modifiedBy"])
             } catch (error: any) {
                 throw new ApolloError(error.message)
             }
@@ -18,10 +18,12 @@ const transferout = {
     Mutation: {
         TransferOut: async (parent: any, args: any, context: any) => {
             try {
-                verify(context.user)
+                const userToken = verify(context.user)
 
                 const newtransferout = new TransferOutSchema({
-                    ...args.input
+                    ...args.input,
+                    createdBy: userToken._id,
+                    modifiedBy: userToken._id
                 })
 
                 const transferoutproduct_map: any = newtransferout.product_lists

@@ -5,6 +5,10 @@ export interface IColor extends Document {
     color_name: string,
     color_code: string,
     remark: string
+    createdBy: object
+    modifiedBy: object 
+    isDelete: boolean
+    deadline: Date
 }
 
 const color = new Schema<IColor>({
@@ -16,6 +20,21 @@ const color = new Schema<IColor>({
     },
     remark: {
         type: String
+    },
+    createdBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User"
+    },
+    modifiedBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User"
+    },
+    isDelete: {
+        type: Boolean,
+        default: false
+    },
+    deadline: {
+        type: Date
     }
 }, { timestamps: true })
 

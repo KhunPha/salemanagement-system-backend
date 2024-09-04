@@ -11,7 +11,7 @@ const secondhand = {
     Query: {
         getSecondHands: async (parent: any, args: any, context: any) => {
             try {
-                verify(context.user)
+                const userToken = verify(context.user)
                 const { page, limit, pagination, keyword } = await args
                 const options: PaginateOptions = {
                     pagination,
@@ -30,6 +30,9 @@ const secondhand = {
                         },
                         {
                             status: false
+                        },
+                        {
+                            isDelete: { $ne: true }
                         }
                     ]
                 }
@@ -42,11 +45,13 @@ const secondhand = {
     Mutation: {
         createSecondHand: async (parent: any, args: any, context: any) => {
             try {
-                verify(context.user)
+                const userToken = verify(context.user)
                 args.input.status = false
 
                 const newsecondhand = new ProductSchema({
-                    ...args.input
+                    ...args.input,
+                    createdBy: userToken._id,
+                    modifiedBy: userToken._id
                 })
 
                 await newsecondhand.save()
@@ -66,10 +71,10 @@ const secondhand = {
         },
         updateSecondHand: async (parent: any, args: any, context: any) => {
             try {
-                verify(context.user)
+                const userToken = verify(context.user)
                 const { id } = await args
 
-                const SecondHandDoc = { $set: { ...args.input } }
+                const SecondHandDoc = { $set: { ...args.input, modifiedBy: userToken._id } }
 
                 const updateDoc = await ProductSchema.findByIdAndUpdate(id, SecondHandDoc, { new: true })
 
@@ -84,10 +89,13 @@ const secondhand = {
         },
         deleteSecondHand: async (parent: any, args: any, context: any) => {
             try {
-                verify(context.user)
+                const userToken = verify(context.user)
                 const { id } = await args
 
-                const deleteSecondHand = await ProductSchema.findByIdAndDelete(id)
+                const updateDoc = { $set: { isDelete: true, modifiedBy: userToken._id } }
+
+                const deleteSecondHand = await ProductSchema.findByIdAndUpdate(id, updateDoc)
+                await StockSchema.findOneAndUpdate({ product_details: id }, { $set: { isDelete: true } })
 
                 if (!deleteSecondHand) {
                     return messageError

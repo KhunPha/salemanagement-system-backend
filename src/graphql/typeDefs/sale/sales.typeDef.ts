@@ -25,6 +25,8 @@ const sales = gql`
         bank: Bank
         product_add: [ProductAdd]
         unit_product_discount: [UnitProductDiscount]
+        createdBy: User
+        modifiedBy: User
     }
 
     type Paginator {

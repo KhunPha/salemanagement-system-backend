@@ -4,6 +4,8 @@ export interface ISliceSecondHandHistory extends Document {
     grade_details: object
     qty: number
     price: number
+    createdBy: object
+    modifiedBy: object
 }
 
 const slicesecondhandhistory = new Schema<ISliceSecondHandHistory>({
@@ -13,6 +15,17 @@ const slicesecondhandhistory = new Schema<ISliceSecondHandHistory>({
     },
     qty: {
         type: Number
+    },
+    price: {
+        type: Number
+    },
+    createdBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User"
+    },
+    modifiedBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User"
     }
 }, { timestamps: true })
 

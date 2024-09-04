@@ -13,7 +13,7 @@ const report = {
         revenueReport: async () => "Go to World",
         expenseReport: async (parent: any, args: any, context: any) => {
             try {
-                verify(context.user)
+                const userToken = verify(context.user)
                 const ExpenseData = await PurchaseSchema.find({}).populate("products_lists.product_details")
 
                 const productSum: any = {};
@@ -58,8 +58,8 @@ const report = {
         },
         stockReport: async (parent: any, args: any, context: any) => {
             try {
-                verify(context.user)
-                const data: any = await StockSchema.find({}).populate("product_details")
+                const userToken = verify(context.user)
+                const data: any = await StockSchema.find({ isDelete: { $ne: true } }).populate("product_details")
                 let total = 0;
 
                 data.map((data: any) => {

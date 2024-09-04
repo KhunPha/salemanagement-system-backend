@@ -5,6 +5,8 @@ const transferin = gql`
         product_lists: [Products]
         supplier_details: Supplier
         remark: String
+        createdBy: User
+        modifiedBy: User
     }
 
     type Products {

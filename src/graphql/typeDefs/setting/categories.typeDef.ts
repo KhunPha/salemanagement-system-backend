@@ -7,6 +7,8 @@ const category = gql`
         _id: ID!,
         category_name: String,
         remark: String
+        createdBy: User
+        modifiedBy: User
     }
 
     type Paginator {
@@ -34,6 +36,7 @@ const category = gql`
 
     type Query {
         getCategories(page: Int, limit: Int, pagination: Boolean, keyword: String): CategoryPagination
+        getCategoryRecovery(page: Int, limit: Int, pagination: Boolean, keyword: String): CategoryPagination
     }
 
     type Mutation {
@@ -44,6 +47,8 @@ const category = gql`
         importCategoryCSV(file: Upload!): ResponseMessage!
         exportCategoryExcel(savePath: String!): ResponseMessage!
         exportCategoryCSV(savePath: String!): ResponseMessage!
+        recoveryCategory(id: ID!): ResponseMessage!
+        recoveryCategoryDelete(id: ID!): ResponseMessage!
     }
 `
 

@@ -24,7 +24,7 @@ const marketing = {
     Query: {
         getMarketings: async (parent: any, args: any, context: any) => {
             try {
-                verify(context.user)
+                const userToken = verify(context.user)
                 const { page, limit, pagination, keyword } = await args
                 const options: PaginateOptions = {
                     pagination,
@@ -37,7 +37,8 @@ const marketing = {
                 const query = {
                     $and: [
                         keyword ? { title: { $regex: keyword, $options: 'i' } } : {}
-                    ]
+                    ],
+                    isDelete: { $ne: true }
                 }
                 return await MarketingSchema.paginate(query, options)
             } catch (error: any) {
@@ -46,8 +47,31 @@ const marketing = {
         },
         getTelegramSend: async (parent: any, args: any, context: any) => {
             try {
-                verify(context.user)
+                const userToken = verify(context.user)
                 return await TelegramSendHIstorySchema.find().populate("customer_lists.customer").sort({ createdAt: -1 })
+            } catch (error: any) {
+                throw new ApolloError(error.message)
+            }
+        },
+        getMarketingRecovery: async (parent: any, args: any, context: any) => {
+            try {
+                const userToken = verify(context.user)
+                const { page, limit, pagination, keyword } = await args
+                const options: PaginateOptions = {
+                    pagination,
+                    customLabels,
+                    page: page,
+                    limit: limit,
+                    sort: { createdAt: -1 }
+                }
+
+                const query = {
+                    $and: [
+                        keyword ? { title: { $regex: keyword, $options: 'i' } } : {}
+                    ],
+                    isDelete: { $ne: false }
+                }
+                return await MarketingSchema.paginate(query, options)
             } catch (error: any) {
                 throw new ApolloError(error.message)
             }
@@ -56,7 +80,7 @@ const marketing = {
     Mutation: {
         uploadMarketingImage: async (parent: any, args: any, context: any) => {
             try {
-                verify(context.user)
+                const userToken = verify(context.user)
                 var img = "https://res.cloudinary.com/duuux4gv5/image/upload/v1723769679/aflwiado1kckthpmfg5m.png"
 
                 if (args.file) {
@@ -82,7 +106,7 @@ const marketing = {
         },
         deleteMarketingImage: async (parent: any, args: any, context: any) => {
             try {
-                verify(context.user)
+                const userToken = verify(context.user)
                 if (args) {
                     await cloudinary.uploader.destroy(args.publicId);
                     console.log("Delete:", args.publicId)
@@ -96,13 +120,15 @@ const marketing = {
         },
         createMarketing: async (parent: any, args: any, context: any) => {
             try {
-                verify(context.user)
+                const userToken = verify(context.user)
 
                 if (!args.input.publicId)
                     args.input.image = "https://res.cloudinary.com/duuux4gv5/image/upload/v1723769679/aflwiado1kckthpmfg5m.png"
 
                 const newmarketing = new MarketingSchema({
-                    ...args.input
+                    ...args.input,
+                    createdBy: userToken._id,
+                    modifiedBy: userToken._id
                 })
 
                 await newmarketing.save()
@@ -118,10 +144,10 @@ const marketing = {
         },
         updateMarketing: async (parent: any, args: any, context: any) => {
             try {
-                verify(context.user)
+                const userToken = verify(context.user)
                 const { id } = await args
 
-                const MarketingDoc = { $set: { ...args.input } }
+                const MarketingDoc = { $set: { ...args.input, modifiedBy: userToken._id } }
 
                 const updateDoc: any = await MarketingSchema.findByIdAndUpdate(id, MarketingDoc)
 
@@ -145,19 +171,18 @@ const marketing = {
         },
         deleteMarketing: async (parent: any, args: any, context: any) => {
             try {
-                verify(context.user)
+                const userToken = verify(context.user)
                 const { id } = await args
 
-                const deleteMarketing: any = await MarketingSchema.findByIdAndDelete(id)
+                const now = new Date()
 
-                if (deleteMarketing?.publicId)
-                    try {
-                        new Promise(async () => {
-                            await cloudinary.uploader.destroy(deleteMarketing?.publicId);
-                        })
-                    } catch (err: any) {
-                        throw new ApolloError(err.message)
-                    }
+                const deadline = new Date(now)
+
+                deadline.setMonth(now.getMonth() + 1)
+
+                const updateDoc = { $set: { isDelete: true, modified: userToken._id, deadline } }
+
+                const deleteMarketing: any = await MarketingSchema.findByIdAndUpdate(id, updateDoc)
 
                 if (!deleteMarketing) {
                     return messageError
@@ -170,7 +195,7 @@ const marketing = {
         },
         emailMarketing: async (parent: any, args: any, context: any) => {
             try {
-                verify(context.user)
+                const userToken = verify(context.user)
                 const { customer, marketing_id } = await args
                 let email: any = []
 
@@ -246,7 +271,7 @@ const marketing = {
         },
         telegramMarketing: async (parent: any, args: any, context: any) => {
             try {
-                verify(context.user)
+                const userToken = verify(context.user)
                 const { customer, marketing_id } = await args
                 var recipientUsername: any, sendSuccess;
 
@@ -345,7 +370,7 @@ const marketing = {
         },
         importMarketingExcel: async (parent: any, args: any, context: any) => {
             try {
-                verify(context.user)
+                const userToken = verify(context.user)
                 const { createReadStream } = await args.file
 
                 const chunks: Buffer[] = [];
@@ -375,7 +400,7 @@ const marketing = {
         },
         importMarketingCSV: async (parent: any, args: any, context: any) => {
             try {
-                verify(context.user)
+                const userToken = verify(context.user)
                 const results: any = [];
                 const { createReadStream } = await args.file
 
@@ -417,7 +442,7 @@ const marketing = {
         },
         exportMarketingExcel: async (parent: any, args: any, context: any) => {
             try {
-                verify(context.user)
+                const userToken = verify(context.user)
                 const uploadPath = args.savePath ? `/app/uploads/${args.savePath}` : `/app/uploads`;
 
                 // Ensure the directory exists
@@ -478,7 +503,7 @@ const marketing = {
         },
         exportMarketingCSV: async (parent: any, args: any, context: any) => {
             try {
-                verify(context.user)
+                const userToken = verify(context.user)
                 const uploadPath = args.savePath ? `/app/uploads/${args.savePath}` : `/app/uploads`;
 
                 // Ensure the directory exists
@@ -512,6 +537,41 @@ const marketing = {
 
                 // Write data to CSV
                 await csvWriter.writeRecords(data.map(doc => doc.toObject())); // Convert Mongoose documents to plain objects
+
+                return message
+            } catch (error: any) {
+                throw new ApolloError(error.message)
+            }
+        },
+        recoveryMarketing: async (parent: any, args: any, context: any) => {
+            try {
+                const userToken = verify(context.user)
+                const { id } = args
+
+                const updateDoc = { $set: { isDelete: false, modifiedBy: userToken._id } }
+
+                await MarketingSchema.findByIdAndUpdate(id, updateDoc)
+
+                return message
+            } catch (error: any) {
+                throw new ApolloError(error.message)
+            }
+        },
+        recoveryMarketingDelete: async (parent: any, args: any, context: any) => {
+            try {
+                const userToken = verify(context.user)
+                const { id } = args
+
+                const deleteMarketing: any = await MarketingSchema.findByIdAndDelete(id)
+
+                if (deleteMarketing?.publicId)
+                    try {
+                        new Promise(async () => {
+                            await cloudinary.uploader.destroy(deleteMarketing?.publicId)
+                        })
+                    } catch (err: any) {
+                        throw new ApolloError(err.message)
+                    }
 
                 return message
             } catch (error: any) {

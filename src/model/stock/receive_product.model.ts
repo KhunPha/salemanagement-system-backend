@@ -4,6 +4,8 @@ export interface IReceiveProductTransaction extends Document {
     purchase_id: object
     product_lists: object
     product_unit_type: string
+    createdBy: object
+    modifiedBy: object
 }
 
 const receiveproductT = new Schema<IReceiveProductTransaction>({
@@ -28,7 +30,15 @@ const receiveproductT = new Schema<IReceiveProductTransaction>({
     product_unit_type: {
         type: String,
         enum: ["Whole", "Retail"]
-    }
+    },
+    createdBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User"
+    },
+    modifiedBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User"
+    },
 }, { timestamps: true })
 
 const ReceiveProductTransactionSchema = mongoose.model<IReceiveProductTransaction>("ReceiveProductTransaction", receiveproductT, "ReceivProductTransactions")

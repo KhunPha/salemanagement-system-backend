@@ -8,6 +8,8 @@ const color = gql`
         color_code: String,
         color_name: String,
         remark: String
+        createdBy: User
+        modifiedBy: User
     }
 
     type Paginator {
@@ -36,6 +38,7 @@ const color = gql`
 
     type Query {
         getColors(page: Int, limit: Int, pagination: Boolean, keyword: String): ColorPagination
+        getColorRecovery(page: Int, limit: Int, pagination: Boolean, keyword: String): ColorPagination
     }
 
     type Mutation {
@@ -46,6 +49,8 @@ const color = gql`
         importColorCSV(file: Upload!): ResponseMessage!
         exportColorExcel(savePath: String!): ResponseMessage!
         exportColorCSV(savePath: String!): ResponseMessage!
+        recoveryColor(id: ID!): ResponseMessage!
+        recoveryColorDelete(id: ID!): ResponseMessage!
     }
 `
 

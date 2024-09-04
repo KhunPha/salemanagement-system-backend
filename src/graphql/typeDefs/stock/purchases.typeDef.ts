@@ -14,6 +14,8 @@ const purchase = gql`
         total_qty: Int
         due: Float
         remark: String
+        createdBy: User
+        modifiedBy: User
     }
 
     type PurchaseProductDetails {

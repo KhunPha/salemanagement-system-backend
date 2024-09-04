@@ -11,6 +11,8 @@ const customer = gql`
         address: String,
         types: String,
         remark: String
+        createdBy: User
+        modifiedBy: User
     }
 
     type Paginator {
@@ -42,6 +44,7 @@ const customer = gql`
 
     type Query {
         getCustomers(page: Int, limit: Int, pagination: Boolean, keyword: String, types: String): CustomerPagination
+        getCustomerRecovery(page: Int, limit: Int, pagination: Boolean, keyword: String): CustomerPagination
     }
 
     type Mutation {
@@ -52,6 +55,8 @@ const customer = gql`
         importCustomerCSV(file: Upload!): ResponseMessage!
         exportCustomerExcel(savePath: String!): ResponseMessage!
         exportCustomerCSV(savePath: String!): ResponseMessage!
+        recoveryCustomer(id: ID!): ResponseMessage!
+        recoveryCustomerDelete(id: ID!): ResponseMessage!
     }
 `
 

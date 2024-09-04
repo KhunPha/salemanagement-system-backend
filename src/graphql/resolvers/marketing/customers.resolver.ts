@@ -15,11 +15,14 @@ const customer = {
     Query: {
         getCustomers: async (parent: any, args: any, context: any) => {
             try {
-                verify(context.user)
+                const userToken = verify(context.user)
                 const { page, limit, pagination, keyword, types } = await args
                 const options: PaginateOptions = {
                     pagination,
                     customLabels,
+                    populate: {
+                        path: "createdBy modifiedBy"
+                    },
                     page: page,
                     limit: limit,
                     sort: { createdAt: -1 }
@@ -36,7 +39,43 @@ const customer = {
                             ]
                         },
                         types ? { types } : {}
-                    ]
+                    ],
+                    isDelete: { $ne: true }
+                }
+
+                return await CustomerSchema.paginate(query, options)
+            } catch (error: any) {
+                throw new ApolloError(error.message)
+            }
+        },
+        getCustomerRecovery: async (parent: any, args: any, context: any) => {
+            try {
+                const userToken = verify(context.user)
+                const { page, limit, pagination, keyword, types } = await args
+                const options: PaginateOptions = {
+                    pagination,
+                    customLabels,
+                    populate: {
+                        path: "createdBy modifiedBy"
+                    },
+                    page: page,
+                    limit: limit,
+                    sort: { createdAt: -1 }
+                }
+
+                const query = {
+                    $and: [
+                        {
+                            $or: [
+                                keyword ? { customer_name: { $regex: keyword, $options: 'i' } } : {},
+                                keyword ? { phone_number: { $regex: keyword, $options: 'i' } } : {},
+                                keyword ? { email: { $regex: keyword, $options: 'i' } } : {},
+                                keyword ? { address: { $regex: keyword, $options: 'i' } } : {},
+                            ]
+                        },
+                        types ? { types } : {}
+                    ],
+                    isDelete: { $ne: false }
                 }
 
                 return await CustomerSchema.paginate(query, options)
@@ -48,9 +87,11 @@ const customer = {
     Mutation: {
         createCustomer: async (parent: any, args: any, context: any) => {
             try {
-                verify(context.user)
+                const userToken = verify(context.user)
                 const newcustomer = new CustomerSchema({
-                    ...args.input
+                    ...args.input,
+                    createdBy: userToken._id,
+                    modifiedBy: userToken._id
                 })
 
                 await newcustomer.save()
@@ -66,10 +107,10 @@ const customer = {
         },
         updateCustomer: async (parent: any, args: any, context: any) => {
             try {
-                verify(context.user)
+                const userToken = verify(context.user)
                 const { id } = await args
 
-                const customerDoc = { $set: { ...args.input } }
+                const customerDoc = { $set: { ...args.input, modifiedBy: userToken._id } }
 
                 const updateDoc = await CustomerSchema.findByIdAndUpdate(id, customerDoc)
 
@@ -84,10 +125,18 @@ const customer = {
         },
         deleteCustomer: async (parent: any, args: any, context: any) => {
             try {
-                verify(context.user)
+                const userToken = verify(context.user)
                 const { id } = args
 
-                const deleteCustomer = await CustomerSchema.findByIdAndDelete(id)
+                const now = new Date()
+
+                const deadline = new Date(now)
+
+                deadline.setMonth(now.getMonth() + 1)
+
+                const updateDoc = { $set: { isDelete: true, modifiedBy: userToken._id, deadline } }
+
+                const deleteCustomer = await CustomerSchema.findByIdAndUpdate(id, updateDoc)
 
                 if (!deleteCustomer) {
                     return messageError
@@ -100,7 +149,7 @@ const customer = {
         },
         importCustomerExcel: async (parent: any, args: any, context: any) => {
             try {
-                verify(context.user)
+                const userToken = verify(context.user)
                 const { createReadStream } = await args.file
 
                 const chunks: Buffer[] = [];
@@ -130,7 +179,7 @@ const customer = {
         },
         importCustomerCSV: async (parent: any, args: any, context: any) => {
             try {
-                verify(context.user)
+                const userToken = verify(context.user)
                 const results: any = [];
                 const { createReadStream } = await args.file
 
@@ -172,7 +221,7 @@ const customer = {
         },
         exportCustomerExcel: async (parent: any, args: any, context: any) => {
             try {
-                verify(context.user)
+                const userToken = verify(context.user)
                 const uploadPath = args.savePath ? `/app/uploads/${args.savePath}` : `/app/uploads`;
 
                 // Ensure the directory exists
@@ -233,7 +282,7 @@ const customer = {
         },
         exportCustomerCSV: async (parent: any, args: any, context: any) => {
             try {
-                verify(context.user)
+                const userToken = verify(context.user)
                 const uploadPath = args.savePath ? `/app/uploads/${args.savePath}` : `/app/uploads`;
 
                 // Ensure the directory exists
@@ -267,6 +316,32 @@ const customer = {
 
                 // Write data to CSV
                 await csvWriter.writeRecords(data.map(doc => doc.toObject())); // Convert Mongoose documents to plain objects
+
+                return message
+            } catch (error: any) {
+                throw new ApolloError(error.message)
+            }
+        },
+        recoveryCustomer: async (parent: any, args: any, context: any) => {
+            try {
+                const userToken = verify(context.user)
+                const { id } = args
+
+                const updateDoc = { $set: { isDelete: false, modified: userToken._id } }
+
+                await CustomerSchema.findByIdAndUpdate(id, updateDoc)
+
+                return message
+            } catch (error: any) {
+                throw new ApolloError(error.message)
+            }
+        },
+        recoveryCustomerDelete: async (parent: any, args: any, context: any) => {
+            try {
+                const userToken = verify(context.user)
+                const { id } = args
+
+                await CustomerSchema.findByIdAndDelete(id)
 
                 return message
             } catch (error: any) {

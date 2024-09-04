@@ -18,8 +18,10 @@ const product = gql`
         price: Float,
         discount: Float,
         remark: String,
-        createdAt: Date,
-        updatedAt: Date,
+        createdBy: User
+        modifiedBy: User
+        createdAt: Date
+        updatedAt: Date
     }
 
     type Paginator {
@@ -59,6 +61,7 @@ const product = gql`
 
     type Query {
         getProducts(page: Int, limit: Int, pagination: Boolean, keyword: String, unit: ID, category: ID, type_of_product: String): ProductPagination
+        getProductRecovery(page: Int, limit: Int, pagination: Boolean,, keyword: String): ProductPagination
     }
 
     type imageUpload {
@@ -78,6 +81,8 @@ const product = gql`
         importProductCSV(file: Upload!): ResponseMessage!
         exportProductExcel(savePath: String!): ResponseMessage!
         exportProductCSV(savePath: String!): ResponseMessage!
+        recoveryProduct(id: ID!): ResponseMessage!
+        recoveryProductDelete(id: ID!): ResponseMessage!
     }
 `
 

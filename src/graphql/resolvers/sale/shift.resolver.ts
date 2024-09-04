@@ -7,7 +7,7 @@ const shift = {
     Query: {
         getShifts: async (parent: any, args: any, context: any) => {
             try {
-                verify(context.user)
+                const userToken = verify(context.user)
 
                 return await ShiftSchema.find();
             } catch (error: any) {
@@ -18,7 +18,7 @@ const shift = {
     Mutation: {
         openShift: async (parent: any, args: any, context: any) => {
             try {
-                verify(context.user)
+                const userToken = verify(context.user)
                 const today = new Date()
                 const curHr = today.getHours()
                 args.input.shift = "Afternoon"
@@ -40,7 +40,7 @@ const shift = {
         },
         closeShift: async (parent: any, args: any, context: any) => {
             try {
-                verify(context.user)
+                const userToken = verify(context.user)
                 const today = new Date(), startOfDay = new Date(), endOfDay = new Date()
                 const curHr = today.getHours()
 

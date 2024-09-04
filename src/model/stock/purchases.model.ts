@@ -13,6 +13,8 @@ export interface IPurchase extends Document {
     due: number
     remiding_date: Date
     remark: string
+    createdBy: object
+    modifiedBy: object 
 }
 
 const purchase = new Schema<IPurchase>({
@@ -61,7 +63,15 @@ const purchase = new Schema<IPurchase>({
     },
     remark: {
         type: String
-    }
+    },
+    createdBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User"
+    },
+    modifiedBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User"
+    },
 }, { timestamps: true })
 
 purchase.plugin(paginate)

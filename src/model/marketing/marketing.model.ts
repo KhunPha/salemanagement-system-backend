@@ -5,7 +5,11 @@ export interface IMarketing extends Document {
     title: string,
     description: string,
     image: string,
-    publicId: string
+    publicId: string,
+    createdBy: object
+    modifiedBy: object 
+    isDelete: boolean
+    deadline: Date
 }
 
 const marketing = new Schema<IMarketing>({
@@ -20,6 +24,21 @@ const marketing = new Schema<IMarketing>({
     },
     publicId: {
         type: String
+    },
+    createdBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User"
+    },
+    modifiedBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User"
+    },
+    isDelete: {
+        type: Boolean,
+        default: false
+    },
+    deadline: {
+        type: Date
     }
 }, { timestamps: true })
 

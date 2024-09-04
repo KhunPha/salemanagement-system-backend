@@ -10,7 +10,7 @@ const purchase = {
     Query: {
         getPurchases: async (parent: any, args: any, context: any) => {
             try {
-                verify(context.user)
+                const userToken = verify(context.user)
                 const { page, limit, pagination, keyword } = await args
                 const options: PaginateOptions = {
                     pagination,
@@ -56,7 +56,7 @@ const purchase = {
     Mutation: {
         createPurchase: async (parent: any, args: any, context: any) => {
             try {
-                verify(context.user)
+                const userToken = verify(context.user)
 
                 const total_qty_map = await args.input.products_lists
                 var total_qty = 0, total_price = [], total_amount = 0
@@ -72,7 +72,9 @@ const purchase = {
                 args.input.date = new Date(args.input.date)
 
                 const newpurchase = new PurchaseSchema({
-                    ...args.input
+                    ...args.input,
+                    createdBy: userToken._id,
+                    modifiedBy: userToken._id
                 })
 
                 await newpurchase.save()
@@ -88,11 +90,11 @@ const purchase = {
         },
         voidPurchase: async (parent: any, args: any, context: any) => {
             try {
-                verify(context.user)
+                const userToken = verify(context.user)
                 const { id } = await args
 
 
-                const voidpurchaseDoc = { $set: { isVoid: true } }
+                const voidpurchaseDoc = { $set: { isVoid: true, modifiedBy: userToken._id } }
 
                 const voidDoc = await PurchaseSchema.findByIdAndUpdate(id, voidpurchaseDoc, { new: true })
 

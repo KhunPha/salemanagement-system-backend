@@ -7,6 +7,8 @@ export interface IPaymentPurchase extends Document {
     payment_method: string
     bank: object
     remark: string
+    createdBy: object
+    modifiedBy: object
 }
 
 const payment_purchase = new Schema<IPaymentPurchase>({
@@ -28,7 +30,15 @@ const payment_purchase = new Schema<IPaymentPurchase>({
     },
     remark: {
         type: String
-    }
+    },
+    createdBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User"
+    },
+    modifiedBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User"
+    },
 }, { timestamps: true })
 
 const PaymentPurchaseSchema = mongoose.model<IPaymentPurchase>("PaymentPurchase", payment_purchase, "PaymentPurchases")

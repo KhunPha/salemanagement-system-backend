@@ -7,8 +7,8 @@ function verifyToken(context: any) {
         const authHeaders = context.req.headers['authorization']
         if (authHeaders) {
             const token = authHeaders.split(" ")[1]
-            const data = jwt.verify(token, process.env.JWT_KEY)
-            return data
+            const decodedToken = jwt.verify(token, process.env.JWT_KEY)
+            return decodedToken.data
         }
         return true
     } catch (error: any) {

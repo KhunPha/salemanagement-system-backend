@@ -7,7 +7,7 @@ const restoreMongoDb = {
     Mutation: {
         backupDatabase: async (parent: any, args: any, context: any) => {
             try {
-                verify(context.user)
+                const userToken = verify(context.user)
                 const command = `mongodump --uri="mongodb+srv://khunpha:Sopha3305@salemanagement.qbm94iq.mongodb.net/salemanagement?retryWrites=true&w=majority&appName=salemanagement" --out=D:/Backup`;
 
                 // Execute the command
@@ -29,7 +29,7 @@ const restoreMongoDb = {
         },
         restoreDatabase: async (parent: any, args: any, context: any) => {
             try {
-                verify(context.user)
+                const userToken = verify(context.user)
                 const directory = 'D:/Backup/salemanagement'
 
                 const command = `mongorestore --uri="mongodb://localhost:27017/salemanagement" --drop ${directory}`;

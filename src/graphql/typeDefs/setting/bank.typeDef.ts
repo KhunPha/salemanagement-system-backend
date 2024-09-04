@@ -6,7 +6,9 @@ const bank = gql`
     type Bank {
         _id: ID,
         bank_name: String,
-        remark: String
+        remark: String,
+        createdBy: User
+        modifiedBy: User
     }
 
     type Paginator {
@@ -33,7 +35,8 @@ const bank = gql`
     }
 
     type Query {
-        getBankPagination(page:Int, limit: Int, pagination: Boolean, keyword: String): BankPagination
+        getBankPagination(page: Int, limit: Int, pagination: Boolean, keyword: String): BankPagination
+        getBankRecovery(page: Int, limit: Int, pagination: Boolean, keyword: String): BankPagination
     }
 
     type Mutation {
@@ -44,6 +47,8 @@ const bank = gql`
         importBankCSV(file: Upload!): ResponseMessage!
         exportBankExcel(savePath: String!): ResponseMessage!
         exportBankCSV(savePath: String!): ResponseMessage!
+        recoveryBank(id: ID!): ResponseMessage!
+        recoveryBankDelete(id: ID!): ResponseMessage!
     }
 `
 

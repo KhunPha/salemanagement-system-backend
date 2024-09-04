@@ -4,6 +4,10 @@ import paginate from "mongoose-paginate-v2";
 export interface IBrand extends Document {
     brand_name: string
     remark: string
+    createdBy: object
+    modifiedBy: object
+    isDelete: boolean
+    deadline: Date
 }
 
 const brand = new Schema<IBrand>({
@@ -12,6 +16,21 @@ const brand = new Schema<IBrand>({
     },
     remark: {
         type: String
+    },
+    isDelete: {
+        type: Boolean,
+        default: false
+    },
+    createdBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User"
+    },
+    modifiedBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User"
+    },
+    deadline: {
+        type: Date
     }
 }, { timestamps: true })
 

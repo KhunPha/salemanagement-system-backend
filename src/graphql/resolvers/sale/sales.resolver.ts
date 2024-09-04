@@ -11,7 +11,7 @@ const sales = {
     Query: {
         getSales: async (parent: any, args: any, context: any) => {
             try {
-                verify(context.user)
+                const userToken = verify(context.user)
                 const { page, limit, pagination, keyword } = await args
                 const options: PaginateOptions = {
                     pagination,
@@ -38,10 +38,12 @@ const sales = {
     Mutation: {
         createSales: async (parent: any, args: any, context: any) => {
             try {
-                verify(context.user)
+                const userToken = verify(context.user)
 
                 const newsales = new SaleSchema({
-                    ...args.input
+                    ...args.input,
+                    createdBy: userToken._id,
+                    modifiedBy: userToken._id
                 })
 
                 args.input.product_add.sale_id = newsales._id

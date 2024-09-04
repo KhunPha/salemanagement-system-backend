@@ -4,6 +4,8 @@ export interface ITransferOut extends Document {
     product_lists: object
     supplier_details: object
     remark: string
+    createdBy: object
+    modifiedBy: object 
 }
 
 const transferout = new Schema<ITransferOut>({
@@ -23,7 +25,15 @@ const transferout = new Schema<ITransferOut>({
     },
     remark: {
         type: String
-    }
+    },
+    createdBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User"
+    },
+    modifiedBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User"
+    },
 })
 
 const TransferOutSchema = mongoose.model<ITransferOut>("TransferOut", transferout, "TransferOuts")

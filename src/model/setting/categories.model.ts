@@ -4,6 +4,10 @@ import paginate from "mongoose-paginate-v2"
 export interface ICate extends Document {
     category_name: string,
     remark: string
+    createdBy: object
+    modifiedBy: object 
+    isDelete: boolean
+    deadline: Date
 }
 
 const cate = new Schema<ICate>({
@@ -13,6 +17,21 @@ const cate = new Schema<ICate>({
     },
     remark: {
         type: String
+    },
+    createdBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User"
+    },
+    modifiedBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User"
+    },
+    isDelete: {
+        type: Boolean,
+        default: false
+    },
+    deadline: {
+        type: Date
     }
 }, { timestamps: true })
 

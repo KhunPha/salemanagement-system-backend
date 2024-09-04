@@ -9,6 +9,8 @@ const marketing = gql`
         description: String
         image: String
         publicId: String
+        createdBy: User
+        modifiedBy: User
     }
 
     type SendDetails {
@@ -53,9 +55,10 @@ const marketing = gql`
     }
 
     type Query {
-        getMarketings(page: Int, limit: Int, pagination: Boolean keyword: String): MarketingPagination
+        getMarketings(page: Int, limit: Int, pagination: Boolean, keyword: String): MarketingPagination
         getTelegramSend: [SendDetails]
         getEmailSend: [SendDetails]
+        getMarketingRecovery(page: Int, limit: Int, pagination: Boolean, keyword: String): MarketingPagination
     }
 
     type Mutation {
@@ -70,6 +73,8 @@ const marketing = gql`
         importMarketingCSV(file: Upload!): ResponseMessage!
         exportMarketingExcel(savePath: String!): ResponseMessage!
         exportMarketingCSV(savePath: String!): ResponseMessage!
+        recoveryMarketing(id: ID!): ResponseMessage!
+        recoveryMarketingDelete(id: ID!): ResponseMessage!
     }
 `
 

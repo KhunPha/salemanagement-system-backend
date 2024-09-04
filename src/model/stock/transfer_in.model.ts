@@ -4,6 +4,8 @@ export interface ITransferIn extends Document {
     product_lists: object
     supplier_details: object
     remark: string
+    createdBy: object
+    modifiedBy: object
 }
 
 const transferin = new Schema<ITransferIn>({
@@ -23,7 +25,15 @@ const transferin = new Schema<ITransferIn>({
     },
     remark: {
         type: String
-    }
+    },
+    createdBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User"
+    },
+    modifiedBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User"
+    },
 }, { timestamps: true })
 
 const TransferInSchema = mongoose.model<ITransferIn>("TransferIn", transferin, "TransferIns")

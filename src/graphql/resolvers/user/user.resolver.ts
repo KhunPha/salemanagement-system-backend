@@ -21,7 +21,7 @@ const user = {
     Query: {
         getUsers: async (parent: any, args: any, context: any) => {
             try {
-                verify(context.user)
+                const userToken = verify(context.user)
                 const { page, limit, pagination, keyword, roles } = await args
                 const options: PaginateOptions = {
                     pagination,
@@ -41,7 +41,8 @@ const user = {
                             ]
                         },
                         roles === 'All' ? {} : { roles }
-                    ]
+                    ],
+                    isDelete: { $ne: true }
                 }
                 return await UserShcema.paginate(query, options)
             } catch (error: any) {
@@ -175,7 +176,7 @@ const user = {
         },
         updateUser: async (parent: any, args: any, context: any) => {
             try {
-                verify(context.user)
+                const userToken = verify(context.user)
                 const { firstname, lastname, username, password, roles, image, remark } = await args.input
                 const { id } = args
 
@@ -206,7 +207,7 @@ const user = {
         },
         resetPassword: async (parent: any, args: any, context: any) => {
             try {
-                verify(context.user)
+                const userToken = verify(context.user)
                 const { id, newPassword } = args
 
                 const salt = await bcrypt.genSalt()
@@ -226,20 +227,13 @@ const user = {
         },
         deleteUser: async (parent: any, args: any, context: any) => {
             try {
-                verify(context.user)
+                const userToken = verify(context.user)
 
                 const { id } = await args
 
-                const deleteUser: any = await UserShcema.findByIdAndDelete(id)
+                const updateDoc = { $set: { isDelete: true } }
 
-                if (deleteUser?.publicId)
-                    try {
-                        new Promise(async () => {
-                            await cloudinary.uploader.destroy(deleteUser?.publicId);
-                        })
-                    } catch (err: any) {
-                        throw new ApolloError(err.message)
-                    }
+                const deleteUser: any = await UserShcema.findByIdAndUpdate(id, updateDoc)
 
                 if (!deleteUser) {
                     return messageError

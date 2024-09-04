@@ -16,6 +16,8 @@ export interface ISales extends Document {
     date_remind: Date,
     pay: object
     bank: object
+    createdBy: object
+    modifiedBy: object
 }
 
 const sale = new Schema<ISales>({
@@ -77,7 +79,15 @@ const sale = new Schema<ISales>({
     bank: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Bank"
-    }
+    },
+    createdBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User"
+    },
+    modifiedBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User"
+    },
 }, { timestamps: true })
 
 sale.plugin(paginate)

@@ -8,7 +8,7 @@ const receiveproduct = {
     Query: {
         getReceiveProductTransac: async (parent: any, args: any, context: any) => {
             try {
-                verify(context.user)
+                const userToken = verify(context.user)
                 return await ReceiveProductTransactionSchema.find({ purchase_id: args.id }).populate({
                     path: "product_lists.products"
                 })
@@ -20,11 +20,13 @@ const receiveproduct = {
     Mutation: {
         processReceiveProduct: async (parent: any, args: any, context: any) => {
             try {
-                verify(context.user)
+                const userToken = verify(context.user)
                 let stockDoc;
 
                 const newproductreceive = new ReceiveProductTransactionSchema({
-                    ...args.input
+                    ...args.input,
+                    createdBy: userToken._id,
+                    modifiedBy: userToken._id
                 })
 
                 const product_map: any = newproductreceive.product_lists

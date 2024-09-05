@@ -15,12 +15,12 @@ const transferout = gql`
     }
 
     input TransferOutInput {
-        product_lists: [ProductsInput]
+        product_lists: [ProductsInputTranferOut]
         supplier_details: ID
         remark: String
     }
 
-    input ProductsInput {
+    input ProductsInputTranferOut {
         product_details: ID,
         qty: Int
     }

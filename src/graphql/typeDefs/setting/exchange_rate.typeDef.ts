@@ -21,6 +21,7 @@ const exchange_rate = gql`
     type Query {
         getExchangeRate: ExchangeRate
         getAllExchangeRate: [ExchangeRate]
+        getNBCExchangeRate: Float
     }
 
     type Mutation {

@@ -2,6 +2,7 @@ import { ApolloError } from "apollo-server-express"
 import verify from "../../../helper/verifyToken.helper"
 import ExchangeRateSchema from "../../../model/setting/exchange_rate.model"
 import { message, messageError, messageLogin } from "../../../helper/message.helper"
+import { getNBCExchangeRate } from "../../../helper/getExchangeRate.helper"
 
 const exchange_rate = {
     Query: {
@@ -13,7 +14,24 @@ const exchange_rate = {
                 throw new ApolloError(error.message)
             }
         },
-        getAllExchangeRate: async () => await ExchangeRateSchema.find()
+        getAllExchangeRate: async () => await ExchangeRateSchema.find(),
+        getNBCExchangeRate: async (_root: undefined, { }, { req }: { req: Express.Request }) => {
+            try {
+                // await checkAuth(req)
+                const nbc = await getNBCExchangeRate('https://www.nbc.gov.kh/english/index.php')
+
+                // const formattedAmount = nbc.toLocaleString('en-US', {
+                //     style: 'currency',
+                //     currency: 'USD',
+                //     minimumFractionDigits: 2,
+                // });
+
+                return nbc
+            } catch (error) {
+                return error
+            }
+        },
+
     },
     Mutation: {
         exchangeRate: async (parent: any, args: any, context: any) => {

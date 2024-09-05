@@ -15,12 +15,12 @@ const transferin = gql`
     }
 
     input TransferInInput {
-        product_lists: [ProductsInput]
+        product_lists: [ProductsInputTranferIn]
         supplier_details: ID
         remark: String
     }
 
-    input ProductsInput {
+    input ProductsInputTranferIn {
         product_details: ID
         qty: Int
     }

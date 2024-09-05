@@ -28,6 +28,7 @@ import getstocksale from "./sale/stocksale.typeDef";
 import report from "./reports/report.typeDef";
 import shift from "./sale/shfit.typeDef";
 import restoreMongoDb from "./restoreDatabase/restoreDatabase.typeDef";
+import aboutsystem from "./setting/about_system.typeDef";
 
 const typeDefs = [
     user,
@@ -59,7 +60,8 @@ const typeDefs = [
     getstocksale,
     report,
     shift,
-    restoreMongoDb
+    restoreMongoDb,
+    aboutsystem
 ]
 
 export default typeDefs

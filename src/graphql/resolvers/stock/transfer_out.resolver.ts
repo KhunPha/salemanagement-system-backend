@@ -29,7 +29,7 @@ const transferout = {
                 const transferoutproduct_map: any = newtransferout.product_lists
 
                 for (var i = 0; i < transferoutproduct_map.length; i++) {
-                    const product_id = transferoutproduct_map[i].products
+                    const product_id = transferoutproduct_map[i].product_details
                     const getStock = await StockSchema.findOne({ product_lists: product_id })
 
                     if (!getStock) {

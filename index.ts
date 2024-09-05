@@ -2,6 +2,7 @@ import express, { Request, Response, NextFunction } from "express"
 import { ApolloServer } from "apollo-server-express"
 const { success, error } = require("consola")
 import { GraphQLUpload, graphqlUploadExpress, Upload } from "graphql-upload-ts"
+import { Server } from 'socket.io';
 import cors from "cors"
 import dotenv from "dotenv"
 import bodyParser from "body-parser"
@@ -11,6 +12,7 @@ import { SubscriptionServer } from "subscriptions-transport-ws"
 import { makeExecutableSchema } from "@graphql-tools/schema"
 import { typeDefs, resolvers } from "./src/graphql"
 import path from "path"
+import StockSchema from "./src/model/stock/stocks.model";
 
 const os = require("os")
 const app: any = express()
@@ -56,6 +58,43 @@ const schema = makeExecutableSchema({
     resolvers
 })
 
+const httpServer = http.createServer(app)
+
+// const io = new Server(httpServer);
+
+// let connectedClients = new Set<string>();
+
+// io.on('connection', (socket) => {
+//     console.log('New client connected');
+//     connectedClients.add(socket.id);
+
+//     socket.on('disconnect', () => {
+//         console.log('Client disconnected');
+//         connectedClients.delete(socket.id);
+//     });
+// });
+
+// // Notify clients about stock updates
+// async function notifyLowStock(stockId: string, stockOnHand: number) {
+//     if (connectedClients.size === 0) {
+//         console.warn('No clients connected to notify.');
+//         return;
+//     }
+
+//     try {
+//         const stock: any = await StockSchema.findOne({product_details: stockId}).populate('product_details');
+//         if (stock) {
+//             const message = `The stock for product ${stock.product_details.pro_name} is running low: ${stockOnHand} items left.`;
+//             io.emit('stockAlert', { stockId, message });
+//             console.log('Notification sent:', message);
+//         }
+//     } catch (error) {
+//         console.error('Error sending stock notification:', error);
+//     }
+// }
+
+// export { notifyLowStock };
+
 const startServer = async () => {
     try {
         const apolloServer = new ApolloServer({
@@ -70,8 +109,6 @@ const startServer = async () => {
 
         await apolloServer.start()
         apolloServer.applyMiddleware({ app, cors: true })
-
-        const httpServer = http.createServer(app)
 
         httpServer.listen(PORT, () => {
             success({

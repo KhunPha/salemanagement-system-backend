@@ -24,6 +24,7 @@ import getstocksale from "./sale/stocksale.resolver";
 import report from "./reports/report.resolver";
 import shift from "./sale/shift.resolver";
 import restoreMongoDb from "./restoreDatabase/restoreDatabase.resolver";
+import aboutsystem from "./setting/about_system.resolver";
 
 const resolvers = [
     user,
@@ -51,7 +52,8 @@ const resolvers = [
     getstocksale,
     report,
     shift,
-    restoreMongoDb
+    restoreMongoDb,
+    aboutsystem
 ]
 
 export default resolvers

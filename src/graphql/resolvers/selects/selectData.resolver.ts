@@ -31,168 +31,60 @@ cron.schedule('0 12 * * *', async () => {
     try {
         const now = new Date();
 
-        // find
-        const marketingFind = await MarketingSchema.find({
-            $and: [
-                {
-                    deadline: { $lt: now }
-                },
-                {
-                    isDelete: true
+        // Find and delete media in Cloudinary
+        const [marketingFind, productFind] = await Promise.all([
+            MarketingSchema.find({ deadline: { $lt: now }, isDelete: true }),
+            ProductSchema.find({ deadline: { $lt: now }, isDelete: true })
+        ]);
+
+        await Promise.all([
+            ...marketingFind.map(async (data: any) => {
+                if (data.publicId) {
+                    try {
+                        await cloudinary.uploader.destroy(data.publicId);
+                    } catch (err: any) {
+                        console.error(`Error deleting Cloudinary media for marketing: ${err.message}`);
+                    }
                 }
-            ]
-        })
-
-        const productFind = await ProductSchema.find({
-            $and: [
-                {
-                    deadline: { $lt: now }
-                },
-                {
-                    isDelete: true
+            }),
+            ...productFind.map(async (data: any) => {
+                if (data.publicId) {
+                    try {
+                        await cloudinary.uploader.destroy(data.publicId);
+                    } catch (err: any) {
+                        console.error(`Error deleting Cloudinary media for product: ${err.message}`);
+                    }
                 }
-            ]
-        })
+            })
+        ]);
 
-        marketingFind.map((data: any) => {
-            try {
-                if (data.publicId)
-                    new Promise(async () => {
-                        await cloudinary.uploader.destroy(data.publicId)
-                    })
-            } catch (err: any) {
-                throw new ApolloError(err.message)
-            }
-        })
+        // Delete documents from all schemas
+        const schemas: any = [
+            BankSchema,
+            BrandSchema,
+            CategoriesSchema,
+            ColorSchema,
+            UnitSchema,
+            SupplierSchema,
+            CustomerSchema,
+            MarketingSchema,
+            ProductSchema,
+            StockSchema
+        ];
 
-        productFind.map((data: any) => {
-            try {
-                if (data.publicId)
-                    new Promise(async () => {
-                        await cloudinary.uploader.destroy(data.publicId)
-                    })
-            } catch (err: any) {
-                throw new ApolloError(err.message)
-            }
-        })
+        const deleteResults = await Promise.all(
+            schemas.map((schema: any) =>
+                schema.deleteMany({ deadline: { $lt: now }, isDelete: true })
+            )
+        );
 
-        // delete
-        const bank = await BankSchema.deleteMany({
-            $and: [
-                {
-                    deadline: { $lt: now }
-                },
-                {
-                    isDelete: true
-                }
-            ]
-        })
+        const totalDeleted = deleteResults.reduce((sum, result) => sum + result.deletedCount, 0);
 
-        const brand = await BrandSchema.deleteMany({
-            $and: [
-                {
-                    deadline: { $lt: now }
-                },
-                {
-                    isDelete: true
-                }
-            ]
-        })
-
-        const category = await CategoriesSchema.deleteMany({
-            $and: [
-                {
-                    deadline: { $lt: now }
-                },
-                {
-                    isDelete: true
-                }
-            ]
-        })
-
-        const color = await ColorSchema.deleteMany({
-            $and: [
-                {
-                    deadline: { $lt: now }
-                },
-                {
-                    isDelete: true
-                }
-            ]
-        })
-
-        const unit = await UnitSchema.deleteMany({
-            $and: [
-                {
-                    deadline: { $lt: now }
-                },
-                {
-                    isDelete: true
-                }
-            ]
-        })
-
-        const supplier = await SupplierSchema.deleteMany({
-            $and: [
-                {
-                    deadline: { $lt: now }
-                },
-                {
-                    isDelete: true
-                }
-            ]
-        })
-
-        const customer = await CustomerSchema.deleteMany({
-            $and: [
-                {
-                    deadline: { $lt: now }
-                },
-                {
-                    isDelete: true
-                }
-            ]
-        })
-
-        const marketing = await MarketingSchema.deleteMany({
-            $and: [
-                {
-                    deadline: { $lt: now }
-                },
-                {
-                    isDelete: true
-                }
-            ]
-        })
-
-        const product = await ProductSchema.deleteMany({
-            $and: [
-                {
-                    deadline: { $lt: now }
-                },
-                {
-                    isDelete: true
-                }
-            ]
-        })
-
-        const stock = await StockSchema.deleteMany({
-            $and: [
-                {
-                    deadline: { $lt: now }
-                },
-                {
-                    isDelete: true
-                }
-            ]
-        })
-
-        const result = bank.deletedCount + brand.deletedCount + category.deletedCount + color.deletedCount + unit.deletedCount + supplier.deletedCount + customer.deletedCount + marketing.deletedCount + product.deletedCount + stock.deletedCount
-
-        console.log(`Delete success: ${result} documents removed.`)
+        console.log(`Delete success: ${totalDeleted} documents removed.`);
     } catch (error: any) {
-        throw new ApolloError(error.message)
+        console.error(`Error during scheduled task: ${error.message}`);
     }
-})
+});
+
 
 export default selectData

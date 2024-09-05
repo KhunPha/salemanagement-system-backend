@@ -29,7 +29,7 @@ const transferin = {
                 const transferinproduct_map: any = newtransferin.product_lists
 
                 for (var i = 0; i < transferinproduct_map.length; i++) {
-                    const product_id = transferinproduct_map[i].products
+                    const product_id = transferinproduct_map[i].product_details
                     const getStock = await StockSchema.findOne({ product_details: product_id })
 
                     if (!getStock) {
@@ -40,7 +40,7 @@ const transferin = {
 
                     const stockDoc = { $set: { stock_on_hand: getStock.stock_on_hand + transferinproduct_map[i].qty } }
 
-                    await StockSchema.findOneAndUpdate({ product_details: product_id }, stockDoc, { new: true })
+                    await StockSchema.findOneAndUpdate({ product_details: product_id }, stockDoc, { new: true, runValidators: true })
                 }
 
                 if (!newtransferin) {

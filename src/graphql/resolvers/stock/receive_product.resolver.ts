@@ -1,5 +1,5 @@
 import { ApolloError } from "apollo-server-express"
-import verify from "../../../helper/verifyToken.helper"
+import { verifyToken } from "../../../middleware/auth.middleware"
 import ReceiveProductTransactionSchema from "../../../model/stock/receive_product.model"
 import { message, messageError } from "../../../helper/message.helper"
 import StockSchema from "../../../model/stock/stocks.model"
@@ -8,7 +8,8 @@ const receiveproduct = {
     Query: {
         getReceiveProductTransac: async (parent: any, args: any, context: any) => {
             try {
-                const userToken = verify(context.user)
+                const userToken: any = await verifyToken(context.user)
+                if (!userToken.status) throw new ApolloError("Unauthorization")
                 return await ReceiveProductTransactionSchema.find({ purchase_id: args.id }).populate({
                     path: "product_lists.products"
                 })
@@ -20,13 +21,14 @@ const receiveproduct = {
     Mutation: {
         processReceiveProduct: async (parent: any, args: any, context: any) => {
             try {
-                const userToken = verify(context.user)
+                const userToken: any = await verifyToken(context.user)
+                if (!userToken.status) throw new ApolloError("Unauthorization")
                 let stockDoc;
 
                 const newproductreceive = new ReceiveProductTransactionSchema({
                     ...args.input,
-                    createdBy: userToken._id,
-                    modifiedBy: userToken._id
+                    createdBy: userToken.data.user._id,
+                    modifiedBy: userToken.data.user._id
                 })
 
                 const product_map: any = newproductreceive.product_lists

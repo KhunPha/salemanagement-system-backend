@@ -1,6 +1,6 @@
 import { ApolloError } from "apollo-server-express";
 import ColorSchema from "../../../model/setting/color.model";
-import verify from "../../../helper/verifyToken.helper";
+import { verifyToken } from "../../../middleware/auth.middleware";
 import { message, messageError, messageLogin } from "../../../helper/message.helper"
 import { PaginateOptions } from "mongoose";
 import { customLabels } from "../../../helper/customeLabels.helper";
@@ -15,7 +15,9 @@ const color = {
     Query: {
         getColors: async (parent: any, args: any, context: any) => {
             try {
-                const userToken = verify(context.user)
+                const userToken: any = await verifyToken(context.user)
+                if (!userToken.status) throw new ApolloError("Unauthorization")
+
                 const { page, limit, pagination, keyword } = await args
                 const options: PaginateOptions = {
                     pagination,
@@ -37,12 +39,13 @@ const color = {
                 }
                 return await ColorSchema.paginate(query, options)
             } catch (error: any) {
-                throw new ApolloError(error.message)
+                throw new ApolloError(error)
             }
         },
         getColorRecovery: async (parent: any, args: any, context: any) => {
             try {
-                const userToken = verify(context.user)
+                const userToken: any = await verifyToken(context.user)
+                if (!userToken.status) throw new ApolloError("Unauthorization")
                 const { page, limit, pagination, keyword } = await args
                 const options: PaginateOptions = {
                     pagination,
@@ -71,11 +74,12 @@ const color = {
     Mutation: {
         createColor: async (parent: any, args: any, context: any) => {
             try {
-                const userToken = verify(context.user)
+                const userToken: any = await verifyToken(context.user)
+                if (!userToken.status) throw new ApolloError("Unauthorization")
                 const newcolor = new ColorSchema({
                     ...args.input,
-                    createdBy: userToken._id,
-                    modifiedBy: userToken._id
+                    createdBy: userToken.data.user._id,
+                    modifiedBy: userToken.data.user._id
                 })
 
                 await newcolor.save()
@@ -91,10 +95,11 @@ const color = {
         },
         updateColor: async (parent: any, args: any, context: any) => {
             try {
-                const userToken = verify(context.user)
+                const userToken: any = await verifyToken(context.user)
+                if (!userToken.status) throw new ApolloError("Unauthorization")
                 const { id } = args
 
-                const colorDoc = { $set: { ...args.input, modifiedBy: userToken._id } }
+                const colorDoc = { $set: { ...args.input, modifiedBy: userToken.data.user._id } }
 
                 const updateDoc = await ColorSchema.findByIdAndUpdate(id, colorDoc)
 
@@ -109,7 +114,8 @@ const color = {
         },
         deleteColor: async (parent: any, args: any, context: any) => {
             try {
-                const userToken = verify(context.user)
+                const userToken: any = await verifyToken(context.user)
+                if (!userToken.status) throw new ApolloError("Unauthorization")
                 const { id } = args
 
                 const now = new Date()
@@ -118,7 +124,7 @@ const color = {
 
                 deadline.setMonth(now.getMonth() + 1)
 
-                const updateDoc = { $set: { isDelete: true, modifiedBy: userToken._id } }
+                const updateDoc = { $set: { isDelete: true, modifiedBy: userToken.data.user._id } }
 
                 const deleteColor = await ColorSchema.findByIdAndUpdate(id, updateDoc)
 
@@ -133,7 +139,8 @@ const color = {
         },
         importColorExcel: async (parent: any, args: any, context: any) => {
             try {
-                const userToken = verify(context.user)
+                const userToken: any = await verifyToken(context.user)
+                if (!userToken.status) throw new ApolloError("Unauthorization")
                 const { createReadStream } = await args.file
 
                 const chunks: Buffer[] = [];
@@ -163,7 +170,8 @@ const color = {
         },
         importColorCSV: async (parent: any, args: any, context: any) => {
             try {
-                const userToken = verify(context.user)
+                const userToken: any = await verifyToken(context.user)
+                if (!userToken.status) throw new ApolloError("Unauthorization")
                 const results: any = [];
                 const { createReadStream } = await args.file
 
@@ -205,7 +213,8 @@ const color = {
         },
         exportColorExcel: async (parent: any, args: any, context: any) => {
             try {
-                const userToken = verify(context.user)
+                const userToken: any = await verifyToken(context.user)
+                if (!userToken.status) throw new ApolloError("Unauthorization")
                 const uploadPath = args.savePath ? `/app/uploads/${args.savePath}` : `/app/uploads`;
 
                 // Ensure the directory exists
@@ -266,7 +275,8 @@ const color = {
         },
         exportColorCSV: async (parent: any, args: any, context: any) => {
             try {
-                const userToken = verify(context.user)
+                const userToken: any = await verifyToken(context.user)
+                if (!userToken.status) throw new ApolloError("Unauthorization")
                 const uploadPath = args.savePath ? `/app/uploads/${args.savePath}` : `/app/uploads`;
 
                 // Ensure the directory exists
@@ -308,10 +318,11 @@ const color = {
         },
         recoveryColor: async (parent: any, args: any, context: any) => {
             try {
-                const userToken = verify(context.user)
+                const userToken: any = await verifyToken(context.user)
+                if (!userToken.status) throw new ApolloError("Unauthorization")
                 const { id } = args
 
-                const updateDoc = { $set: { isDelete: false, modifiedBy: userToken._id } }
+                const updateDoc = { $set: { isDelete: false, modifiedBy: userToken.data.user._id } }
 
                 await ColorSchema.findByIdAndUpdate(id, updateDoc)
 
@@ -322,8 +333,9 @@ const color = {
         },
         recoveryColorDelete: async (parent: any, args: any, context: any) => {
             try {
-                const userToken = verify(context.user)
-                const {id} = args
+                const userToken: any = await verifyToken(context.user)
+                if (!userToken.status) throw new ApolloError("Unauthorization")
+                const { id } = args
 
                 await ColorSchema.findByIdAndDelete(id)
 

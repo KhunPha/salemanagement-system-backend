@@ -1,5 +1,5 @@
 import { ApolloError } from "apollo-server-express"
-import verify from "../../../helper/verifyToken.helper"
+import { verifyToken } from "../../../middleware/auth.middleware"
 import UnitSchema from "../../../model/setting/unit.model"
 import { message, messageError, messageLogin } from "../../../helper/message.helper"
 import { PaginateOptions } from "mongoose"
@@ -18,7 +18,8 @@ const unit = {
     Query: {
         getUnits: async (parent: any, args: any, context: any) => {
             try {
-                const userToken = verify(context.user)
+                const userToken: any = await verifyToken(context.user)
+                if (!userToken.status) throw new ApolloError("Unauthorization")
 
                 const { page, limit, pagination, keyword } = await args
                 const options: PaginateOptions = {
@@ -46,7 +47,8 @@ const unit = {
         },
         getUnitRecovery: async (parent: any, args: any, context: any) => {
             try {
-                const userToken = verify(context.user)
+                const userToken: any = await verifyToken(context.user)
+                if (!userToken.status) throw new ApolloError("Unauthorization")
 
                 const { page, limit, pagination, keyword } = await args
                 const options: PaginateOptions = {
@@ -76,12 +78,13 @@ const unit = {
     Mutation: {
         createUnit: async (parent: any, args: any, context: any) => {
             try {
-                const userToken = verify(context.user)
+                const userToken: any = await verifyToken(context.user)
+                if (!userToken.status) throw new ApolloError("Unauthorization")
 
                 const newunit = new UnitSchema({
                     ...args.input,
-                    createdBy: userToken._id,
-                    modifiedBy: userToken._id
+                    createdBy: userToken.data.user._id,
+                    modifiedBy: userToken.data.user._id
                 })
 
                 await newunit.save()
@@ -99,10 +102,11 @@ const unit = {
         },
         updateUnit: async (parent: any, args: any, context: any) => {
             try {
-                const userToken = verify(context.user)
+                const userToken: any = await verifyToken(context.user)
+                if (!userToken.status) throw new ApolloError("Unauthorization")
                 const { id } = await args
 
-                const unitDoc = { $set: { ...args.input, modifiedBy: userToken._id } }
+                const unitDoc = { $set: { ...args.input, modifiedBy: userToken.data.user._id } }
 
                 const updateDoc = await UnitSchema.findByIdAndUpdate(id, unitDoc, { new: true })
 
@@ -117,7 +121,8 @@ const unit = {
         },
         deleteUnit: async (parent: any, args: any, context: any) => {
             try {
-                const userToken = verify(context.user)
+                const userToken: any = await verifyToken(context.user)
+                if (!userToken.status) throw new ApolloError("Unauthorization")
                 const { id } = await args
 
                 const now = new Date()
@@ -126,7 +131,7 @@ const unit = {
 
                 deadline.setMonth(now.getMonth() + 1)
 
-                const unitDoc = { $set: { isDelete: true, modifiedBy: userToken._id, deadline } }
+                const unitDoc = { $set: { isDelete: true, modifiedBy: userToken.data.user._id, deadline } }
 
                 const deleteUnit = await UnitSchema.findByIdAndUpdate(id, unitDoc)
 
@@ -141,7 +146,8 @@ const unit = {
         },
         importUnitExcel: async (parent: any, args: any, context: any) => {
             try {
-                const userToken = verify(context.user)
+                const userToken: any = await verifyToken(context.user)
+                if (!userToken.status) throw new ApolloError("Unauthorization")
                 const { createReadStream } = await args.file
 
                 const chunks: Buffer[] = [];
@@ -171,7 +177,8 @@ const unit = {
         },
         importUnitCSV: async (parent: any, args: any, context: any) => {
             try {
-                const userToken = verify(context.user)
+                const userToken: any = await verifyToken(context.user)
+                if (!userToken.status) throw new ApolloError("Unauthorization")
                 const results: any = [];
                 const { createReadStream } = await args.file
 
@@ -213,7 +220,8 @@ const unit = {
         },
         exportUnitExcel: async (parent: any, args: any, context: any) => {
             try {
-                const userToken = verify(context.user)
+                const userToken: any = await verifyToken(context.user)
+                if (!userToken.status) throw new ApolloError("Unauthorization")
                 const uploadPath = args.savePath ? `/app/uploads/${args.savePath}` : `/app/uploads`;
 
                 // Ensure the directory exists
@@ -274,7 +282,8 @@ const unit = {
         },
         exportUnitCSV: async (parent: any, args: any, context: any) => {
             try {
-                const userToken = verify(context.user)
+                const userToken: any = await verifyToken(context.user)
+                if (!userToken.status) throw new ApolloError("Unauthorization")
                 const uploadPath = args.savePath ? `/app/uploads/${args.savePath}` : `/app/uploads`;
 
                 // Ensure the directory exists
@@ -316,10 +325,11 @@ const unit = {
         },
         recoveryUnit: async (parent: any, args: any, context: any) => {
             try {
-                const userToken = verify(context.user)
+                const userToken: any = await verifyToken(context.user)
+                if (!userToken.status) throw new ApolloError("Unauthorization")
                 const { id } = args
 
-                const updateDoc = { $set: { isDelete: false, modifiedBy: userToken._id } }
+                const updateDoc = { $set: { isDelete: false, modifiedBy: userToken.data.user._id } }
 
                 await UnitSchema.findByIdAndUpdate(id, updateDoc)
 
@@ -330,7 +340,8 @@ const unit = {
         },
         recoveryUnitDelete: async (parent: any, args: any, context: any) => {
             try {
-                const userToken = verify(context.user)
+                const userToken: any = await verifyToken(context.user)
+                if (!userToken.status) throw new ApolloError("Unauthorization")
                 const { id } = args
 
                 await UnitSchema.findByIdAndDelete(id)

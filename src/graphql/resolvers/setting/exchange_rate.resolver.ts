@@ -1,5 +1,5 @@
 import { ApolloError } from "apollo-server-express"
-import verify from "../../../helper/verifyToken.helper"
+import { verifyToken } from "../../../middleware/auth.middleware"
 import ExchangeRateSchema from "../../../model/setting/exchange_rate.model"
 import { message, messageError, messageLogin } from "../../../helper/message.helper"
 import { getNBCExchangeRate } from "../../../helper/getExchangeRate.helper"
@@ -8,7 +8,8 @@ const exchange_rate = {
     Query: {
         getExchangeRate: async (parent: any, args: any, context: any) => {
             try {
-                const userToken = verify(context.user)
+                const userToken: any = await verifyToken(context.user)
+                if (!userToken.status) throw new ApolloError("Unauthorization")
                 return await ExchangeRateSchema.findOne({ isActive: true })
             } catch (error: any) {
                 throw new ApolloError(error.message)
@@ -36,7 +37,8 @@ const exchange_rate = {
     Mutation: {
         exchangeRate: async (parent: any, args: any, context: any) => {
             try {
-                const userToken = verify(context.user)
+                const userToken: any = await verifyToken(context.user)
+                if (!userToken.status) throw new ApolloError("Unauthorization")
                 const getExchangeRate = await ExchangeRateSchema.findOne({ type: args.input.type });
 
                 if (!getExchangeRate?._id) {
@@ -61,7 +63,8 @@ const exchange_rate = {
         },
         applyUse: async (parent: any, args: any, context: any) => {
             try {
-                const userToken = verify(context.user)
+                const userToken: any = await verifyToken(context.user)
+                if (!userToken.status) throw new ApolloError("Unauthorization")
                 const { id } = await args
 
                 const getExchangeRate_True = await ExchangeRateSchema.findOne({ _id: { $ne: id } })

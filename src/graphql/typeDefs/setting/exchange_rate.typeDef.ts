@@ -3,19 +3,13 @@ import { gql } from "apollo-server-express";
 const exchange_rate = gql`
     type ExchangeRate {
         _id: ID
-        exchange_rate_name: String
         exchange_rate: Float
         isActive: Boolean
-        type: String
-        remark: String
     }
 
     input ExchangeRateInput {
-        exchange_rate_name: String
         exchange_rate: Float
         isActive: Boolean
-        type: String
-        remark: String
     }
 
     type Query {

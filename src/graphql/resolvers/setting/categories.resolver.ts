@@ -1,6 +1,6 @@
 import { ApolloError } from "apollo-server-express";
 import CategoriesSchema from "../../../model/setting/categories.model";
-import verify from "../../../helper/verifyToken.helper";
+import { verifyToken } from "../../../middleware/auth.middleware";
 import { message, messageError, messageLogin } from "../../../helper/message.helper"
 import { PaginateOptions } from "mongoose";
 import { customLabels } from "../../../helper/customeLabels.helper";
@@ -15,7 +15,8 @@ const category = {
     Query: {
         getCategories: async (parent: any, args: any, context: any) => {
             try {
-                const userToken = verify(context.user)
+                const userToken: any = await verifyToken(context.user)
+                if (!userToken.status) throw new ApolloError("Unauthorization")
                 const { page, limit, pagination, keyword } = await args
                 const options: PaginateOptions = {
                     pagination,
@@ -41,7 +42,8 @@ const category = {
         },
         getCategoryRecovery: async (parent: any, args: any, context: any) => {
             try {
-                const userToken = verify(context.user)
+                const userToken: any = await verifyToken(context.user)
+                if (!userToken.status) throw new ApolloError("Unauthorization")
                 const { page, limit, pagination, keyword } = await args
                 const options: PaginateOptions = {
                     pagination,
@@ -69,11 +71,12 @@ const category = {
     Mutation: {
         createCategory: async (parent: any, args: any, context: any) => {
             try {
-                const userToken = verify(context.user)
+                const userToken: any = await verifyToken(context.user)
+                if (!userToken.status) throw new ApolloError("Unauthorization")
                 const newcate = new CategoriesSchema({
                     ...args.input,
-                    createdBy: userToken._id,
-                    modifiedBy: userToken._id
+                    createdBy: userToken.data.user._id,
+                    modifiedBy: userToken.data.user._id
                 })
 
                 await newcate.save()
@@ -89,10 +92,11 @@ const category = {
         },
         updateCategory: async (parent: any, args: any, context: any) => {
             try {
-                const userToken = verify(context.user)
+                const userToken: any = await verifyToken(context.user)
+                if (!userToken.status) throw new ApolloError("Unauthorization")
                 const { id } = args
 
-                const cateDoc = { $set: { ...args.input, modifiedBy: userToken._id } }
+                const cateDoc = { $set: { ...args.input, modifiedBy: userToken.data.user._id } }
 
                 const updateDoc = await CategoriesSchema.findByIdAndUpdate(id, cateDoc)
 
@@ -107,7 +111,8 @@ const category = {
         },
         deleteCategory: async (parent: any, args: any, context: any) => {
             try {
-                const userToken = verify(context.user)
+                const userToken: any = await verifyToken(context.user)
+                if (!userToken.status) throw new ApolloError("Unauthorization")
                 const { id } = args
 
                 const now = new Date()
@@ -116,7 +121,7 @@ const category = {
 
                 deadline.setMonth(now.getMonth() + 1)
 
-                const updateDoc = { $set: { isDelete: true, modifiedBy: userToken._id, deadline } }
+                const updateDoc = { $set: { isDelete: true, modifiedBy: userToken.data.user._id, deadline } }
 
                 const deleteCategory = await CategoriesSchema.findByIdAndUpdate(id, updateDoc)
 
@@ -131,7 +136,8 @@ const category = {
         },
         importCategoryExcel: async (parent: any, args: any, context: any) => {
             try {
-                const userToken = verify(context.user)
+                const userToken: any = await verifyToken(context.user)
+                if (!userToken.status) throw new ApolloError("Unauthorization")
                 const { createReadStream } = await args.file
 
                 const chunks: Buffer[] = [];
@@ -161,7 +167,8 @@ const category = {
         },
         importCategoryCSV: async (parent: any, args: any, context: any) => {
             try {
-                const userToken = verify(context.user)
+                const userToken: any = await verifyToken(context.user)
+                if (!userToken.status) throw new ApolloError("Unauthorization")
                 const results: any = [];
                 const { createReadStream } = await args.file
 
@@ -203,7 +210,8 @@ const category = {
         },
         exportCategoryExcel: async (parent: any, args: any, context: any) => {
             try {
-                const userToken = verify(context.user)
+                const userToken: any = await verifyToken(context.user)
+                if (!userToken.status) throw new ApolloError("Unauthorization")
                 const uploadPath = args.savePath ? `${args.savePath}` : `/app/uploads`;
 
                 // Ensure the directory exists
@@ -264,7 +272,8 @@ const category = {
         },
         exportCategoryCSV: async (parent: any, args: any, context: any) => {
             try {
-                const userToken = verify(context.user)
+                const userToken: any = await verifyToken(context.user)
+                if (!userToken.status) throw new ApolloError("Unauthorization")
                 const uploadPath = args.savePath ? `/app/uploads/${args.savePath}` : `/app/uploads`;
 
                 // Ensure the directory exists
@@ -306,10 +315,11 @@ const category = {
         },
         recoveryCategory: async (parent: any, args: any, context: any) => {
             try {
-                const userToken = verify(context.user)
+                const userToken: any = await verifyToken(context.user)
+                if (!userToken.status) throw new ApolloError("Unauthorization")
                 const { id } = args
 
-                const updateDoc = { $set: { isDelete: false, modifiedBy: userToken._id } }
+                const updateDoc = { $set: { isDelete: false, modifiedBy: userToken.data.user._id } }
 
                 await CategoriesSchema.findByIdAndUpdate(id, updateDoc)
 
@@ -320,7 +330,8 @@ const category = {
         },
         recoveryCategoryDelete: async (parent: any, args: any, context: any) => {
             try {
-                const userToken = verify(context.user)
+                const userToken: any = await verifyToken(context.user)
+                if (!userToken.status) throw new ApolloError("Unauthorization")
                 const { id } = args
 
                 await CategoriesSchema.findByIdAndDelete(id)

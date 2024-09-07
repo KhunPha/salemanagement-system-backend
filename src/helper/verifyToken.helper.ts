@@ -1,12 +1,16 @@
 import { ApolloError } from "apollo-server-express";
 import { verifyToken } from "../middleware/auth.middleware";
 
-function verify(context: any){
-    if(!verifyToken(context)){
+async function verify(context: any) {
+    if (!verifyToken(context)) {
         throw new ApolloError("Unauthenticated or Expired token")
     }
-    const data = verifyToken(context)
-    return data
+    const data: any = await verifyToken(context)
+
+    if (data.status) {
+        return { data: data.data, status: true }
+    }
+    return { data: data.data, status: false }
 }
 
 export default verify

@@ -1,13 +1,14 @@
 import { ApolloError } from "apollo-server-express";
 import { exec } from "child_process";
-import verify from "../../../helper/verifyToken.helper";
+import { verifyToken } from "../../../middleware/auth.middleware";
 import { message } from "../../../helper/message.helper";
 
 const restoreMongoDb = {
     Mutation: {
         backupDatabase: async (parent: any, args: any, context: any) => {
             try {
-                const userToken = verify(context.user)
+                const userToken: any = await verifyToken(context.user)
+                if (!userToken.status) throw new ApolloError("Unauthorization")
                 const command = `mongodump --uri="mongodb+srv://khunpha:Sopha3305@salemanagement.qbm94iq.mongodb.net/salemanagement?retryWrites=true&w=majority&appName=salemanagement" --out=D:/Backup`;
 
                 // Execute the command
@@ -29,7 +30,8 @@ const restoreMongoDb = {
         },
         restoreDatabase: async (parent: any, args: any, context: any) => {
             try {
-                const userToken = verify(context.user)
+                const userToken: any = await verifyToken(context.user)
+                if (!userToken.status) throw new ApolloError("Unauthorization")
                 const directory = 'D:/Backup/salemanagement'
 
                 const command = `mongorestore --uri="mongodb://localhost:27017/salemanagement" --drop ${directory}`;

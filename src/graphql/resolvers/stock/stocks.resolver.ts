@@ -1,5 +1,5 @@
 import { ApolloError } from "apollo-server-express"
-import verify from "../../../helper/verifyToken.helper"
+import { verifyToken } from "../../../middleware/auth.middleware"
 import StockSchema from "../../../model/stock/stocks.model"
 import { message, messageError } from "../../../helper/message.helper"
 import { PaginateOptions } from "mongoose"
@@ -9,7 +9,8 @@ const stock = {
     Query: {
         getStocks: async (parent: any, args: any, context: any) => {
             try {
-                const userToken = verify(context.user)
+                const userToken: any = await verifyToken(context.user)
+                if (!userToken.status) throw new ApolloError("Unauthorization")
                 const { page, limit, pagination, keyword } = await args
                 const options: PaginateOptions = {
                     pagination,
@@ -44,7 +45,8 @@ const stock = {
     Mutation: {
         updateStock: async (parent: any, args: any, context: any) => {
             try {
-                const userToken = verify(context.user)
+                const userToken: any = await verifyToken(context.user)
+                if (!userToken.status) throw new ApolloError("Unauthorization")
                 const { cost, discount } = await args.input
                 const { id } = await args
 

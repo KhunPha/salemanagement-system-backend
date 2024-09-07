@@ -1,5 +1,5 @@
 import { ApolloError } from "apollo-server-express"
-import verify from "../../../helper/verifyToken.helper"
+import { verifyToken } from "../../../middleware/auth.middleware"
 import MarketingSchema from "../../../model/marketing/marketing.model"
 import { message, messageError, messageLogin } from "../../../helper/message.helper"
 import { PaginateOptions } from "mongoose"
@@ -24,7 +24,8 @@ const marketing = {
     Query: {
         getMarketings: async (parent: any, args: any, context: any) => {
             try {
-                const userToken = verify(context.user)
+                const userToken: any = await verifyToken(context.user)
+                if (!userToken.status) throw new ApolloError("Unauthorization")
                 const { page, limit, pagination, keyword } = await args
                 const options: PaginateOptions = {
                     pagination,
@@ -47,7 +48,8 @@ const marketing = {
         },
         getTelegramSend: async (parent: any, args: any, context: any) => {
             try {
-                const userToken = verify(context.user)
+                const userToken: any = await verifyToken(context.user)
+                if (!userToken.status) throw new ApolloError("Unauthorization")
                 return await TelegramSendHIstorySchema.find().populate("customer_lists.customer").sort({ createdAt: -1 })
             } catch (error: any) {
                 throw new ApolloError(error.message)
@@ -55,7 +57,8 @@ const marketing = {
         },
         getMarketingRecovery: async (parent: any, args: any, context: any) => {
             try {
-                const userToken = verify(context.user)
+                const userToken: any = await verifyToken(context.user)
+                if (!userToken.status) throw new ApolloError("Unauthorization")
                 const { page, limit, pagination, keyword } = await args
                 const options: PaginateOptions = {
                     pagination,
@@ -80,7 +83,8 @@ const marketing = {
     Mutation: {
         uploadMarketingImage: async (parent: any, args: any, context: any) => {
             try {
-                const userToken = verify(context.user)
+                const userToken: any = await verifyToken(context.user)
+                if (!userToken.status) throw new ApolloError("Unauthorization")
                 var img = "https://res.cloudinary.com/duuux4gv5/image/upload/v1723769679/aflwiado1kckthpmfg5m.png"
 
                 if (args.file) {
@@ -106,7 +110,8 @@ const marketing = {
         },
         deleteMarketingImage: async (parent: any, args: any, context: any) => {
             try {
-                const userToken = verify(context.user)
+                const userToken: any = await verifyToken(context.user)
+                if (!userToken.status) throw new ApolloError("Unauthorization")
                 if (args) {
                     await cloudinary.uploader.destroy(args.publicId);
                     console.log("Delete:", args.publicId)
@@ -120,15 +125,16 @@ const marketing = {
         },
         createMarketing: async (parent: any, args: any, context: any) => {
             try {
-                const userToken = verify(context.user)
+                const userToken: any = await verifyToken(context.user)
+                if (!userToken.status) throw new ApolloError("Unauthorization")
 
                 if (!args.input.publicId)
                     args.input.image = "https://res.cloudinary.com/duuux4gv5/image/upload/v1723769679/aflwiado1kckthpmfg5m.png"
 
                 const newmarketing = new MarketingSchema({
                     ...args.input,
-                    createdBy: userToken._id,
-                    modifiedBy: userToken._id
+                    createdBy: userToken.data.user._id,
+                    modifiedBy: userToken.data.user._id
                 })
 
                 await newmarketing.save()
@@ -144,10 +150,11 @@ const marketing = {
         },
         updateMarketing: async (parent: any, args: any, context: any) => {
             try {
-                const userToken = verify(context.user)
+                const userToken: any = await verifyToken(context.user)
+                if (!userToken.status) throw new ApolloError("Unauthorization")
                 const { id } = await args
 
-                const MarketingDoc = { $set: { ...args.input, modifiedBy: userToken._id } }
+                const MarketingDoc = { $set: { ...args.input, modifiedBy: userToken.data.user._id } }
 
                 const updateDoc: any = await MarketingSchema.findByIdAndUpdate(id, MarketingDoc)
 
@@ -171,7 +178,8 @@ const marketing = {
         },
         deleteMarketing: async (parent: any, args: any, context: any) => {
             try {
-                const userToken = verify(context.user)
+                const userToken: any = await verifyToken(context.user)
+                if (!userToken.status) throw new ApolloError("Unauthorization")
                 const { id } = await args
 
                 const now = new Date()
@@ -180,7 +188,7 @@ const marketing = {
 
                 deadline.setMonth(now.getMonth() + 1)
 
-                const updateDoc = { $set: { isDelete: true, modified: userToken._id, deadline } }
+                const updateDoc = { $set: { isDelete: true, modified: userToken.data.user._id, deadline } }
 
                 const deleteMarketing: any = await MarketingSchema.findByIdAndUpdate(id, updateDoc)
 
@@ -195,7 +203,8 @@ const marketing = {
         },
         emailMarketing: async (parent: any, args: any, context: any) => {
             try {
-                const userToken = verify(context.user)
+                const userToken: any = await verifyToken(context.user)
+                if (!userToken.status) throw new ApolloError("Unauthorization")
                 const { customer, marketing_id } = await args
                 let email: any = []
 
@@ -271,7 +280,8 @@ const marketing = {
         },
         telegramMarketing: async (parent: any, args: any, context: any) => {
             try {
-                const userToken = verify(context.user)
+                const userToken: any = await verifyToken(context.user)
+                if (!userToken.status) throw new ApolloError("Unauthorization")
                 const { customer, marketing_id } = await args
                 var recipientUsername: any, sendSuccess;
 
@@ -370,7 +380,8 @@ const marketing = {
         },
         importMarketingExcel: async (parent: any, args: any, context: any) => {
             try {
-                const userToken = verify(context.user)
+                const userToken: any = await verifyToken(context.user)
+                if (!userToken.status) throw new ApolloError("Unauthorization")
                 const { createReadStream } = await args.file
 
                 const chunks: Buffer[] = [];
@@ -400,7 +411,8 @@ const marketing = {
         },
         importMarketingCSV: async (parent: any, args: any, context: any) => {
             try {
-                const userToken = verify(context.user)
+                const userToken: any = await verifyToken(context.user)
+                if (!userToken.status) throw new ApolloError("Unauthorization")
                 const results: any = [];
                 const { createReadStream } = await args.file
 
@@ -442,7 +454,8 @@ const marketing = {
         },
         exportMarketingExcel: async (parent: any, args: any, context: any) => {
             try {
-                const userToken = verify(context.user)
+                const userToken: any = await verifyToken(context.user)
+                if (!userToken.status) throw new ApolloError("Unauthorization")
                 const uploadPath = args.savePath ? `/app/uploads/${args.savePath}` : `/app/uploads`;
 
                 // Ensure the directory exists
@@ -503,7 +516,8 @@ const marketing = {
         },
         exportMarketingCSV: async (parent: any, args: any, context: any) => {
             try {
-                const userToken = verify(context.user)
+                const userToken: any = await verifyToken(context.user)
+                if (!userToken.status) throw new ApolloError("Unauthorization")
                 const uploadPath = args.savePath ? `/app/uploads/${args.savePath}` : `/app/uploads`;
 
                 // Ensure the directory exists
@@ -545,10 +559,11 @@ const marketing = {
         },
         recoveryMarketing: async (parent: any, args: any, context: any) => {
             try {
-                const userToken = verify(context.user)
+                const userToken: any = await verifyToken(context.user)
+                if (!userToken.status) throw new ApolloError("Unauthorization")
                 const { id } = args
 
-                const updateDoc = { $set: { isDelete: false, modifiedBy: userToken._id } }
+                const updateDoc = { $set: { isDelete: false, modifiedBy: userToken.data.user._id } }
 
                 await MarketingSchema.findByIdAndUpdate(id, updateDoc)
 
@@ -559,7 +574,8 @@ const marketing = {
         },
         recoveryMarketingDelete: async (parent: any, args: any, context: any) => {
             try {
-                const userToken = verify(context.user)
+                const userToken: any = await verifyToken(context.user)
+                if (!userToken.status) throw new ApolloError("Unauthorization")
                 const { id } = args
 
                 const deleteMarketing: any = await MarketingSchema.findByIdAndDelete(id)

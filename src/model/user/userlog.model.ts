@@ -4,7 +4,8 @@ import paginate from "mongoose-paginate-v2";
 export interface IUserLog extends Document {
     user_details: object,
     user_ip_address: string,
-    log_count: number
+    token: string
+    terminate: boolean
 }
 
 const userlog = new Schema<IUserLog>({
@@ -15,8 +16,12 @@ const userlog = new Schema<IUserLog>({
     user_ip_address: {
         type: String
     },
-    log_count: {
-        type: Number
+    token: {
+        type: String
+    },
+    terminate: {
+        type: Boolean,
+        default: false
     }
 }, { timestamps: true })
 

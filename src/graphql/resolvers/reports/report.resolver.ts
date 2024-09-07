@@ -1,8 +1,7 @@
 import { ApolloError } from "apollo-server-express"
-import verify from "../../../helper/verifyToken.helper"
+import { verifyToken } from "../../../middleware/auth.middleware"
 import StockSchema from "../../../model/stock/stocks.model"
 import PurchaseSchema from "../../../model/stock/purchases.model"
-import product from "../product/products.resolver"
 
 const report = {
     Query: {
@@ -13,7 +12,8 @@ const report = {
         revenueReport: async () => "Go to World",
         expenseReport: async (parent: any, args: any, context: any) => {
             try {
-                const userToken = verify(context.user)
+                const userToken: any = await verifyToken(context.user)
+                if (!userToken.status) throw new ApolloError("Unauthorization")
                 const ExpenseData = await PurchaseSchema.find({}).populate("products_lists.product_details")
 
                 const productSum: any = {};
@@ -58,7 +58,8 @@ const report = {
         },
         stockReport: async (parent: any, args: any, context: any) => {
             try {
-                const userToken = verify(context.user)
+                const userToken: any = await verifyToken(context.user)
+                if (!userToken.status) throw new ApolloError("Unauthorization")
                 const data: any = await StockSchema.find({ isDelete: { $ne: true } }).populate("product_details")
                 let total = 0;
 

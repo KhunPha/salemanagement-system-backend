@@ -1,8 +1,7 @@
 import { ApolloError } from "apollo-server-express"
-import verify from "../../../helper/verifyToken.helper"
+import { verifyToken } from "../../../middleware/auth.middleware"
 import PurchaseSchema from "../../../model/stock/purchases.model"
 import { message, messageError, messageLogin } from "../../../helper/message.helper"
-import { date } from "../../../helper/date.helper"
 import { PaginateOptions } from "mongoose"
 import { customLabels } from "../../../helper/customeLabels.helper"
 
@@ -10,7 +9,8 @@ const purchase = {
     Query: {
         getPurchases: async (parent: any, args: any, context: any) => {
             try {
-                const userToken = verify(context.user)
+                const userToken: any = await verifyToken(context.user)
+                if (!userToken.status) throw new ApolloError("Unauthorization")
                 const { page, limit, pagination, keyword } = await args
                 const options: PaginateOptions = {
                     pagination,
@@ -56,7 +56,8 @@ const purchase = {
     Mutation: {
         createPurchase: async (parent: any, args: any, context: any) => {
             try {
-                const userToken = verify(context.user)
+                const userToken: any = await verifyToken(context.user)
+                if (!userToken.status) throw new ApolloError("Unauthorization")
 
                 const total_qty_map = await args.input.products_lists
                 var total_qty = 0, total_price = [], total_amount = 0
@@ -73,8 +74,8 @@ const purchase = {
 
                 const newpurchase = new PurchaseSchema({
                     ...args.input,
-                    createdBy: userToken._id,
-                    modifiedBy: userToken._id
+                    createdBy: userToken.data.user._id,
+                    modifiedBy: userToken.data.user._id
                 })
 
                 await newpurchase.save()
@@ -90,11 +91,12 @@ const purchase = {
         },
         voidPurchase: async (parent: any, args: any, context: any) => {
             try {
-                const userToken = verify(context.user)
+                const userToken: any = await verifyToken(context.user)
+                if (!userToken.status) throw new ApolloError("Unauthorization")
                 const { id } = await args
 
 
-                const voidpurchaseDoc = { $set: { isVoid: true, modifiedBy: userToken._id } }
+                const voidpurchaseDoc = { $set: { isVoid: true, modifiedBy: userToken.data.user._id } }
 
                 const voidDoc = await PurchaseSchema.findByIdAndUpdate(id, voidpurchaseDoc, { new: true })
 

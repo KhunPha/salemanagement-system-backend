@@ -12,7 +12,7 @@ import { SubscriptionServer } from "subscriptions-transport-ws"
 import { makeExecutableSchema } from "@graphql-tools/schema"
 import { typeDefs, resolvers } from "./src/graphql"
 import path from "path"
-import StockSchema from "./src/model/stock/stocks.model";
+const cookieParser = require('cookie-parser');
 
 const os = require("os")
 const app: any = express()
@@ -43,6 +43,7 @@ app.use(cors())
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use('/public', express.static(path.join(__dirname, 'public')));
+app.use(cookieParser())
 
 const PORT = process.env.PORT || 3000
 var client: any = null
@@ -100,7 +101,7 @@ const startServer = async () => {
         const apolloServer = new ApolloServer({
             schema,
             context: (req) => {
-                const user = req;
+                const user = req
                 return { user, client }
             }
         })

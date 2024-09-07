@@ -1,6 +1,6 @@
 import { ApolloError } from "apollo-server-express";
 import ProductSchema from "../../../model/product/products.model";
-import verify from "../../../helper/verifyToken.helper";
+import { verifyToken } from "../../../middleware/auth.middleware";
 import {
   message,
   messageError,
@@ -23,7 +23,8 @@ const product = {
     getProducts: async (parent: any, args: any, context: any) => {
       try {
         // Verify Token
-        const userToken = verify(context.user);
+        const userToken: any = await verifyToken(context.user)
+        if (!userToken.status) throw new ApolloError("Unauthorization")
 
         var { page, limit, pagination, keyword, unit, category, type_of_product } = args;
         const options: PaginateOptions = {
@@ -73,7 +74,8 @@ const product = {
     getProductRecovery: async (parent: any, args: any, context: any) => {
       try {
         // Verify Token
-        const userToken = verify(context.user);
+        const userToken: any = await verifyToken(context.user)
+        if (!userToken.status) throw new ApolloError("Unauthorization")
 
         var { page, limit, pagination, keyword, unit, category, type_of_product } = args;
         const options: PaginateOptions = {
@@ -82,15 +84,27 @@ const product = {
           populate: [
             {
               path: "category",
+              match: {
+                isDelete: { $ne: true }
+              }
             },
             {
               path: "unit",
+              match: {
+                isDelete: { $ne: true }
+              }
             },
             {
               path: "color",
+              match: {
+                isDelete: { $ne: true }
+              }
             },
             {
-              path: "brand"
+              path: "brand",
+              match: {
+                isDelete: { $ne: true }
+              }
             }
           ],
           page: page,
@@ -124,7 +138,8 @@ const product = {
   Mutation: {
     uploadProductImage: async (parent: any, args: any, context: any) => {
       try {
-        const userToken = verify(context.user)
+        const userToken: any = await verifyToken(context.user)
+        if (!userToken.status) throw new ApolloError("Unauthorization")
         const img = "https://res.cloudinary.com/duuux4gv5/image/upload/v1723769668/pyss4ndvbe2w2asi2rsy.png"
 
         if (args.file) {
@@ -150,7 +165,8 @@ const product = {
     },
     deleteProductImage: async (parent: any, args: any, context: any) => {
       try {
-        const userToken = verify(context.user)
+        const userToken: any = await verifyToken(context.user)
+        if (!userToken.status) throw new ApolloError("Unauthorization")
         if (args) {
           await cloudinary.uploader.destroy(args.publicId);
           console.log("Delete:", args.publicId)
@@ -163,15 +179,16 @@ const product = {
     },
     createProduct: async (parent: any, args: any, context: any) => {
       try {
-        const userToken = verify(context.user);
+        const userToken: any = await verifyToken(context.user)
+        if (!userToken.status) throw new ApolloError("Unauthorization")
 
         if (!args.input.publicId)
           args.input.image = "https://res.cloudinary.com/duuux4gv5/image/upload/v1723769668/pyss4ndvbe2w2asi2rsy.png"
 
         const newproduct = new ProductSchema({
           ...args.input,
-          createdBy: userToken._id,
-          modifiedBy: userToken._id
+          createdBy: userToken.data.user._id,
+          modifiedBy: userToken.data.user._id
         });
 
         await newproduct.save();
@@ -193,10 +210,11 @@ const product = {
     },
     updateProduct: async (parent: any, args: any, context: any) => {
       try {
-        const userToken = verify(context.user);
+        const userToken: any = await verifyToken(context.user)
+        if (!userToken.status) throw new ApolloError("Unauthorization")
         const { id } = args;
 
-        const productDoc = { $set: { ...args.input, modifiedBy: userToken._id } };
+        const productDoc = { $set: { ...args.input, modifiedBy: userToken.data.user._id } };
 
         const updateDoc: any = await ProductSchema.findByIdAndUpdate(id, productDoc);
 
@@ -220,7 +238,9 @@ const product = {
     },
     discountProduct: async (parent: any, args: any, context: any) => {
       try {
-        const userToken = verify(context.user)
+        const userToken: any = await verifyToken(context.user)
+        if (!userToken.status) throw new ApolloError("Unauthorization")
+        if (!userToken.status) throw new ApolloError("Unauthorization")
 
         const discountProduct = new DiscountProductSchema({
           ...args
@@ -235,7 +255,8 @@ const product = {
     },
     deleteProduct: async (parent: any, args: any, context: any) => {
       try {
-        const userToken = verify(context.user);
+        const userToken: any = await verifyToken(context.user)
+        if (!userToken.status) throw new ApolloError("Unauthorization")
         const { id } = args;
 
         const now = new Date()
@@ -244,7 +265,7 @@ const product = {
 
         deadline.setMonth(now.getMonth() + 1)
 
-        const updateDoc = { $set: { isDelete: true, modifiedBy: userToken._id, deadline } }
+        const updateDoc = { $set: { isDelete: true, modifiedBy: userToken.data.user._id, deadline } }
 
         const deleteProduct: any = await ProductSchema.findByIdAndUpdate(id, updateDoc);
         await StockSchema.findOneAndUpdate({ product_details: id }, { $set: { isDelete: true, deadline } })
@@ -260,7 +281,8 @@ const product = {
     },
     importProductExcel: async (parent: any, args: any, context: any) => {
       try {
-        const userToken = verify(context.user)
+        const userToken: any = await verifyToken(context.user)
+        if (!userToken.status) throw new ApolloError("Unauthorization")
         const { createReadStream } = await args.file
 
         const chunks: Buffer[] = [];
@@ -300,7 +322,8 @@ const product = {
     },
     importProductCSV: async (parent: any, args: any, context: any) => {
       try {
-        const userToken = verify(context.user)
+        const userToken: any = await verifyToken(context.user)
+        if (!userToken.status) throw new ApolloError("Unauthorization")
         const results: any = [];
         const { createReadStream } = await args.file
 
@@ -352,7 +375,8 @@ const product = {
     },
     exportProductExcel: async (parent: any, args: any, context: any) => {
       try {
-        const userToken = verify(context.user)
+        const userToken: any = await verifyToken(context.user)
+        if (!userToken.status) throw new ApolloError("Unauthorization")
         const uploadPath = args.savePath ? `${args.savePath}` : `/app/uploads`;
 
         // Ensure the directory exists
@@ -413,7 +437,8 @@ const product = {
     },
     exportProductCSV: async (parent: any, args: any, context: any) => {
       try {
-        const userToken = verify(context.user)
+        const userToken: any = await verifyToken(context.user)
+        if (!userToken.status) throw new ApolloError("Unauthorization")
         const uploadPath = args.savePath ? `${args.savePath}` : `/app/uploads`;
 
         // Ensure the directory exists
@@ -455,10 +480,11 @@ const product = {
     },
     recoveryProduct: async (parent: any, args: any, context: any) => {
       try {
-        const userToken = verify(context.user)
+        const userToken: any = await verifyToken(context.user)
+        if (!userToken.status) throw new ApolloError("Unauthorization")
         const { id } = args
 
-        const updateDoc = { $set: { isDelete: false, modifiedBy: userToken._id } }
+        const updateDoc = { $set: { isDelete: false, modifiedBy: userToken.data.user._id } }
 
         await ProductSchema.findByIdAndUpdate(id, updateDoc)
         await StockSchema.findOneAndUpdate({ product_details: id }, updateDoc)
@@ -470,7 +496,8 @@ const product = {
     },
     recoveryProductDelete: async (parent: any, args: any, context: any) => {
       try {
-        const userToken = verify(context.user)
+        const userToken: any = await verifyToken(context.user)
+        if (!userToken.status) throw new ApolloError("Unauthorization")
         const { id } = args
 
         const deleteProduct: any = await ProductSchema.findByIdAndDelete(id)
@@ -478,11 +505,11 @@ const product = {
 
         if (deleteProduct?.publicId)
           try {
-              new Promise(async () => {
-                  await cloudinary.uploader.destroy(deleteProduct?.publicId)
-              })
+            new Promise(async () => {
+              await cloudinary.uploader.destroy(deleteProduct?.publicId)
+            })
           } catch (err: any) {
-              throw new ApolloError(err.message)
+            throw new ApolloError(err.message)
           }
 
         return message

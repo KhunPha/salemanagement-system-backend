@@ -1,5 +1,5 @@
 import { ApolloError } from "apollo-server-express"
-import verify from "../../../helper/verifyToken.helper"
+import { verifyToken } from "../../../middleware/auth.middleware"
 import TransferOutSchema from "../../../model/stock/transfer_out.model"
 import { message, messageError } from "../../../helper/message.helper"
 import StockSchema from "../../../model/stock/stocks.model"
@@ -8,7 +8,8 @@ const transferout = {
     Query: {
         getTransferOuts: async (parent: any, args: any, context: any) => {
             try {
-                const userToken = verify(context.user)
+                const userToken: any = await verifyToken(context.user)
+                if (!userToken.status) throw new ApolloError("Unauthorization")
                 return await TransferOutSchema.find().populate(["product_lists.products", "supplier_details", "createdBy", "modifiedBy"])
             } catch (error: any) {
                 throw new ApolloError(error.message)
@@ -18,12 +19,13 @@ const transferout = {
     Mutation: {
         TransferOut: async (parent: any, args: any, context: any) => {
             try {
-                const userToken = verify(context.user)
+                const userToken: any = await verifyToken(context.user)
+                if (!userToken.status) throw new ApolloError("Unauthorization")
 
                 const newtransferout = new TransferOutSchema({
                     ...args.input,
-                    createdBy: userToken._id,
-                    modifiedBy: userToken._id
+                    createdBy: userToken.data.user._id,
+                    modifiedBy: userToken.data.user._id
                 })
 
                 const transferoutproduct_map: any = newtransferout.product_lists

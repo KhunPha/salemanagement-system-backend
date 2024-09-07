@@ -1,5 +1,5 @@
 import { ApolloError } from "apollo-server-express"
-import verify from "../../../helper/verifyToken.helper"
+import { verifyToken } from "../../../middleware/auth.middleware"
 import AboutSystemSchema from "../../../model/setting/about_system.model"
 import cloudinary from "../../../util/cloudinary"
 import { message } from "telegram/client"
@@ -8,7 +8,8 @@ const aboutsystem = {
     Query: {
         getAboutSystem: async (parent: any, args: any, context: any) => {
             try {
-                const userToken = verify(context.user)
+                const userToken: any = await verifyToken(context.user)
+                if (!userToken.status) throw new ApolloError("Unauthorization")
                 const { section } = args
 
                 return await AboutSystemSchema.find({ section: section })
@@ -20,7 +21,8 @@ const aboutsystem = {
     Mutation: {
         uploadVideoAboutSystem: async (parent: any, args: any, context: any) => {
             try {
-                const userToken = verify(context.user)
+                const userToken: any = await verifyToken(context.user)
+                if (!userToken.status) throw new ApolloError("Unauthorization")
                 if (args.file) {
                     const { createReadStream } = await args.file
                     const result: any = await new Promise((resolve, reject) => {
@@ -43,7 +45,8 @@ const aboutsystem = {
         },
         deleteVideoAboutSystem: async (parent: any, args: any, context: any) => {
             try {
-                const userToken = verify(context.user)
+                const userToken: any = await verifyToken(context.user)
+                if (!userToken.status) throw new ApolloError("Unauthorization")
                 if (args) {
                     await cloudinary.uploader.destroy(args.publicId, { resource_type: 'video' })
                     return true
@@ -56,7 +59,8 @@ const aboutsystem = {
         },
         createAboutSystem: async (parent: any, args: any, context: any) => {
             try {
-                const userToken = verify(context.user)
+                const userToken: any = await verifyToken(context.user)
+                if (!userToken.status) throw new ApolloError("Unauthorization")
                 const newaboutsystem = new AboutSystemSchema({
                     ...args.input
                 })
@@ -70,7 +74,8 @@ const aboutsystem = {
         },
         deleteAboutSystem: async (parent: any, args: any, context: any) => {
             try {
-                const userToken = verify(context.user)
+                const userToken: any = await verifyToken(context.user)
+                if (!userToken.status) throw new ApolloError("Unauthorization")
                 const { id } = args
 
                 const deleteAboutSystem: any = await AboutSystemSchema.findByIdAndDelete(id)

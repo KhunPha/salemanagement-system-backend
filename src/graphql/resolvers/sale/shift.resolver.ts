@@ -1,5 +1,5 @@
 import { ApolloError } from "apollo-server-express"
-import verify from "../../../helper/verifyToken.helper"
+import { verifyToken } from "../../../middleware/auth.middleware"
 import ShiftSchema from "../../../model/sale/shift.model"
 import { message } from "../../../helper/message.helper"
 
@@ -7,7 +7,8 @@ const shift = {
     Query: {
         getShifts: async (parent: any, args: any, context: any) => {
             try {
-                const userToken = verify(context.user)
+                const userToken: any = await verifyToken(context.user)
+                if (!userToken.status) throw new ApolloError("Unauthorization")
 
                 return await ShiftSchema.find();
             } catch (error: any) {
@@ -18,7 +19,8 @@ const shift = {
     Mutation: {
         openShift: async (parent: any, args: any, context: any) => {
             try {
-                const userToken = verify(context.user)
+                const userToken: any = await verifyToken(context.user)
+                if (!userToken.status) throw new ApolloError("Unauthorization")
                 const today = new Date()
                 const curHr = today.getHours()
                 args.input.shift = "Afternoon"
@@ -40,7 +42,8 @@ const shift = {
         },
         closeShift: async (parent: any, args: any, context: any) => {
             try {
-                const userToken = verify(context.user)
+                const userToken: any = await verifyToken(context.user)
+                if (!userToken.status) throw new ApolloError("Unauthorization")
                 const today = new Date(), startOfDay = new Date(), endOfDay = new Date()
                 const curHr = today.getHours()
 

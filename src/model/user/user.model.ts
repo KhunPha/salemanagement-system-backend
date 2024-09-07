@@ -10,6 +10,7 @@ export interface IUser extends Document {
     image: string,
     publicId: string
     remark: string
+    sessionId: string
     isDelete: boolean
 }
 
@@ -42,6 +43,9 @@ const user = new Schema<IUser>({
         type: String
     },
     remark: {
+        type: String
+    },
+    sessionId: {
         type: String
     },
     isDelete: {

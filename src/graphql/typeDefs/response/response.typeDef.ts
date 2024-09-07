@@ -12,6 +12,7 @@ const ResponseMessage = gql`
         message_kh: String
         status: Boolean
         token: String
+        sessionId: String
     }
 `
 

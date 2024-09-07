@@ -1,5 +1,5 @@
 import { ApolloError } from "apollo-server-express"
-import verify from "../../../helper/verifyToken.helper"
+import { verifyToken } from "../../../middleware/auth.middleware"
 import ShopInformationSchema from "../../../model/setting/shop_information.model"
 import { message, messageError, messageLogin } from "../../../helper/message.helper"
 
@@ -10,7 +10,8 @@ const shop_information = {
     Mutation: {
         shopInformation: async (parent: any, args: any, context: any) => {
             try {
-                const userToken = verify(context.user)
+                const userToken: any = await verifyToken(context.user)
+                if (!userToken.status) throw new ApolloError("Unauthorization")
                 const getInformation: any = await ShopInformationSchema.findOne();
 
                 if (!getInformation._id) {

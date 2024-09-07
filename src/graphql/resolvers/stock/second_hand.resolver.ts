@@ -1,5 +1,5 @@
 import { ApolloError } from "apollo-server-express"
-import verify from "../../../helper/verifyToken.helper"
+import { verifyToken } from "../../../middleware/auth.middleware"
 import SecondHandSchema from "../../../model/stock/second_hand.model"
 import { message, messageError, messageLogin } from "../../../helper/message.helper"
 import { PaginateOptions } from "mongoose"
@@ -11,7 +11,8 @@ const secondhand = {
     Query: {
         getSecondHands: async (parent: any, args: any, context: any) => {
             try {
-                const userToken = verify(context.user)
+                const userToken: any = await verifyToken(context.user)
+                if (!userToken.status) throw new ApolloError("Unauthorization")
                 const { page, limit, pagination, keyword } = await args
                 const options: PaginateOptions = {
                     pagination,
@@ -45,13 +46,14 @@ const secondhand = {
     Mutation: {
         createSecondHand: async (parent: any, args: any, context: any) => {
             try {
-                const userToken = verify(context.user)
+                const userToken: any = await verifyToken(context.user)
+                if (!userToken.status) throw new ApolloError("Unauthorization")
                 args.input.status = false
 
                 const newsecondhand = new ProductSchema({
                     ...args.input,
-                    createdBy: userToken._id,
-                    modifiedBy: userToken._id
+                    createdBy: userToken.data.user._id,
+                    modifiedBy: userToken.data.user._id
                 })
 
                 await newsecondhand.save()
@@ -71,10 +73,11 @@ const secondhand = {
         },
         updateSecondHand: async (parent: any, args: any, context: any) => {
             try {
-                const userToken = verify(context.user)
+                const userToken: any = await verifyToken(context.user)
+                if (!userToken.status) throw new ApolloError("Unauthorization")
                 const { id } = await args
 
-                const SecondHandDoc = { $set: { ...args.input, modifiedBy: userToken._id } }
+                const SecondHandDoc = { $set: { ...args.input, modifiedBy: userToken.data.user._id } }
 
                 const updateDoc = await ProductSchema.findByIdAndUpdate(id, SecondHandDoc, { new: true })
 
@@ -89,10 +92,11 @@ const secondhand = {
         },
         deleteSecondHand: async (parent: any, args: any, context: any) => {
             try {
-                const userToken = verify(context.user)
+                const userToken: any = await verifyToken(context.user)
+                if (!userToken.status) throw new ApolloError("Unauthorization")
                 const { id } = await args
 
-                const updateDoc = { $set: { isDelete: true, modifiedBy: userToken._id } }
+                const updateDoc = { $set: { isDelete: true, modifiedBy: userToken.data.user._id } }
 
                 const deleteSecondHand = await ProductSchema.findByIdAndUpdate(id, updateDoc)
                 await StockSchema.findOneAndUpdate({ product_details: id }, { $set: { isDelete: true } })

@@ -4,14 +4,14 @@ import bcrypt from "bcrypt"
 import { getToken } from "../../../helper"
 import { FileUpload, GraphQLUpload } from "graphql-upload-ts"
 import fs from "fs"
-import verify from "../../../helper/verifyToken.helper"
+import { verifyToken } from "../../../middleware/auth.middleware"
 import { message, messageError, messageLogin } from "../../../helper/message.helper"
 import UserLogSchema from "../../../model/user/userlog.model"
 import { PubSub } from "graphql-subscriptions"
 import { PaginateOptions } from "mongoose"
 import { customLabels } from "../../../helper/customeLabels.helper"
 import cloudinary from "../../../util/cloudinary"
-import { password } from "telegram"
+const { v4: uuidv4 } = require('uuid');
 
 const pubsub = new PubSub()
 
@@ -21,7 +21,8 @@ const user = {
     Query: {
         getUsers: async (parent: any, args: any, context: any) => {
             try {
-                const userToken = verify(context.user)
+                const userToken: any = await verifyToken(context.user)
+                if (!userToken.status) throw new ApolloError("Unauthorization")
                 const { page, limit, pagination, keyword, roles } = await args
                 const options: PaginateOptions = {
                     pagination,
@@ -46,7 +47,7 @@ const user = {
                 }
                 return await UserShcema.paginate(query, options)
             } catch (error: any) {
-                throw new ApolloError(error.message)
+                throw new ApolloError(error)
             }
         }
     },
@@ -54,7 +55,8 @@ const user = {
     Mutation: {
         uploadUserImage: async (parent: any, args: any, context: any) => {
             try {
-                verify(context.user)
+                const userToken: any = await verifyToken(context.user)
+                if (!userToken.status) throw new ApolloError("Unauthorization")
                 const img = "https://res.cloudinary.com/duuux4gv5/image/upload/v1723769658/rv8ojwv6bmlkkvok2nih.png"
 
                 if (args.file) {
@@ -80,7 +82,8 @@ const user = {
         },
         deleteUserImage: async (parent: any, args: any, context: any) => {
             try {
-                verify(context.user)
+                const userToken: any = await verifyToken(context.user)
+                if (!userToken.status) throw new ApolloError("Unauthorization")
                 if (args) {
                     await cloudinary.uploader.destroy(args.publicId);
                     console.log("Delete:", args.publicId)
@@ -133,7 +136,7 @@ const user = {
             try {
                 const { username, password } = await args.input
 
-                const userfound = await UserShcema.findOne({ username })
+                const userfound = await UserShcema.findOne({ username }).select("-sessionId")
 
                 if (!userfound) {
                     throw new ApolloError("User not found!")
@@ -145,29 +148,27 @@ const user = {
                     throw new ApolloError("Incorrect password!")
                 }
 
+                const newSessionId = uuidv4()
+                messageLogin.sessionId = newSessionId;
+                await UserShcema.updateOne({ _id: userfound._id }, { sessionId: newSessionId });
+
+                messageLogin.token = await getToken(userfound, newSessionId)
+
                 const user_ip_address: any = context.client
 
-                const findlog = await UserLogSchema.findOne({
+                await UserLogSchema.findOneAndUpdate({
                     $and: [
-                        { user_details: `${userfound._id}` },
-                        { user_ip_address: `${user_ip_address}` }
+                        { user_details: userfound._id },
+                        { terminate: false }
                     ]
-                })
+                }, { $set: { terminate: true } })
 
-                if (findlog) {
-                    var log_count = findlog.log_count + 1
-                    const updateDoc = { $set: { log_count } }
-                    await UserLogSchema.findByIdAndUpdate(findlog._id, updateDoc, { new: true })
-                } else {
-                    const newlog = new UserLogSchema({
-                        user_details: userfound._id,
-                        user_ip_address: context.client,
-                        log_count: 1
-                    })
-                    await newlog.save()
-                }
-
-                messageLogin.token = await getToken(userfound)
+                // const newlog = new UserLogSchema({
+                //     user_details: userfound._id,
+                //     user_ip_address: user_ip_address,
+                //     token: messageLogin.token
+                // })
+                // await newlog.save()
 
                 return messageLogin
             } catch (error: any) {
@@ -176,7 +177,8 @@ const user = {
         },
         updateUser: async (parent: any, args: any, context: any) => {
             try {
-                const userToken = verify(context.user)
+                const userToken: any = await verifyToken(context.user)
+                if (!userToken.status) throw new ApolloError("Unauthorization")
                 const { firstname, lastname, username, password, roles, image, remark } = await args.input
                 const { id } = args
 
@@ -207,7 +209,8 @@ const user = {
         },
         resetPassword: async (parent: any, args: any, context: any) => {
             try {
-                const userToken = verify(context.user)
+                const userToken: any = await verifyToken(context.user)
+                if (!userToken.status) throw new ApolloError("Unauthorization")
                 const { id, newPassword } = args
 
                 const salt = await bcrypt.genSalt()
@@ -227,7 +230,8 @@ const user = {
         },
         deleteUser: async (parent: any, args: any, context: any) => {
             try {
-                const userToken = verify(context.user)
+                const userToken: any = await verifyToken(context.user)
+                if (!userToken.status) throw new ApolloError("Unauthorization")
 
                 const { id } = await args
 

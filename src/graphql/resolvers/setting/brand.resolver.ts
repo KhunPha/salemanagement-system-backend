@@ -1,5 +1,5 @@
 import { ApolloError } from "apollo-server-express"
-import verify from "../../../helper/verifyToken.helper"
+import { verifyToken } from "../../../middleware/auth.middleware"
 import { PaginateOptions } from "mongoose"
 import { customLabels } from "../../../helper/customeLabels.helper"
 import BrandSchema from "../../../model/setting/brand.model"
@@ -16,7 +16,8 @@ const brand = {
     Query: {
         getBrands: async (parent: any, args: any, context: any) => {
             try {
-                const userToken = verify(context.user)
+                const userToken: any = await verifyToken(context.user)
+                if (!userToken.status) throw new ApolloError("Unauthorization")
                 const { page, limit, pagination, keyword } = await args
 
                 const options: PaginateOptions = {
@@ -44,7 +45,8 @@ const brand = {
         },
         getBrandRecovery: async (parent: any, args: any, context: any) => {
             try {
-                const userToken = verify(context.user)
+                const userToken: any = await verifyToken(context.user)
+                if (!userToken.status) throw new ApolloError("Unauthorization")
                 const { page, limit, pagination, keyword } = await args
 
                 const options: PaginateOptions = {
@@ -74,12 +76,13 @@ const brand = {
     Mutation: {
         createBrand: async (parent: any, args: any, context: any) => {
             try {
-                const userToken = verify(context.user)
+                const userToken: any = await verifyToken(context.user)
+                if (!userToken.status) throw new ApolloError("Unauthorization")
 
                 const newbrand = new BrandSchema({
                     ...args.input,
-                    createdBy: userToken._id,
-                    modifiedBy: userToken._id
+                    createdBy: userToken.data.user._id,
+                    modifiedBy: userToken.data.user._id
                 })
 
                 await newbrand.save()
@@ -95,10 +98,11 @@ const brand = {
         },
         updateBrand: async (parent: any, args: any, context: any) => {
             try {
-                const userToken = verify(context.user)
+                const userToken: any = await verifyToken(context.user)
+                if (!userToken.status) throw new ApolloError("Unauthorization")
                 const { id } = await args
 
-                const brandDoc = { $set: { ...args.input, modifiedBy: userToken._id } }
+                const brandDoc = { $set: { ...args.input, modifiedBy: userToken.data.user._id } }
 
                 const updateDoc = await BrandSchema.findByIdAndUpdate(id, brandDoc, { new: true })
 
@@ -113,7 +117,8 @@ const brand = {
         },
         deleteBrand: async (parent: any, args: any, context: any) => {
             try {
-                const userToken = verify(context.user)
+                const userToken: any = await verifyToken(context.user)
+                if (!userToken.status) throw new ApolloError("Unauthorization")
                 const { id } = await args
 
                 const now = new Date()
@@ -122,7 +127,7 @@ const brand = {
 
                 deadline.setMonth(now.getMonth() + 1)
 
-                const updateDoc = { $set: { isdelete: true, modified: userToken._id, deadline } }
+                const updateDoc = { $set: { isdelete: true, modified: userToken.data.user._id, deadline } }
 
                 const deleteBrand = await BrandSchema.findByIdAndUpdate(id, updateDoc)
 
@@ -137,7 +142,8 @@ const brand = {
         },
         importBrandExcel: async (parent: any, args: any, context: any) => {
             try {
-                const userToken = verify(context.user)
+                const userToken: any = await verifyToken(context.user)
+                if (!userToken.status) throw new ApolloError("Unauthorization")
                 const { createReadStream } = await args.file
 
                 const chunks: Buffer[] = [];
@@ -167,7 +173,8 @@ const brand = {
         },
         importBrandCSV: async (parent: any, args: any, context: any) => {
             try {
-                const userToken = verify(context.user)
+                const userToken: any = await verifyToken(context.user)
+                if (!userToken.status) throw new ApolloError("Unauthorization")
                 const results: any = [];
                 const { createReadStream } = await args.file
 
@@ -209,7 +216,8 @@ const brand = {
         },
         exportBrandExcel: async (parent: any, args: any, context: any) => {
             try {
-                const userToken = verify(context.user)
+                const userToken: any = await verifyToken(context.user)
+                if (!userToken.status) throw new ApolloError("Unauthorization")
                 const uploadPath = args.savePath ? `${args.savePath}` : ` / app / uploads`;
 
                 if (!fs.existsSync(uploadPath)) {
@@ -269,7 +277,8 @@ const brand = {
         },
         exportBrandCSV: async (parent: any, args: any, context: any) => {
             try {
-                const userToken = verify(context.user)
+                const userToken: any = await verifyToken(context.user)
+                if (!userToken.status) throw new ApolloError("Unauthorization")
                 const uploadPath = args.savePath ? `${args.savePath}` : ` / app / uploads`;
 
                 // Ensure the directory exists
@@ -311,10 +320,11 @@ const brand = {
         },
         recoveryBrand: async (parent: any, args: any, context: any) => {
             try {
-                const userToken = verify(context.user)
+                const userToken: any = await verifyToken(context.user)
+                if (!userToken.status) throw new ApolloError("Unauthorization")
                 const { id } = args
 
-                const updateDoc = { $set: { isDelete: false, modifiedBy: userToken._id } }
+                const updateDoc = { $set: { isDelete: false, modifiedBy: userToken.data.user._id } }
 
                 await BrandSchema.findByIdAndUpdate(id, updateDoc)
 
@@ -325,7 +335,8 @@ const brand = {
         },
         recoveryBrandDelete: async (parent: any, args: any, context: any) => {
             try {
-                const userToken = verify(context.user)
+                const userToken: any = await verifyToken(context.user)
+                if (!userToken.status) throw new ApolloError("Unauthorization")
                 const { id } = args
 
                 await BrandSchema.findByIdAndDelete(id)

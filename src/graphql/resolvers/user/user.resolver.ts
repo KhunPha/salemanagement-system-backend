@@ -3,7 +3,6 @@ import UserShcema from "../../../model/user/user.model"
 import bcrypt from "bcrypt"
 import { getToken } from "../../../helper"
 import { FileUpload, GraphQLUpload } from "graphql-upload-ts"
-import fs from "fs"
 import { verifyToken } from "../../../middleware/auth.middleware"
 import { message, messageError, messageLogin } from "../../../helper/message.helper"
 import UserLogSchema from "../../../model/user/userlog.model"
@@ -171,6 +170,20 @@ const user = {
                 // await newlog.save()
 
                 return messageLogin
+            } catch (error: any) {
+                throw new ApolloError(error.message)
+            }
+        },
+        logout: async (parent: any, args: any, context: any) => {
+            try {
+                const userToken = await verifyToken(context.user)
+                if (!userToken.status) throw new ApolloError("Unauthorization")
+
+                const { id } = args
+
+                await UserShcema.findByIdAndUpdate(id, { $set: { sessionId: null } })
+
+                return message
             } catch (error: any) {
                 throw new ApolloError(error.message)
             }

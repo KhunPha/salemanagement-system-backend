@@ -4,7 +4,6 @@ import { verifyToken } from "../../../middleware/auth.middleware";
 import { message, messageError, messageLogin } from "../../../helper/message.helper"
 import { customLabels } from "../../../helper/customeLabels.helper";
 import { PaginateOptions } from "mongoose";
-import path from "path";
 import { createObjectCsvWriter } from "csv-writer";
 import ExcelJS from "exceljs"
 import { GraphQLUpload } from "graphql-upload-ts";

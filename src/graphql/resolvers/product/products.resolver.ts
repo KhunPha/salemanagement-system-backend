@@ -39,9 +39,6 @@ const product = {
             },
             {
               path: "color",
-            },
-            {
-              path: "brand"
             }
           ],
           page: page,
@@ -83,28 +80,13 @@ const product = {
           customLabels,
           populate: [
             {
-              path: "category",
-              match: {
-                isDelete: { $ne: true }
-              }
+              path: "category"
             },
             {
-              path: "unit",
-              match: {
-                isDelete: { $ne: true }
-              }
+              path: "unit"
             },
             {
-              path: "color",
-              match: {
-                isDelete: { $ne: true }
-              }
-            },
-            {
-              path: "brand",
-              match: {
-                isDelete: { $ne: true }
-              }
+              path: "color"
             }
           ],
           page: page,

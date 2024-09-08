@@ -18,7 +18,6 @@ import slicesecondhandhistory from "./stock/slice_second_hand_history.resolver";
 import transferin from "./stock/transfer_in.resolver";
 import transferout from "./stock/transfer_out.resolver";
 import selectData from "./selects/selectData.resolver";
-import brand from "./setting/brand.resolver";
 import receiveproduct from "./stock/receive_product.resolver";
 import getstocksale from "./sale/stocksale.resolver";
 import report from "./reports/report.resolver";
@@ -47,7 +46,6 @@ const resolvers = [
     transferin,
     transferout,
     selectData,
-    brand,
     receiveproduct,
     getstocksale,
     report,

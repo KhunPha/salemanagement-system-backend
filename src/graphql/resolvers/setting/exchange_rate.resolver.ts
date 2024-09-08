@@ -10,7 +10,7 @@ const exchange_rate = {
             try {
                 const userToken: any = await verifyToken(context.user)
                 if (!userToken.status) throw new ApolloError("Unauthorization")
-                return await ExchangeRateSchema.findOne({ isActive: true })
+                return await ExchangeRateSchema.findOne()
             } catch (error: any) {
                 throw new ApolloError(error.message)
             }
@@ -39,39 +39,17 @@ const exchange_rate = {
             try {
                 const userToken: any = await verifyToken(context.user)
                 if (!userToken.status) throw new ApolloError("Unauthorization")
-                const getExchangeRate = await ExchangeRateSchema.findOne({ type: args.input.type });
+                const ifExist: any = await ExchangeRateSchema.find()
 
-                if (!getExchangeRate?._id) {
-
-                    const newexchangerate = new ExchangeRateSchema({
+                if (!ifExist) {
+                    new ExchangeRateSchema({
                         ...args.input
-                    })
-
-                    await newexchangerate.save()
+                    }).save()
 
                     return message
                 }
 
-                const exchangeRateDoc = { $set: { ...args.input } }
-
-                await ExchangeRateSchema.findByIdAndUpdate(getExchangeRate._id, exchangeRateDoc, { new: true })
-
-                return message
-            } catch (error: any) {
-                throw new ApolloError(error.message)
-            }
-        },
-        applyUse: async (parent: any, args: any, context: any) => {
-            try {
-                const userToken: any = await verifyToken(context.user)
-                if (!userToken.status) throw new ApolloError("Unauthorization")
-                const { id } = await args
-
-                const getExchangeRate_True = await ExchangeRateSchema.findOne({ _id: { $ne: id } })
-
-                await ExchangeRateSchema.findByIdAndUpdate(id, { $set: { isActive: true } })
-
-                await ExchangeRateSchema.findByIdAndUpdate(getExchangeRate_True?._id, { $set: { isActive: false } })
+                await ExchangeRateSchema.findByIdAndUpdate(ifExist._id, { $set: { ...args.input } })
 
                 return message
             } catch (error: any) {

@@ -6,7 +6,7 @@ const product = gql`
     type Product {
         _id: ID
         pro_name: String
-        brand: Brand
+        brand: String
         size: String
         color: Color
         type_of_product: String
@@ -44,7 +44,7 @@ const product = gql`
 
     input ProductInputs {
         pro_name: String,
-        brand: ID
+        brand: String
         size: String
         color: ID
         type_of_product: String

@@ -125,6 +125,7 @@ const marketing = {
         },
         createMarketing: async (parent: any, args: any, context: any) => {
             try {
+                console.log(args.input)
                 const userToken: any = await verifyToken(context.user)
                 if (!userToken.status) throw new ApolloError("Unauthorization")
 
@@ -136,6 +137,8 @@ const marketing = {
                     createdBy: userToken.data.user._id,
                     modifiedBy: userToken.data.user._id
                 })
+
+                console.log(newmarketing)
 
                 await newmarketing.save()
 
@@ -338,15 +341,9 @@ const marketing = {
                             recipientUsername = `+855${phonenumber}`;
                         }
 
-                        var emojis = [
-                            '📣', '📢', '🔊', '🎉', '📌'
-                        ];
+                        const title = marketing?.title
 
-                        const emote = emojis[Math.floor(Math.random() * emojis.length)];
-
-                        const title = `${emote} ` + marketing?.title + ` ${emote}\n\n`
-
-                        const message = title + "✈️ 🛍️ 📸 🎧 🎫 " + marketing?.description;
+                        const message = title + "\n\n\n" + marketing?.description;
 
                         const filePath = `${marketing?.image}`
 

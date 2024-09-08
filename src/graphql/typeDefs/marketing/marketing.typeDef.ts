@@ -64,7 +64,7 @@ const marketing = gql`
     type Mutation {
         uploadMarketingImage(file: Upload): imageUpload
         deleteMarketingImage(publicId: String): Boolean
-        createMarketing(input: MarketingInput, file: Upload): ResponseMessage!
+        createMarketing(input: MarketingInput): ResponseMessage!
         updateMarketing(id: ID, input: MarketingInput): ResponseMessage!
         deleteMarketing(id: ID): ResponseMessage!
         emailMarketing(customer: [ID], marketing_id: ID): ResponseMessage!

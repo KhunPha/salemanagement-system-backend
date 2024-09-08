@@ -138,8 +138,6 @@ const marketing = {
                     modifiedBy: userToken.data.user._id
                 })
 
-                console.log(newmarketing)
-
                 await newmarketing.save()
 
                 if (!newmarketing) {

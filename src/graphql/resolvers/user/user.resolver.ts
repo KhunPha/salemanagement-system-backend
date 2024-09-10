@@ -74,7 +74,7 @@ const user = {
                     return { url: result?.url, publicId: result?.public_id, status: true }
                 }
 
-                return { url: img, publicId: "", status: true }
+                return { url: img, publicId: null, status: true }
             } catch (error: any) {
                 throw new ApolloError(error.message)
             }
@@ -83,10 +83,13 @@ const user = {
             try {
                 const userToken: any = await verifyToken(context.user)
                 if (!userToken.status) throw new ApolloError("Unauthorization")
-                if (args) {
-                    await cloudinary.uploader.destroy(args.publicId);
+
+                const findUser = await UserShcema.findOne({ publicId: args.publicId })
+
+                if (!findUser) {
+                    const result = await cloudinary.uploader.destroy(args.publicId).then(function (value) { return true }).catch(function (error) { return false });
                     console.log("Delete:", args.publicId)
-                    return true;
+                    return result;
                 }
 
                 return false;
@@ -192,24 +195,28 @@ const user = {
             try {
                 const userToken: any = await verifyToken(context.user)
                 if (!userToken.status) throw new ApolloError("Unauthorization")
-                const { firstname, lastname, username, password, roles, image, remark } = await args.input
                 const { id } = args
 
-                const salt = await bcrypt.genSalt()
-                const hashpassword = await bcrypt.hash(password, salt)
+                if (!args.input.publicId) {
+                    const findUser = await UserShcema.findById(id)
+                    args.input.image = findUser?.image
+                    args.input.publicId = findUser?.publicId
+                }
 
-                const userDoc = { $set: { ...args.input, password: hashpassword } }
+                const userDoc = { $set: { ...args.input } }
 
                 const updateDoc: any = await UserShcema.findByIdAndUpdate(id, userDoc)
 
-                if (args.input.publicId != updateDoc?.publicId)
-                    try {
-                        new Promise(async () => {
-                            await cloudinary.uploader.destroy(updateDoc?.publicId);
-                        })
-                    } catch (err: any) {
-                        throw new ApolloError(err.message)
-                    }
+                if (args.input.publicId) {
+                    if (args.input.publicId != updateDoc?.publicId)
+                        try {
+                            if (updateDoc?.publicId) {
+                                await cloudinary.uploader.destroy(updateDoc?.publicId);
+                            }
+                        } catch (err: any) {
+                            throw new ApolloError(err.message)
+                        }
+                }
 
                 if (!updateDoc) {
                     return messageError

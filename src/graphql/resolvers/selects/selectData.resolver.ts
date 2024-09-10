@@ -6,22 +6,25 @@ import BrandSchema from "../../../model/setting/brand.model";
 import ProductSchema from "../../../model/product/products.model";
 import SupplierSchema from "../../../model/stock/suppliers.model";
 import CustomerSchema from "../../../model/marketing/customers.model";
-import { ApolloError } from "apollo-server-express";
 import MarketingSchema from "../../../model/marketing/marketing.model";
 import StockSchema from "../../../model/stock/stocks.model";
 import cloudinary from "../../../util/cloudinary";
+import getStorageUsage from "../../../helper/checkcloudinary.helper";
 const cron = require("node-cron")
 
 const selectData = {
     Query: {
-        selectUnit: async () => await UnitSchema.find().sort({ "unit_name": 1 }),
-        selectBank: async () => await BankSchema.find().sort({ "bank_name": 1 }),
-        selectCategory: async () => await CategoriesSchema.find().sort({ "category_name": 1 }),
-        selectColor: async () => await ColorSchema.find().sort({ "color_name": 1 }),
-        selectBrand: async () => await BrandSchema.find().sort({ "brand_name": 1 }),
-        selectProduct: async () => await ProductSchema.find().sort({ "pro_name": 1 }),
-        selectSupplier: async () => await SupplierSchema.find().sort({ "supplier_name": 1 }),
-        selectCustomer: async () => await CustomerSchema.find().sort({ "customer_name": 1 })
+        selectUnit: async () => await UnitSchema.find({ isDelete: { $ne: true } }).sort({ "unit_name": 1 }),
+        selectBank: async () => await BankSchema.find({ isDelete: { $ne: true } }).sort({ "bank_name": 1 }),
+        selectCategory: async () => await CategoriesSchema.find({ isDelete: { $ne: true } }).sort({ "category_name": 1 }),
+        selectColor: async () => await ColorSchema.find({ isDelete: { $ne: true } }).sort({ "color_name": 1 }),
+        selectProduct: async () => await ProductSchema.find({ isDelete: { $ne: true } }).sort({ "pro_name": 1 }),
+        selectSupplier: async () => await SupplierSchema.find({ isDelete: { $ne: true } }).sort({ "supplier_name": 1 }),
+        selectCustomer: async () => await CustomerSchema.find({ isDelete: { $ne: true } }).sort({ "customer_name": 1 }),
+        storageUsage: async () => {
+            const data = await getStorageUsage();
+            return { used: data };
+        },
     }
 }
 

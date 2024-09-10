@@ -17,14 +17,32 @@ const stock = {
                     customLabels,
                     populate: {
                         path: "product_details",
-                        populate: {
-                            path: "category brand color unit"
-                        },
+                        populate: [
+                            {
+                                path: "category",
+                                match: {
+                                    isDelete: { $ne: true }
+                                }
+                            },
+                            {
+                                path: "unit",
+                                match: {
+                                    isDelete: { $ne: true }
+                                }
+                            },
+                            {
+                                path: "color",
+                                match: {
+                                    isDelete: { $ne: true }
+                                }
+                            },
+                        ],
                         match: {
                             $or: [
                                 { pro_name: { $regex: keyword, $options: "i" } },
                                 { barcode: { $regex: keyword, $options: "i" } }
-                            ]
+                            ],
+                            isDelete: { $ne: true }
                         }
                     },
                     page: page,

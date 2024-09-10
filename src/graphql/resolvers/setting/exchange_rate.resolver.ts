@@ -39,7 +39,7 @@ const exchange_rate = {
             try {
                 const userToken: any = await verifyToken(context.user)
                 if (!userToken.status) throw new ApolloError("Unauthorization")
-                const ifExist: any = await ExchangeRateSchema.find()
+                const ifExist: any = await ExchangeRateSchema.findOne()
 
                 if (!ifExist) {
                     new ExchangeRateSchema({

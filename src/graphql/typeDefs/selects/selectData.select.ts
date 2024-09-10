@@ -41,6 +41,10 @@ const selectData = gql`
         customer_name: String
     }
 
+    type StorageUsage {
+        used: String
+    }
+
     type Query {
         selectUnit: [SelectUnit]
         selectBank: [SelectBank]
@@ -50,6 +54,7 @@ const selectData = gql`
         selectProduct: [SelectProduct]
         selectSupplier: [SelectSupplier]
         selectCustomer: [SelectCustomer]
+        storageUsage: StorageUsage
     }
 `
 

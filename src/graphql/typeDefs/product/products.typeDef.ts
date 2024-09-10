@@ -61,7 +61,7 @@ const product = gql`
 
     type Query {
         getProducts(page: Int, limit: Int, pagination: Boolean, keyword: String, unit: ID, category: ID, type_of_product: String): ProductPagination
-        getProductRecovery(page: Int, limit: Int, pagination: Boolean,, keyword: String): ProductPagination
+        getProductRecovery(page: Int, limit: Int, pagination: Boolean, keyword: String, unit: ID, category: ID, type_of_product: String): ProductPagination
     }
 
     type imageUpload {

@@ -47,9 +47,10 @@ const aboutsystem = {
             try {
                 const userToken: any = await verifyToken(context.user)
                 if (!userToken.status) throw new ApolloError("Unauthorization")
-                if (args) {
-                    await cloudinary.uploader.destroy(args.publicId, { resource_type: 'video' })
-                    return true
+                if (args.publicId) {
+                    const result = await cloudinary.uploader.destroy(args.publicId, { resource_type: 'video' }).then(function (value) { return true }).catch(function (error) { return false })
+                    console.log("Delete:", args.publicId)
+                    return result
                 }
 
                 return false

@@ -96,6 +96,13 @@ const httpServer = http.createServer(app)
 
 // export { notifyLowStock };
 
+// Example error handling middleware
+app.use((err: any, req: any, res: any, next: any) => {
+    console.error('Unhandled Error:', err);
+    res.status(500).send('Something broke!');
+    process.exit(1); // Exit with a non-zero code to trigger a restart
+});
+
 const startServer = async () => {
     try {
         const apolloServer = new ApolloServer({

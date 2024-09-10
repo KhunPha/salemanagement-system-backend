@@ -33,12 +33,21 @@ const product = {
           populate: [
             {
               path: "category",
+              match: {
+                isDelete: { $ne: true }
+              }
             },
             {
               path: "unit",
+              match: {
+                isDelete: { $ne: true }
+              }
             },
             {
               path: "color",
+              match: {
+                isDelete: { $ne: true }
+              }
             }
           ],
           page: page,
@@ -60,8 +69,10 @@ const product = {
             type_of_product === "All" ? {} : { type_of_product },
             unit ? { unit } : {},
             category ? { category } : {},
+            {
+              isDelete: { $ne: true }
+            }
           ],
-          isDelete: { $ne: true }
         }
         return await ProductSchema.paginate(query, options)
       } catch (error: any) {
@@ -80,7 +91,7 @@ const product = {
           customLabels,
           populate: [
             {
-              path: "category"
+              path: "category",
             },
             {
               path: "unit"
@@ -140,7 +151,7 @@ const product = {
           return { url: result?.url, publicId: result?.public_id, status: true }
         }
 
-        return { url: img, publicId: "", status: true }
+        return { url: img, publicId: null, status: true }
       } catch (error: any) {
         throw new ApolloError(error.message)
       }
@@ -149,10 +160,13 @@ const product = {
       try {
         const userToken: any = await verifyToken(context.user)
         if (!userToken.status) throw new ApolloError("Unauthorization")
-        if (args) {
-          await cloudinary.uploader.destroy(args.publicId);
+
+        const findProduct = await ProductSchema.findOne({ publicId: args.publicId })
+        
+        if (!findProduct) {
+          const result = await cloudinary.uploader.destroy(args.publicId).then(function (value) { return true }).catch(function (error) { return false });
           console.log("Delete:", args.publicId)
-          return true
+          return result;
         }
         return false
       } catch (error: any) {
@@ -196,18 +210,26 @@ const product = {
         if (!userToken.status) throw new ApolloError("Unauthorization")
         const { id } = args;
 
+        if (!args.input.publicId) {
+          const findProduct = await ProductSchema.findById(id)
+          args.input.image = findProduct?.image
+          args.input.publicId = findProduct?.image
+        }
+
         const productDoc = { $set: { ...args.input, modifiedBy: userToken.data.user._id } };
 
         const updateDoc: any = await ProductSchema.findByIdAndUpdate(id, productDoc);
 
-        if (args.input.publicId != updateDoc?.publicId)
-          try {
-            new Promise(async () => {
-              await cloudinary.uploader.destroy(updateDoc?.publicId);
-            })
-          } catch (err: any) {
-            throw new ApolloError(err.message)
-          }
+        if (args.input.publicId) {
+          if (args.input.publicId != updateDoc?.publicId)
+            try {
+              if (updateDoc?.publicId) {
+                await cloudinary.uploader.destroy(updateDoc?.publicId);
+              }
+            } catch (err: any) {
+              throw new ApolloError(err.message)
+            }
+        }
 
         if (!updateDoc) {
           return messageError;

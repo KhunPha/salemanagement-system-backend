@@ -30,6 +30,9 @@ const marketing = {
                 const options: PaginateOptions = {
                     pagination,
                     customLabels,
+                    populate: {
+                        path: "createdBy modifiedBy"
+                    },
                     page: page,
                     limit: limit,
                     sort: { createdAt: -1 }
@@ -103,7 +106,7 @@ const marketing = {
                     return { url: result?.url, publicId: result?.public_id, status: true }
                 }
 
-                return { url: img, publicId: "", status: true }
+                return { url: img, publicId: null, status: true }
             } catch (error: any) {
                 throw new ApolloError(error.message)
             }
@@ -112,10 +115,13 @@ const marketing = {
             try {
                 const userToken: any = await verifyToken(context.user)
                 if (!userToken.status) throw new ApolloError("Unauthorization")
-                if (args) {
-                    await cloudinary.uploader.destroy(args.publicId);
+
+                const findMarketing = await MarketingSchema.findOne({ publicId: args.publicId })
+
+                if (!findMarketing) {
+                    const result = await cloudinary.uploader.destroy(args.publicId).then(function (value) { return true }).catch(function (error) { return false });
                     console.log("Delete:", args.publicId)
-                    return true;
+                    return result;
                 }
 
                 return false
@@ -125,7 +131,6 @@ const marketing = {
         },
         createMarketing: async (parent: any, args: any, context: any) => {
             try {
-                console.log(args.input)
                 const userToken: any = await verifyToken(context.user)
                 if (!userToken.status) throw new ApolloError("Unauthorization")
 
@@ -155,18 +160,26 @@ const marketing = {
                 if (!userToken.status) throw new ApolloError("Unauthorization")
                 const { id } = await args
 
+                if (!args.input.publicId) {
+                    const findMarketing = await MarketingSchema.findById(id)
+                    args.input.image = findMarketing?.image
+                    args.input.publicId = findMarketing?.image
+                }
+
                 const MarketingDoc = { $set: { ...args.input, modifiedBy: userToken.data.user._id } }
 
                 const updateDoc: any = await MarketingSchema.findByIdAndUpdate(id, MarketingDoc)
 
-                if (args.input.publicId != updateDoc?.publicId)
-                    try {
-                        new Promise(async () => {
-                            await cloudinary.uploader.destroy(updateDoc?.publicId);
-                        })
-                    } catch (err: any) {
-                        throw new ApolloError(err.message)
-                    }
+                if (args.input.publicId) {
+                    if (args.input.publicId != updateDoc?.publicId)
+                        try {
+                            if (updateDoc?.publicId) {
+                                await cloudinary.uploader.destroy(updateDoc?.publicId);
+                            }
+                        } catch (err: any) {
+                            throw new ApolloError(err.message)
+                        }
+                }
 
                 if (!updateDoc) {
                     return messageError

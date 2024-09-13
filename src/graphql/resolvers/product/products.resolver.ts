@@ -224,7 +224,9 @@ const product = {
           if (args.input.publicId != updateDoc?.publicId)
             try {
               if (updateDoc?.publicId) {
-                await cloudinary.uploader.destroy(updateDoc?.publicId);
+                new Promise(async () => {
+                  await cloudinary.uploader.destroy(updateDoc?.publicId);
+                })
               }
             } catch (err: any) {
               throw new ApolloError(err.message)

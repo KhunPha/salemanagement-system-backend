@@ -16,8 +16,14 @@ import cloudinary from "../../../util/cloudinary"
 import { createObjectCsvWriter } from "csv-writer";
 import ExcelJS from "exceljs"
 import { PassThrough } from "stream"
+import sharp from "sharp"
 const XLSX = require("xlsx")
 const csv = require("csv-parser")
+const { pipeline } = require('stream');
+const { promisify } = require('util');
+const fetch = require('node-fetch'); // Ensure you're using node-fetch v3 or higher for modern usage
+
+const pipelineAsync = promisify(pipeline);
 
 
 const marketing = {
@@ -358,9 +364,18 @@ const marketing = {
 
                         const filePath = `${marketing?.image}`
 
+                        console.log(filePath)
+
+                        const avifPath = "./public/marketing/marketing.avif";
+                        const pngPath = "./public/marketing/marketing.png";
+
                         new Promise(async () => {
                             try {
-                                sendSuccess = await client.sendFile(recipientUsername, { file: filePath, caption: message }).then(function (value) { return true }).catch(function (error) { return false })
+                                await downloadFile(filePath, avifPath);
+
+                                await convertAvifToPng(avifPath, pngPath);
+                            
+                                sendSuccess = await client.sendFile(recipientUsername, { file: pngPath, caption: message }).then(function (value) { return true }).catch(function (error) { return false })
 
                                 if (!sendSuccess) {
                                     sendSuccess = await client.sendMessage(recipientUsername, {
@@ -372,7 +387,8 @@ const marketing = {
                                     await TelegramSendHIstorySchema.updateOne({ _id: newtelegramsendhistory._id }, { $push: { customer_lists: { customer_details: getCustomer?._id, status: "Message send failed!" } } })
                                 } else {
                                     await TelegramSendHIstorySchema.updateOne({ _id: newtelegramsendhistory._id }, { $push: { customer_lists: { customer_details: getCustomer?._id, status: "Message sent successfully!" } } })
-                                }
+                                }           
+                                deleteFiles([avifPath, pngPath], 10000);                           
                             } catch (error: any) {
                                 throw new ApolloError("Send file: " + error.message)
                             }
@@ -604,6 +620,49 @@ const marketing = {
         }
     }
 }
+
+
+const downloadFile = async (url: string, localPath: string) => {
+    const response = await fetch(url);
+    if (!response.ok) {
+        throw new Error(`Failed to fetch ${url}`);
+    }
+
+    // Use pipeline to pipe the response body to a file
+    const fileStream = fs.createWriteStream(localPath);
+
+    try {
+        await pipelineAsync(response.body, fileStream);
+        console.log('File downloaded successfully');
+    } catch (error) {
+        console.error('Error downloading file:', error);
+    }
+};
+
+const convertAvifToPng = async (inputPath: any, outputPath: any) => {
+    try {
+        await sharp(inputPath)
+            .toFormat('png') // Convert to PNG
+            .toFile(outputPath); // Save it as a PNG
+        console.log('Conversion to PNG successful');
+    } catch (error) {
+        console.error('Error converting AVIF to PNG:', error);
+    }
+};
+
+const deleteFiles = (filePaths: any, delay: any) => {
+    setTimeout(() => {
+        filePaths.forEach((filePath: any) => {
+            fs.unlink(filePath, (err: any) => {
+                if (err) {
+                    console.error(`Error deleting file ${filePath}:`, err);
+                } else {
+                    console.log(`File ${filePath} deleted successfully`);
+                }
+            });
+        });
+    }, delay);
+};
 
 
 export default marketing

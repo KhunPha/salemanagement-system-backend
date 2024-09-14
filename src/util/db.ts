@@ -1,6 +1,5 @@
 import mongoose from "mongoose"
 import { MONGO_URI } from "../.."
-const cron = require('node-cron');
 const { success, error } = require("consola")
 try {
     mongoose.connect(MONGO_URI)

@@ -162,7 +162,7 @@ const product = {
         if (!userToken.status) throw new ApolloError("Unauthorization")
 
         const findProduct = await ProductSchema.findOne({ publicId: args.publicId })
-        
+
         if (!findProduct) {
           const result = await cloudinary.uploader.destroy(args.publicId).then(function (value) { return true }).catch(function (error) { return false });
           console.log("Delete:", args.publicId)

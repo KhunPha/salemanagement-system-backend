@@ -6,7 +6,7 @@ import { PaginateOptions } from "mongoose"
 import { customLabels } from "../../../helper/customeLabels.helper"
 const fs = require('fs');
 const nodemailer = require("nodemailer")
-import { Api, TelegramClient } from "telegram";
+import { client, TelegramClient } from "telegram";
 import { StringSession } from "telegram/sessions";
 import readline from "readline";
 import CustomerSchema from "../../../model/marketing/customers.model"
@@ -17,6 +17,7 @@ import { createObjectCsvWriter } from "csv-writer";
 import ExcelJS from "exceljs"
 import { PassThrough } from "stream"
 import sharp from "sharp"
+import TelegramLoginSchema from "../../../model/marketing/telegramLogin.model"
 const XLSX = require("xlsx")
 const csv = require("csv-parser")
 const { pipeline } = require('stream');
@@ -25,6 +26,9 @@ const fetch = require('node-fetch'); // Ensure you're using node-fetch v3 or hig
 
 const pipelineAsync = promisify(pipeline);
 
+const apiId: any = 28257415;
+const apiHash = "5c3bd09c79301ab6119faff84a4675c0"; // fill this later with the value from session.save()
+const sessions: any = {}; // In-memory storage for sessions
 
 const marketing = {
     Query: {
@@ -305,9 +309,9 @@ const marketing = {
                 const { customer, marketing_id } = await args
                 var recipientUsername: any, sendSuccess;
 
-                const apiId = 28257415;
-                const apiHash: any = process.env.apiHash;
-                const stringSession: any = new StringSession(process.env.stringSession); // fill this later with the value from session.save()
+                const telegramLogin = await TelegramLoginSchema.findOne()
+
+                const stringSession: any = new StringSession(telegramLogin?.sessionString);
 
                 const marketing = await MarketingSchema.findById(marketing_id)
 
@@ -321,6 +325,7 @@ const marketing = {
                     const client = new TelegramClient(stringSession, apiId, apiHash, {
                         connectionRetries: 5
                     });
+
                     await client.start({
                         phoneNumber: async () =>
                             new Promise((resolve) =>
@@ -336,6 +341,7 @@ const marketing = {
                             ),
                         onError: (err) => console.log(err),
                     });
+
                     console.log(client.session.save());
                     console.log('Sending message...');
 
@@ -360,11 +366,9 @@ const marketing = {
 
                         const title = marketing?.title
 
-                        const message = title + "\n\n\n" + marketing?.description;
+                        const message = title + "\n\n" + marketing?.description;
 
                         const filePath = `${marketing?.image}`
-
-                        console.log(filePath)
 
                         const avifPath = "./public/marketing/marketing.avif";
                         const pngPath = "./public/marketing/marketing.png";
@@ -374,7 +378,7 @@ const marketing = {
                                 await downloadFile(filePath, avifPath);
 
                                 await convertAvifToPng(avifPath, pngPath);
-                            
+
                                 sendSuccess = await client.sendFile(recipientUsername, { file: pngPath, caption: message }).then(function (value) { return true }).catch(function (error) { return false })
 
                                 if (!sendSuccess) {
@@ -387,8 +391,8 @@ const marketing = {
                                     await TelegramSendHIstorySchema.updateOne({ _id: newtelegramsendhistory._id }, { $push: { customer_lists: { customer_details: getCustomer?._id, status: "Message send failed!" } } })
                                 } else {
                                     await TelegramSendHIstorySchema.updateOne({ _id: newtelegramsendhistory._id }, { $push: { customer_lists: { customer_details: getCustomer?._id, status: "Message sent successfully!" } } })
-                                }           
-                                deleteFiles([avifPath, pngPath], 10000);                           
+                                }
+                                deleteFiles([avifPath, pngPath], 10000);
                             } catch (error: any) {
                                 throw new ApolloError("Send file: " + error.message)
                             }
@@ -400,6 +404,99 @@ const marketing = {
                 return message
             } catch (error: any) {
                 throw new ApolloError(error.message)
+            }
+        },
+        telegramRequestCode: async (parent: any, args: any, context: any) => {
+            const { phoneNumber } = args;
+
+            if (typeof phoneNumber !== 'string') {
+                throw new Error('Phone number must be a string');
+            }
+
+            if (!phoneNumber) {
+                throw new ApolloError("Phone Number is required!")
+            }
+
+            try {
+                const stringSession = new StringSession('');
+                const client = new TelegramClient(stringSession, apiId, apiHash, {
+                    connectionRetries: 5,
+                });
+
+                await client.connect();
+
+                // Request a verification code
+                const apiCredentials = { apiId, apiHash }
+
+                const sentCode = await client.sendCode(apiCredentials, phoneNumber)
+
+                // Save the session for later use
+                sessions[phoneNumber] = {
+                    client,
+                    stringSession,
+                    phoneCodeHash: sentCode.phoneCodeHash, // Save phoneCodeHash
+                };
+
+                return message
+            } catch (error: any) {
+                throw new ApolloError(error.message)
+            }
+        },
+        telegramVerifyCode: async (parent: any, args: any, context: any) => {
+            const { phoneNumber, phoneCode, password } = args;
+
+            if (!phoneNumber || !phoneCode) {
+                throw new ApolloError("Phone number and code are required")
+            }
+
+            try {
+
+                const sessionData: any = sessions[phoneNumber];
+
+                if (!sessionData) {
+                    throw new ApolloError("Session not found")
+                }
+
+                const { client, stringSession, phoneCodeHash } = sessionData
+
+                await client.connect();
+
+                // Sign in with the received code
+                await client.start({
+                    phoneNumber: () => phoneNumber,
+                    password: () => password,
+                    phoneCode: () => phoneCode
+                });
+
+                const { firstName, lastName, username, phone } = await client.getMe()
+
+                const userExist: any = await TelegramLoginSchema.findOne()
+
+                if (userExist) {
+                    await TelegramLoginSchema.findByIdAndUpdate(userExist._id, {
+                        $set: {
+                            firstname: firstName,
+                            lastname: lastName,
+                            username: username,
+                            phonenumber: phone,
+                            sessionString: client.session.save()
+                        }
+                    })
+
+                    return message
+                }
+
+                await new TelegramLoginSchema({
+                    firstname: firstName,
+                    lastname: lastName,
+                    username: username,
+                    phonenumber: phone,
+                    sessionString: client.session.save()
+                }).save()
+
+                return message
+            } catch (error: any) {
+                throw new ApolloError('Error verifying code:', error.message);
             }
         },
         importMarketingExcel: async (parent: any, args: any, context: any) => {

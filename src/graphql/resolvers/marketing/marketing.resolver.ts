@@ -306,6 +306,8 @@ const marketing = {
             try {
                 const userToken: any = await verifyToken(context.user)
                 if (!userToken.status) throw new ApolloError("Unauthorization")
+
+                let getReturn = true;
                 const { customer, marketing_id } = await args
                 var recipientUsername: any, sendSuccess;
 
@@ -322,9 +324,19 @@ const marketing = {
 
                 (async () => {
                     console.log("Loading interactive example...");
-                    const client = new TelegramClient(stringSession, apiId, apiHash, {
+                    const client: any = new TelegramClient(stringSession, apiId, apiHash, {
                         connectionRetries: 5
                     });
+
+                    await client.connect();
+
+                    if (!client.session.save()) {
+                        messageError.message_en = "Please login first";
+                        messageError.message_kh = "សូមមេត្តា login សិនប្រូ"
+
+                        getReturn = false;
+                        return messageError;
+                    }
 
                     await client.start({
                         phoneNumber: async () =>
@@ -339,11 +351,8 @@ const marketing = {
                             new Promise((resolve) =>
                                 rl.question("Please enter the code you received: ", resolve)
                             ),
-                        onError: (err) => console.log(err),
+                        onError: (err: any) => console.log(err),
                     });
-
-                    console.log(client.session.save());
-                    console.log('Sending message...');
 
                     const newtelegramsendhistory: any = new TelegramSendHIstorySchema({
                         marketing_details: marketing_id
@@ -379,12 +388,12 @@ const marketing = {
 
                                 await convertAvifToPng(avifPath, pngPath);
 
-                                sendSuccess = await client.sendFile(recipientUsername, { file: pngPath, caption: message }).then(function (value) { return true }).catch(function (error) { return false })
+                                sendSuccess = await client.sendFile(recipientUsername, { file: pngPath, caption: message }).then(function (value: any) { return true }).catch(function (error: any) { return false })
 
                                 if (!sendSuccess) {
                                     sendSuccess = await client.sendMessage(recipientUsername, {
                                         message
-                                    }).then(function (value) { return true }).catch(function (error) { return false })
+                                    }).then(function (value: any) { return true }).catch(function (error: any) { return false })
                                 }
 
                                 if (!sendSuccess) {
@@ -397,9 +406,11 @@ const marketing = {
                                 throw new ApolloError("Send file: " + error.message)
                             }
                         })
-                        console.log("Message sent successfully")
                     }
                 })();
+
+                if(!getReturn)
+                    return messageError
 
                 return message
             } catch (error: any) {
@@ -730,7 +741,6 @@ const downloadFile = async (url: string, localPath: string) => {
 
     try {
         await pipelineAsync(response.body, fileStream);
-        console.log('File downloaded successfully');
     } catch (error) {
         console.error('Error downloading file:', error);
     }
@@ -741,7 +751,6 @@ const convertAvifToPng = async (inputPath: any, outputPath: any) => {
         await sharp(inputPath)
             .toFormat('png') // Convert to PNG
             .toFile(outputPath); // Save it as a PNG
-        console.log('Conversion to PNG successful');
     } catch (error) {
         console.error('Error converting AVIF to PNG:', error);
     }
@@ -753,8 +762,6 @@ const deleteFiles = (filePaths: any, delay: any) => {
             fs.unlink(filePath, (err: any) => {
                 if (err) {
                     console.error(`Error deleting file ${filePath}:`, err);
-                } else {
-                    console.log(`File ${filePath} deleted successfully`);
                 }
             });
         });

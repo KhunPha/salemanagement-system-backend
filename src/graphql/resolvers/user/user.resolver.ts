@@ -48,6 +48,16 @@ const user = {
             } catch (error: any) {
                 throw new ApolloError(error)
             }
+        },
+        getUserLogin: async (parent: any, args: any, context: any) => {
+            try {
+                const userToken: any = await verifyToken(context.user)
+                if (!userToken.status) throw new ApolloError("Unauthorization")
+
+                return userToken.data.user
+            } catch (error: any) {
+                throw new ApolloError(error.message)
+            }
         }
     },
 
@@ -182,9 +192,7 @@ const user = {
                 const userToken = await verifyToken(context.user)
                 if (!userToken.status) throw new ApolloError("Unauthorization")
 
-                const { id } = args
-
-                await UserShcema.findByIdAndUpdate(id, { $set: { sessionId: null } })
+                await UserShcema.findByIdAndUpdate(userToken.data._id, { $set: { sessionId: null } })
 
                 return message
             } catch (error: any) {

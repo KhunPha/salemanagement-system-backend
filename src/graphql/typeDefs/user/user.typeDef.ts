@@ -57,6 +57,7 @@ const user = gql`
 
     type Query {
         getUsers(keyword: String, page: Int, pagination: Boolean, limit: Int, roles: String): UserPagination
+        getUserLogin: User
     }
 
     type Mutation {
@@ -64,7 +65,7 @@ const user = gql`
         deleteUserImage(publicId: String): Boolean
         createUser(input: UserInput!, file: Upload): ResponseMessage!
         login(input: Login): ResponseMessageLogin!
-        logout(id: ID!): ResponseMessage!
+        logout: ResponseMessage!
         updateUser(id: ID!, input: UserInput): ResponseMessage!
         resetPassword(id: ID!, newPassword: String): ResponseMessage!
         deleteUser(id: ID!): ResponseMessage!

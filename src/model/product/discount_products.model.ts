@@ -3,6 +3,7 @@ import mongoose, { Schema, Document } from "mongoose";
 export interface IDiscountProducts extends Document {
     product_id: object
     discount: number
+    type: string
     remark: string
     createdBy: object
     modifiedBy: object
@@ -17,6 +18,10 @@ const discountproduct = new Schema<IDiscountProducts>({
     ],
     discount: {
         type: Number
+    },
+    type: {
+        type: String,
+        enum: ["Cash", "Percentage"]
     },
     remark: {
         type: String

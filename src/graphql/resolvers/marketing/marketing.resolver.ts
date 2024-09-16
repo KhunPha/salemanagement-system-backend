@@ -6,7 +6,7 @@ import { PaginateOptions } from "mongoose"
 import { customLabels } from "../../../helper/customeLabels.helper"
 const fs = require('fs');
 const nodemailer = require("nodemailer")
-import { client, TelegramClient } from "telegram";
+import { Api, TelegramClient } from "telegram";
 import { StringSession } from "telegram/sessions";
 import readline from "readline";
 import CustomerSchema from "../../../model/marketing/customers.model"
@@ -28,7 +28,7 @@ const pipelineAsync = promisify(pipeline);
 
 const apiId: any = 28257415;
 const apiHash = "5c3bd09c79301ab6119faff84a4675c0"; // fill this later with the value from session.save()
-const sessions: any = {}; // In-memory storage for sessions
+let sessions: any = {}; // In-memory storage for sessions
 
 const marketing = {
     Query: {
@@ -307,7 +307,6 @@ const marketing = {
                 const userToken: any = await verifyToken(context.user)
                 if (!userToken.status) throw new ApolloError("Unauthorization")
 
-                let getReturn = true;
                 const { customer, marketing_id } = await args
                 var recipientUsername: any, sendSuccess;
 
@@ -322,22 +321,30 @@ const marketing = {
                     output: process.stdout,
                 });
 
+                console.log("Loading interactive example...");
+                const client: any = new TelegramClient(stringSession, apiId, apiHash, {
+                    connectionRetries: 5
+                });
+
+                await client.connect();
+
+                const loginExist = await client.getMe().then(function (value: any) { return value }).catch(function (error: any) { return false })
+
+                if (!loginExist) {
+                    const userTelegram: any = await TelegramLoginSchema.findOne()
+
+                    if (userTelegram)
+                        await TelegramLoginSchema.findByIdAndDelete(userTelegram._id)
+
+                    sessions = {};
+
+                    messageError.message_en = "Please login first";
+                    messageError.message_kh = "សូមមេត្តា login សិនប្រូ"
+
+                    return messageError
+                }
+
                 (async () => {
-                    console.log("Loading interactive example...");
-                    const client: any = new TelegramClient(stringSession, apiId, apiHash, {
-                        connectionRetries: 5
-                    });
-
-                    await client.connect();
-
-                    if (!client.session.save()) {
-                        messageError.message_en = "Please login first";
-                        messageError.message_kh = "សូមមេត្តា login សិនប្រូ"
-
-                        getReturn = false;
-                        return messageError;
-                    }
-
                     await client.start({
                         phoneNumber: async () =>
                             new Promise((resolve) =>
@@ -360,17 +367,20 @@ const marketing = {
 
                     await newtelegramsendhistory.save()
 
-                    for (var i = 0; i < customer.length; i++) {
-                        const getCustomer = await CustomerSchema.findById(customer[i])
+                    const avifPath = "./public/marketing/marketing.avif";
+                    const pngPath = "./public/marketing/marketing.png";
 
-                        var phonenumber = getCustomer?.phone_number;
+                    for (var i = 0; i < customer.length; i++) {
+                        const getCustomer: any = await CustomerSchema.findById(customer[i])
+
+                        var phonenumber: any = getCustomer?.phone_number;
 
                         if (phonenumber?.startsWith("0")) {
-                            recipientUsername = `+855${phonenumber.slice(1)}`;
+                            recipientUsername = `+855${phonenumber.slice(1).replace(/\s+/g, '')}`;
                         } else if (phonenumber?.startsWith("@")) {
                             recipientUsername = `${phonenumber}`
                         } else {
-                            recipientUsername = `+855${phonenumber}`;
+                            recipientUsername = `+855${phonenumber?.replace(/\s+/g, '')}`;
                         }
 
                         const title = marketing?.title
@@ -379,38 +389,43 @@ const marketing = {
 
                         const filePath = `${marketing?.image}`
 
-                        const avifPath = "./public/marketing/marketing.avif";
-                        const pngPath = "./public/marketing/marketing.png";
+                        await downloadFile(filePath, avifPath);
 
-                        new Promise(async () => {
-                            try {
-                                await downloadFile(filePath, avifPath);
+                        await convertAvifToPng(avifPath, pngPath);
 
-                                await convertAvifToPng(avifPath, pngPath);
+                        const contactUser = await client.getEntity(recipientUsername).then(function (value: any) { return value }).catch(function (error: any) { return false });
 
-                                sendSuccess = await client.sendFile(recipientUsername, { file: pngPath, caption: message }).then(function (value: any) { return true }).catch(function (error: any) { return false })
+                        const clientId: any = BigInt(Date.now());
 
-                                if (!sendSuccess) {
-                                    sendSuccess = await client.sendMessage(recipientUsername, {
-                                        message
-                                    }).then(function (value: any) { return true }).catch(function (error: any) { return false })
-                                }
+                        if (!contactUser) {
+                            await client.invoke(new Api.contacts.ImportContacts({
+                                contacts: [
+                                    new Api.InputPhoneContact({
+                                        clientId, // Using BigInt for clientId
+                                        phone: recipientUsername, // Phone number should be a string
+                                        firstName: getCustomer.customer_name, // Placeholder if name is unknown
+                                        lastName: '', // You can leave lastName as empty or provide a value
+                                    })
+                                ]
+                            }));
+                        }
 
-                                if (!sendSuccess) {
-                                    await TelegramSendHIstorySchema.updateOne({ _id: newtelegramsendhistory._id }, { $push: { customer_lists: { customer_details: getCustomer?._id, status: "Message send failed!" } } })
-                                } else {
-                                    await TelegramSendHIstorySchema.updateOne({ _id: newtelegramsendhistory._id }, { $push: { customer_lists: { customer_details: getCustomer?._id, status: "Message sent successfully!" } } })
-                                }
-                                deleteFiles([avifPath, pngPath], 10000);
-                            } catch (error: any) {
-                                throw new ApolloError("Send file: " + error.message)
-                            }
-                        })
+                        sendSuccess = await client.sendFile(recipientUsername, { file: pngPath, caption: message }).then(function (value: any) { return true }).catch(function (error: any) { return false })
+
+                        if (!sendSuccess) {
+                            sendSuccess = await client.sendMessage(recipientUsername, {
+                                message
+                            }).then(function (value: any) { return true }).catch(function (error: any) { return false })
+                        }
+
+                        if (!sendSuccess) {
+                            await TelegramSendHIstorySchema.updateOne({ _id: newtelegramsendhistory._id }, { $push: { customer_lists: { customer_details: getCustomer?._id, status: "Message send failed!" } } })
+                        } else {
+                            await TelegramSendHIstorySchema.updateOne({ _id: newtelegramsendhistory._id }, { $push: { customer_lists: { customer_details: getCustomer?._id, status: "Message sent successfully!" } } })
+                        }
                     }
+                    deleteFiles([avifPath, pngPath], 10000);
                 })();
-
-                if(!getReturn)
-                    return messageError
 
                 return message
             } catch (error: any) {

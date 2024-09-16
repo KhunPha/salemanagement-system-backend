@@ -95,8 +95,7 @@ const purchase = {
                 if (!userToken.status) throw new ApolloError("Unauthorization")
                 const { id } = await args
 
-
-                const voidpurchaseDoc = { $set: { isVoid: true, modifiedBy: userToken.data.user._id } }
+                const voidpurchaseDoc = { $set: { isVoid: true, modifiedBy: userToken.data._id } }
 
                 const voidDoc = await PurchaseSchema.findByIdAndUpdate(id, voidpurchaseDoc, { new: true })
 

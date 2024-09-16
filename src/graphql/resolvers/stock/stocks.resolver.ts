@@ -11,7 +11,7 @@ const stock = {
             try {
                 const userToken: any = await verifyToken(context.user)
                 if (!userToken.status) throw new ApolloError("Unauthorization")
-                const { page, limit, pagination, keyword } = await args
+                const { page, limit, pagination, type_of_product, category, keyword } = args
                 const options: PaginateOptions = {
                     pagination,
                     customLabels,
@@ -21,7 +21,9 @@ const stock = {
                             {
                                 path: "category",
                                 match: {
-                                    isDelete: { $ne: true }
+                                    $and: {
+                                        isDelete: { $ne: true }
+                                    }
                                 }
                             },
                             {
@@ -38,11 +40,17 @@ const stock = {
                             },
                         ],
                         match: {
-                            $or: [
-                                { pro_name: { $regex: keyword, $options: "i" } },
-                                { barcode: { $regex: keyword, $options: "i" } }
-                            ],
-                            isDelete: { $ne: true }
+                            $and: [
+                                {
+                                    $or: [
+                                        keyword ? { pro_name: { $regex: keyword, $options: "i" } } : {},
+                                        keyword ? { barcode: { $regex: keyword, $options: "i" } } : {}
+                                    ]
+                                },
+                                category ? { category } : {},
+                                type_of_product === "All" ? {} : { type_of_product },
+                                { isDelete: { $ne: true } }
+                            ]
                         }
                     },
                     page: page,
@@ -50,8 +58,8 @@ const stock = {
                     sort: { createdAt: -1 }
                 }
 
-                const stocks: any = await StockSchema.paginate({}, options)
-                const data = stocks.data.filter((data: any) => data.product_details != null);
+                const stocks: any = await StockSchema.paginate({ isDelete: { $ne: true } }, options)
+                const data = stocks.data.filter((data: any) => data.product_details !== null && data?.product_details?.category !== null);
                 const paginator = stocks.paginator
 
                 return { data, paginator }

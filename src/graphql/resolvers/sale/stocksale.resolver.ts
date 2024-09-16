@@ -27,7 +27,7 @@ const getstocksale = {
                                         keyword ? { barcode: { $regex: keyword, $options: "i" } } : {}
                                     ]
                                 },
-                                category ? { category } : {}
+                                category ? { category } : {},
                             ]
                         }
                     },
@@ -36,7 +36,7 @@ const getstocksale = {
                     sort: { createdAt: -1 }
                 }
 
-                const StockSale: any = await StockSchema.paginate({}, options)
+                const StockSale: any = await StockSchema.paginate({ isDelete: { $ne: true } }, options)
                 const data = StockSale.data.filter((data: any) => data.product_details != null)
                 const paginator = StockSale.paginator
 

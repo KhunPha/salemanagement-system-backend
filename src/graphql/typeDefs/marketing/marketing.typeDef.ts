@@ -54,11 +54,20 @@ const marketing = gql`
         status: Boolean
     }
 
+    type UserTelegram {
+        _id: ID,
+        firstname: String
+        lastname: String
+        username: String
+        phonenumber: String
+    }
+
     type Query {
         getMarketings(page: Int, limit: Int, pagination: Boolean, keyword: String): MarketingPagination
         getTelegramSend: [SendDetails]
         getEmailSend: [SendDetails]
         getMarketingRecovery(page: Int, limit: Int, pagination: Boolean, keyword: String): MarketingPagination
+        getUserTelegramLogin: UserTelegram
     }
 
     type Mutation {

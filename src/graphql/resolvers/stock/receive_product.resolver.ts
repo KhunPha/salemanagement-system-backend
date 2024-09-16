@@ -3,6 +3,7 @@ import { verifyToken } from "../../../middleware/auth.middleware"
 import ReceiveProductTransactionSchema from "../../../model/stock/receive_product.model"
 import { message, messageError } from "../../../helper/message.helper"
 import StockSchema from "../../../model/stock/stocks.model"
+import PurchaseSchema from "../../../model/stock/purchases.model"
 
 const receiveproduct = {
     Query: {
@@ -25,11 +26,17 @@ const receiveproduct = {
                 if (!userToken.status) throw new ApolloError("Unauthorization")
                 let stockDoc;
 
+                const { purchase_id } = args.input
+
                 const newproductreceive = new ReceiveProductTransactionSchema({
                     ...args.input,
                     createdBy: userToken.data.user._id,
                     modifiedBy: userToken.data.user._id
                 })
+
+                const purchase: any = await PurchaseSchema.findById(purchase_id)
+
+                await PurchaseSchema.findByIdAndUpdate(purchase_id, { $set: { total_pay: purchase.total_pay + args.input.total_pay, remiding_date: args.input.date_notify, due: purchase.amounts - args.input.total_pay } })
 
                 const product_map: any = newproductreceive.product_lists
 

@@ -10,7 +10,8 @@ export interface IPurchase extends Document {
     amounts: number,
     isVoid: boolean,
     total_qty: number
-    due: number
+    due: number,
+    total_pay: number,
     remiding_date: Date
     remark: string
     createdBy: object
@@ -55,6 +56,10 @@ const purchase = new Schema<IPurchase>({
         type: Number
     },
     due: {
+        type: Number,
+        default: 0
+    },
+    total_pay: {
         type: Number,
         default: 0
     },

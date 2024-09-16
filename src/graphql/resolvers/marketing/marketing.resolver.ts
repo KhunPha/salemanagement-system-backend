@@ -91,6 +91,39 @@ const marketing = {
             } catch (error: any) {
                 throw new ApolloError(error.message)
             }
+        },
+        getUserTelegramLogin: async (parent: any, args: any, context: any) => {
+            try {
+                const userToken: any = await verifyToken(context.user)
+                if (!userToken.status) throw new ApolloError("Unauthorization")
+
+                const telegramLogin = await TelegramLoginSchema.findOne()
+
+                const stringSession: any = new StringSession(telegramLogin?.sessionString);
+
+                const client: any = new TelegramClient(stringSession, apiId, apiHash, {
+                    connectionRetries: 5
+                });
+
+                await client.connect();
+
+                const loginExist = await client.getMe().then(function (value: any) { return value }).catch(function (error: any) { return false })
+
+                if (!loginExist) {
+                    const userTelegram: any = await TelegramLoginSchema.findOne()
+
+                    if (userTelegram)
+                        await TelegramLoginSchema.findByIdAndDelete(userTelegram._id)
+
+                    sessions = {};
+
+                    return;
+                }
+
+                return telegramLogin
+            } catch (error: any) {
+                throw new ApolloError(error.message)
+            }
         }
     },
     Mutation: {
@@ -345,22 +378,6 @@ const marketing = {
                 }
 
                 (async () => {
-                    await client.start({
-                        phoneNumber: async () =>
-                            new Promise((resolve) =>
-                                rl.question("Please enter your number: ", resolve)
-                            ),
-                        password: async () =>
-                            new Promise((resolve) =>
-                                rl.question("Please enter your password: ", resolve)
-                            ),
-                        phoneCode: async () =>
-                            new Promise((resolve) =>
-                                rl.question("Please enter the code you received: ", resolve)
-                            ),
-                        onError: (err: any) => console.log(err),
-                    });
-
                     const newtelegramsendhistory: any = new TelegramSendHIstorySchema({
                         marketing_details: marketing_id
                     })

@@ -1,6 +1,8 @@
 import { gql } from "apollo-server-express";
 
 const receiveproduct = gql`
+    scalar Date
+
     type ReceiveProduct {
         _id: ID
         purchase_id: ID
@@ -28,6 +30,8 @@ const receiveproduct = gql`
         purchase_id: ID
         product_lists: [ProductInputReceiver]
         product_unit_type: String
+        total_pay: Float
+        date_notify: Date
     }
 
     type Query {

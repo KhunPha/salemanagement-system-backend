@@ -147,9 +147,19 @@ const stock = {
 
                 const { id } = args
 
-                await DiscountProductSchema.findOneAndUpdate({ product_id: id[0] }, { $set: { deadline: true, isActive: false } })
-
                 id.map(async (id: any) => {
+                    const findStock = await StockSchema.findById(id)
+
+                    const findDiscount: any = await DiscountProductSchema.findById(findStock?.discount_id)
+
+                    const product_id = findDiscount?.product_id.filter((product_id: any) => product_id.toString() !== findStock?.product_details.toString())
+
+                    if (product_id?.length <= 0) {
+                        await DiscountProductSchema.findByIdAndUpdate(findStock?.discount_id, { $set: { deadline: true, isActive: false, product_id: product_id } })
+                    } else {
+                        await DiscountProductSchema.findByIdAndUpdate(findStock?.discount_id, { $set: { product_id: product_id } })
+                    }
+
                     const updateDoc = { $set: { discount: 0, after_discount: 0, discount_id: null, isDiscount: false } }
 
                     await StockSchema.findByIdAndUpdate(id, updateDoc)

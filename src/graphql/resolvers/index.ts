@@ -25,6 +25,8 @@ import shift from "./sale/shift.resolver";
 import restoreMongoDb from "./restoreDatabase/restoreDatabase.resolver";
 import aboutsystem from "./setting/about_system.resolver";
 
+require("./setting/onCronSchedule.resolver")
+
 const resolvers = [
     user,
     bank,

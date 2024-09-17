@@ -4,6 +4,8 @@ export interface IDiscountProducts extends Document {
     product_id: object
     discount: number
     type: string
+    from_date: Date
+    to_date: Date
     remark: string
     createdBy: object
     modifiedBy: object
@@ -22,6 +24,12 @@ const discountproduct = new Schema<IDiscountProducts>({
     type: {
         type: String,
         enum: ["Cash", "Percentage"]
+    },
+    from_date: {
+        type: Date
+    },
+    to_date: {
+        type: Date
     },
     remark: {
         type: String

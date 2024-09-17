@@ -50,7 +50,7 @@ const receiveproduct = {
 
                     await newproductreceive.save()
 
-                    if (args.input.product_unit_type === "Whole") {
+                    if (args.input.product_type === "Second Hand") {
                         stockDoc = { $set: { stock_in_hand: getStock.stock_in_hand + product_map[i].whole } }
                     } else {
                         stockDoc = { $set: { stock_in_hand: getStock.stock_in_hand + (product_map[i].retail_in_whole * product_map[i].whole) } }

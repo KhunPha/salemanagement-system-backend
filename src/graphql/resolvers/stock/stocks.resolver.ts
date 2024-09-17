@@ -4,6 +4,7 @@ import StockSchema from "../../../model/stock/stocks.model"
 import { message, messageError } from "../../../helper/message.helper"
 import { PaginateOptions } from "mongoose"
 import { customLabels } from "../../../helper/customeLabels.helper"
+import DiscountProductSchema from "../../../model/product/discount_products.model"
 
 const stock = {
     Query: {
@@ -69,20 +70,18 @@ const stock = {
         }
     },
     Mutation: {
-        updateStock: async (parent: any, args: any, context: any) => {
+        discountProduct: async (parent: any, args: any, context: any) => {
             try {
                 const userToken: any = await verifyToken(context.user)
                 if (!userToken.status) throw new ApolloError("Unauthorization")
-                const { cost, discount } = await args.input
-                const { id } = await args
 
-                const StockDoc = { $set: { cost, discount } }
+                const discountProduct = new DiscountProductSchema({
+                    ...args.input,
+                    createdBy: userToken.data.user_id,
+                    modifiedBy: userToken.data.user._id
+                })
 
-                const updateDoc = await StockSchema.findByIdAndUpdate(id, StockDoc, { new: true })
-
-                if (!updateDoc) {
-                    return messageError
-                }
+                await discountProduct.save()
 
                 return message
             } catch (error: any) {

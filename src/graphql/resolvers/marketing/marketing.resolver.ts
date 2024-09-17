@@ -56,7 +56,7 @@ const marketing = {
                 }
                 return await MarketingSchema.paginate(query, options)
             } catch (error: any) {
-                throw new ApolloError(error.message)
+                throw new ApolloError(error)
             }
         },
         getTelegramSend: async (parent: any, args: any, context: any) => {
@@ -65,7 +65,7 @@ const marketing = {
                 if (!userToken.status) throw new ApolloError("Unauthorization")
                 return await TelegramSendHIstorySchema.find().populate("customer_lists.customer").sort({ createdAt: -1 })
             } catch (error: any) {
-                throw new ApolloError(error.message)
+                throw new ApolloError(error)
             }
         },
         getMarketingRecovery: async (parent: any, args: any, context: any) => {
@@ -89,7 +89,7 @@ const marketing = {
                 }
                 return await MarketingSchema.paginate(query, options)
             } catch (error: any) {
-                throw new ApolloError(error.message)
+                throw new ApolloError(error)
             }
         },
         getUserTelegramLogin: async (parent: any, args: any, context: any) => {
@@ -122,7 +122,7 @@ const marketing = {
 
                 return telegramLogin
             } catch (error: any) {
-                throw new ApolloError(error.message)
+                throw new ApolloError(error)
             }
         }
     },
@@ -151,7 +151,7 @@ const marketing = {
 
                 return { url: img, publicId: null, status: true }
             } catch (error: any) {
-                throw new ApolloError(error.message)
+                throw new ApolloError(error)
             }
         },
         deleteMarketingImage: async (parent: any, args: any, context: any) => {
@@ -169,7 +169,7 @@ const marketing = {
 
                 return false
             } catch (error: any) {
-                throw new ApolloError(error.message)
+                throw new ApolloError(error)
             }
         },
         createMarketing: async (parent: any, args: any, context: any) => {
@@ -194,7 +194,7 @@ const marketing = {
 
                 return message
             } catch (error: any) {
-                throw new ApolloError(error.message)
+                throw new ApolloError(error)
             }
         },
         updateMarketing: async (parent: any, args: any, context: any) => {
@@ -220,7 +220,7 @@ const marketing = {
                                 await cloudinary.uploader.destroy(updateDoc?.publicId);
                             }
                         } catch (err: any) {
-                            throw new ApolloError(err.message)
+                            throw new ApolloError(err)
                         }
                 }
 
@@ -230,7 +230,7 @@ const marketing = {
 
                 return message
             } catch (error: any) {
-                throw new ApolloError(error.message)
+                throw new ApolloError(error)
             }
         },
         deleteMarketing: async (parent: any, args: any, context: any) => {
@@ -255,7 +255,7 @@ const marketing = {
 
                 return message
             } catch (error: any) {
-                throw new ApolloError(error.message)
+                throw new ApolloError(error)
             }
         },
         emailMarketing: async (parent: any, args: any, context: any) => {
@@ -331,7 +331,7 @@ const marketing = {
                 // console.log(createOTP, "createOTP")
                 return message
             } catch (error: any) {
-                throw new ApolloError(error.message)
+                throw new ApolloError(error)
             }
 
         },
@@ -453,7 +453,7 @@ const marketing = {
 
                 return message
             } catch (error: any) {
-                throw new ApolloError(error.message)
+                throw new ApolloError(error)
             }
         },
         telegramRequestCode: async (parent: any, args: any, context: any) => {
@@ -489,7 +489,7 @@ const marketing = {
 
                 return message
             } catch (error: any) {
-                throw new ApolloError(error.message)
+                throw new ApolloError(error)
             }
         },
         telegramVerifyCode: async (parent: any, args: any, context: any) => {
@@ -546,7 +546,33 @@ const marketing = {
 
                 return message
             } catch (error: any) {
-                throw new ApolloError('Error verifying code:', error.message);
+                throw new ApolloError('Error verifying code:', error);
+            }
+        },
+        telegramLogout: async (parent: any, args: any, context: any) => {
+            try {
+                const userToken: any = await verifyToken(context.user)
+                if (!userToken.status) throw new ApolloError("Unauthorization")
+
+                const user: any = await TelegramLoginSchema.findOne()
+
+                const stringSession: any = new StringSession(user?.sessionString);
+
+                const client = new TelegramClient(stringSession, apiId, apiHash, {
+                    connectionRetries: 5,
+                });
+
+                await client.connect();
+
+                // Log out the user
+                await client.invoke(new Api.auth.LogOut());
+
+                // Optionally remove from the database
+                await TelegramLoginSchema.findByIdAndDelete(user._id);
+
+                return message
+            } catch (error: any) {
+                throw new ApolloError('Error logging out:', error);
             }
         },
         importMarketingExcel: async (parent: any, args: any, context: any) => {
@@ -577,7 +603,7 @@ const marketing = {
 
                 return message
             } catch (error: any) {
-                throw new ApolloError(error.message)
+                throw new ApolloError(error)
             }
         },
         importMarketingCSV: async (parent: any, args: any, context: any) => {
@@ -620,7 +646,7 @@ const marketing = {
                 });
                 return message
             } catch (error: any) {
-                throw new ApolloError(error.message)
+                throw new ApolloError(error)
             }
         },
         exportMarketingExcel: async (parent: any, args: any, context: any) => {
@@ -682,7 +708,7 @@ const marketing = {
 
                 return message
             } catch (error: any) {
-                throw new ApolloError(error.message)
+                throw new ApolloError(error)
             }
         },
         exportMarketingCSV: async (parent: any, args: any, context: any) => {
@@ -725,7 +751,7 @@ const marketing = {
 
                 return message
             } catch (error: any) {
-                throw new ApolloError(error.message)
+                throw new ApolloError(error)
             }
         },
         recoveryMarketing: async (parent: any, args: any, context: any) => {
@@ -740,7 +766,7 @@ const marketing = {
 
                 return message
             } catch (error: any) {
-                throw new ApolloError(error.message)
+                throw new ApolloError(error)
             }
         },
         recoveryMarketingDelete: async (parent: any, args: any, context: any) => {
@@ -757,12 +783,12 @@ const marketing = {
                             await cloudinary.uploader.destroy(deleteMarketing?.publicId)
                         })
                     } catch (err: any) {
-                        throw new ApolloError(err.message)
+                        throw new ApolloError(err)
                     }
 
                 return message
             } catch (error: any) {
-                throw new ApolloError(error.message)
+                throw new ApolloError(error)
             }
         }
     }

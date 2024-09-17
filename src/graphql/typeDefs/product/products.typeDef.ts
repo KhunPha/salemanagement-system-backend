@@ -2,6 +2,7 @@ import { gql } from "apollo-server-express";
 
 const product = gql`
     scalar Upload
+    scalar Date
     
     type Product {
         _id: ID
@@ -75,7 +76,6 @@ const product = gql`
         deleteProductImage(publicId: String): Boolean
         createProduct(input: ProductInputs): ResponseMessage!
         updateProduct(id: ID!, input: ProductInputs): ResponseMessage!
-        discountProduct(id: [ID], discount: Float): ResponseMessage
         deleteProduct(id: ID): ResponseMessage!
         importProductExcel(file: Upload!): ResponseMessage!
         importProductCSV(file: Upload!): ResponseMessage!

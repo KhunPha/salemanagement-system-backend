@@ -7,6 +7,7 @@ const stock = gql`
         stock_on_hand: Int
         price: Float
         discount: Float
+        after_discount: Float
         cost: Float
     }
 
@@ -32,8 +33,16 @@ const stock = gql`
         product_details: ID
         stock_on_hand: Int
         price: Float
-        discount: Float
         cost: Float
+    }
+
+    input ProductDiscounts {
+        product_id: [ID],
+        discount: Float,
+        type: String,
+        from_date: Date,
+        to_date: Date,
+        remark: String
     }
 
     type Query {
@@ -41,7 +50,7 @@ const stock = gql`
     }
 
     type Mutation {
-        updateStock(id: ID, input: StockInput): ResponseMessage!
+        discountProduct(input: ProductDiscounts): ResponseMessage
     }
 `
 

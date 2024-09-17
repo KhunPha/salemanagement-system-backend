@@ -80,6 +80,7 @@ const marketing = gql`
         telegramMarketing(customer: [ID], marketing_id: ID): ResponseMessage!
         telegramRequestCode(phoneNumber: String): ResponseMessage!
         telegramVerifyCode(phoneNumber: String, phoneCode: String, password: String): ResponseMessage!
+        telegramLogout: ResponseMessage!
         importMarketingExcel(file: Upload!): ResponseMessage!
         importMarketingCSV(file: Upload!): ResponseMessage!
         exportMarketingExcel(savePath: String!): ResponseMessage!

@@ -29,7 +29,7 @@ const receiveproduct = gql`
     input ReceiveProductInput {
         purchase_id: ID
         product_lists: [ProductInputReceiver]
-        product_unit_type: String
+        product_type: String
         total_pay: Float
         date_notify: Date
     }

@@ -7,7 +7,6 @@ export interface IStocks extends Document {
     product_details: object
     stock_on_hand: number
     price: number
-    discount: number
     cost: number
     isDelete: boolean
     deadline: Date
@@ -23,10 +22,6 @@ const stock = new Schema<IStocks>({
         default: 0
     },
     price: {
-        type: Number,
-        default: 0
-    },
-    discount: {
         type: Number,
         default: 0
     },

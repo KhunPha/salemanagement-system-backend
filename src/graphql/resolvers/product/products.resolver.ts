@@ -242,23 +242,6 @@ const product = {
         throw new ApolloError(error.message);
       }
     },
-    discountProduct: async (parent: any, args: any, context: any) => {
-      try {
-        const userToken: any = await verifyToken(context.user)
-        if (!userToken.status) throw new ApolloError("Unauthorization")
-        if (!userToken.status) throw new ApolloError("Unauthorization")
-
-        const discountProduct = new DiscountProductSchema({
-          ...args
-        })
-
-        await discountProduct.save()
-
-        return message
-      } catch (error: any) {
-        throw new ApolloError(error.message)
-      }
-    },
     deleteProduct: async (parent: any, args: any, context: any) => {
       try {
         const userToken: any = await verifyToken(context.user)

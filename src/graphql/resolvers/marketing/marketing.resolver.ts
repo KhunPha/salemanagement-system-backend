@@ -343,13 +343,6 @@ const marketing = {
                 const { customer, marketing_id } = await args
                 var recipientUsername: any, sendSuccess;
 
-                if (customer.length <= 0) {
-                    messageError.message_en = "Please select customer";
-                    messageError.message_kh = "សូមមេត្តាជ្រើរើសអតិថិជន"
-
-                    return messageError
-                }
-
                 const telegramLogin = await TelegramLoginSchema.findOne()
 
                 const stringSession: any = new StringSession(telegramLogin?.sessionString);
@@ -380,6 +373,13 @@ const marketing = {
 
                     messageError.message_en = "Please login first";
                     messageError.message_kh = "សូមមេត្តា login សិនប្រូ"
+
+                    return messageError
+                }
+
+                if (customer.length <= 0) {
+                    messageError.message_en = "Please select customer";
+                    messageError.message_kh = "សូមមេត្តាជ្រើរើសអតិថិជន"
 
                     return messageError
                 }

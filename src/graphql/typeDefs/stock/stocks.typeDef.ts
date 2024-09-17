@@ -8,6 +8,7 @@ const stock = gql`
         price: Float
         discount: Float
         after_discount: Float
+        isDiscount: Boolean
         cost: Float
     }
 
@@ -50,7 +51,9 @@ const stock = gql`
     }
 
     type Mutation {
-        discountProduct(input: ProductDiscounts): ResponseMessage
+        discountProduct(input: ProductDiscounts): ResponseMessage!
+        clearDiscountOneProduct(id: ID): ResponseMessage!
+        clearDiscountAllProduct(id: [ID]): ResponseMessage
     }
 `
 

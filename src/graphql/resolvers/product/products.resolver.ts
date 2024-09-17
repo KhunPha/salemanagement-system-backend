@@ -191,6 +191,8 @@ const product = {
 
         const newstock = new StockSchema({
           product_details: newproduct._id,
+          price: args.input.price,
+          cost: args.input.cost
         })
 
         await newstock.save()

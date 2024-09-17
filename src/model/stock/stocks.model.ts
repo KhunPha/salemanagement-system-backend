@@ -7,6 +7,10 @@ export interface IStocks extends Document {
     product_details: object
     stock_on_hand: number
     price: number
+    discount_id: object
+    discount: number
+    after_discount: number
+    isDiscount: boolean
     cost: number
     isDelete: boolean
     deadline: Date
@@ -24,6 +28,21 @@ const stock = new Schema<IStocks>({
     price: {
         type: Number,
         default: 0
+    },
+    discount_id: {
+        type: mongoose.Schema.Types.ObjectId
+    },
+    discount: {
+        type: Number,
+        default: 0
+    },
+    after_discount: {
+        type: Number,
+        default: 0
+    },
+    isDiscount: {
+        type: Boolean,
+        default: false
     },
     cost: {
         type: Number,

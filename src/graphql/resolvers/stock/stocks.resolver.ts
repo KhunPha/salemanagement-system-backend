@@ -75,17 +75,89 @@ const stock = {
                 const userToken: any = await verifyToken(context.user)
                 if (!userToken.status) throw new ApolloError("Unauthorization")
 
-                const discountProduct = new DiscountProductSchema({
+                let discountProduct = new DiscountProductSchema({
                     ...args.input,
-                    createdBy: userToken.data.user_id,
+                    createdBy: userToken.data.user._id,
                     modifiedBy: userToken.data.user._id
                 })
+
+                const today = new Date();
+                const formattedDate = today.toLocaleDateString('en-CA');
+
+                if (args.input.from_date <= formattedDate && args.input.to_date >= formattedDate) {
+                    discountProduct = new DiscountProductSchema({
+                        ...args.input,
+                        isActive: true,
+                        createdBy: userToken.data.user._id,
+                        modifiedBy: userToken.data.user._id
+                    })
+                    args.input.product_id.map(async (product_id: any) => {
+                        const findStock: any = await StockSchema.findOne({ product_details: product_id })
+                        let after_discount: number = 0;
+                        if (args.input.type === "Cash") {
+                            after_discount = findStock?.price - args.input.discount;
+                        } else {
+                            const price_discount = findStock?.price * (args.input.discount / 100)
+                            after_discount = findStock?.price - price_discount;
+                        }
+
+                        await StockSchema.findByIdAndUpdate(findStock._id, { $set: { discount_id: discountProduct._id, discount: args.input.discount, after_discount, isDiscount: true } })
+                    })
+                }
 
                 await discountProduct.save()
 
                 return message
             } catch (error: any) {
                 throw new ApolloError(error.message)
+            }
+        },
+        clearDiscountOneProduct: async (parent: any, args: any, context: any) => {
+            try {
+                const userToken: any = await verifyToken(context.user);
+                if (!userToken.status) throw new ApolloError("Unauthorization")
+
+                const { id } = args
+
+                const findStock = await StockSchema.findById(id)
+
+                const findDiscount: any = await DiscountProductSchema.findById(findStock?.discount_id)
+
+                const product_id = findDiscount?.product_id.filter((product_id: any) => product_id.toString() !== findStock?.product_details.toString())
+
+                if (product_id?.length <= 0) {
+                    await DiscountProductSchema.findByIdAndUpdate(findStock?.discount_id, { $set: { deadline: true, isActive: false, product_id: product_id } })
+                } else {
+                    await DiscountProductSchema.findByIdAndUpdate(findStock?.discount_id, { $set: { product_id: product_id } })
+                }
+
+                const updateDoc = { $set: { discount: 0, after_discount: 0, discount_id: null, isDiscount: false } }
+
+                await StockSchema.findByIdAndUpdate(id, updateDoc)
+
+                return message
+            } catch (error: any) {
+                throw new ApolloError(error)
+            }
+        },
+        clearDiscountAllProduct: async (parent: any, args: any, context: any) => {
+            try {
+                const userToken: any = await verifyToken(context.user);
+                if (!userToken.status) throw new ApolloError("Unauthorization")
+
+                const { id } = args
+
+                await DiscountProductSchema.findOneAndUpdate({ product_id: id[0] }, { $set: { deadline: true, isActive: false } })
+
+                id.map(async (id: any) => {
+                    const updateDoc = { $set: { discount: 0, after_discount: 0, discount_id: null, isDiscount: false } }
+
+                    await StockSchema.findByIdAndUpdate(id, updateDoc)
+                })
+
+                return message
+            } catch (error: any) {
+                throw new ApolloError(error)
             }
         }
     }

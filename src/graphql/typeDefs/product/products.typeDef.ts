@@ -55,6 +55,7 @@ const product = gql`
         image: String
         publicId: String
         price: Float
+        cost: Float
         remark: String
         createdAt: Date,
         updatedAt: Date,

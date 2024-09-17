@@ -9,13 +9,14 @@ export interface IDiscountProducts extends Document {
     remark: string
     createdBy: object
     modifiedBy: object
+    isActive: boolean
+    deadline: boolean
 }
 
 const discountproduct = new Schema<IDiscountProducts>({
     product_id: [
         {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "Product"
+            type: mongoose.Schema.Types.ObjectId
         }
     ],
     discount: {
@@ -42,6 +43,14 @@ const discountproduct = new Schema<IDiscountProducts>({
         type: mongoose.Schema.Types.ObjectId,
         ref: "User"
     },
+    isActive: {
+        type: Boolean,
+        default: false
+    },
+    deadline: {
+        type: Boolean,
+        default: false
+    }
 }, { timestamps: true })
 
 const DiscountProductSchema = mongoose.model<IDiscountProducts>("DiscountProduct", discountproduct, "DiscountProducts")

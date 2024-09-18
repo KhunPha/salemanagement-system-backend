@@ -26,8 +26,8 @@ const fetch = require('node-fetch'); // Ensure you're using node-fetch v3 or hig
 
 const pipelineAsync = promisify(pipeline);
 
-const apiId: any = 23360318;
-const apiHash = "dfd5ba54864db536d93c3cd179dd9f2a"; // fill this later with the value from session.save()
+const apiId: any = 28257415;
+const apiHash = "5c3bd09c79301ab6119faff84a4675c0"; // fill this later with the value from session.save()
 let sessions: any = {}; // In-memory storage for sessions
 
 const marketing = {
@@ -114,8 +114,6 @@ const marketing = {
 
                     if (userTelegram)
                         await TelegramLoginSchema.findByIdAndDelete(userTelegram._id)
-
-                    sessions = {};
 
                     return;
                 }
@@ -369,8 +367,6 @@ const marketing = {
                     if (userTelegram)
                         await TelegramLoginSchema.findByIdAndDelete(userTelegram._id)
 
-                    sessions = {};
-
                     messageError.message_en = "Please login first";
                     messageError.message_kh = "សូមមេត្តា login សិនប្រូ"
 
@@ -468,6 +464,7 @@ const marketing = {
             }
 
             try {
+                console.log(phoneNumber)
                 const stringSession = new StringSession('');
                 const client = new TelegramClient(stringSession, apiId, apiHash, {
                     connectionRetries: 5,
@@ -500,11 +497,10 @@ const marketing = {
             }
 
             try {
-
                 const sessionData: any = sessions[phoneNumber];
 
                 if (!sessionData) {
-                    throw new ApolloError("Session not found")
+                    // throw new ApolloError("Session not found")
                 }
 
                 const { client, stringSession, phoneCodeHash } = sessionData
@@ -546,17 +542,7 @@ const marketing = {
 
                 return message
             } catch (error: any) {
-                if (error.message.includes("PHONE_CODE_INVALID")) {
-                    throw new ApolloError("Invalid phone code provided.");
-                } else if (error.message.includes("AUTH_KEY_UNREGISTERED")) {
-                    throw new ApolloError("The provided phone number is not registered.");
-                } else if (error.message.includes("PHONE_NUMBER_UNOCCUPIED")) {
-                    throw new ApolloError("The phone number is not associated with an account.");
-                } else if (error.message.includes("PASSWORD_HASH_INVALID")) {
-                    throw new ApolloError("The provided password is incorrect.");
-                } else {
-                    throw new ApolloError("An unexpected error occurred. Please try again later.");
-                }
+                throw new ApolloError(error)
             }
         },
         telegramLogout: async (parent: any, args: any, context: any) => {

@@ -17,6 +17,10 @@ const transferin = new Schema<ITransferIn>({
         qty: {
             type: Number,
             default: 0
+        },
+        price: {
+            type: Number,
+            default: 0
         }
     }],
     supplier_details: {

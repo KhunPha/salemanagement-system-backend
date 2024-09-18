@@ -17,6 +17,10 @@ const transferout = new Schema<ITransferOut>({
         qty: {
             type: Number,
             default: 0
+        },
+        price: {
+            type: Number,
+            default: 0
         }
     }],
     supplier_details: {

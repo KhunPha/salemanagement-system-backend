@@ -6,6 +6,7 @@ import ProductSchema from "../../../model/product/products.model";
 import SupplierSchema from "../../../model/stock/suppliers.model";
 import CustomerSchema from "../../../model/marketing/customers.model";
 import getStorageUsage from "../../../helper/checkcloudinary.helper";
+import { verify } from "crypto";
 const cron = require("node-cron")
 
 const selectData = {
@@ -15,6 +16,19 @@ const selectData = {
         selectCategory: async () => await CategoriesSchema.find({ isDelete: { $ne: true } }).sort({ "category_name": 1 }),
         selectColor: async () => await ColorSchema.find({ isDelete: { $ne: true } }).sort({ "color_name": 1 }),
         selectProduct: async () => await ProductSchema.find({ isDelete: { $ne: true } }).sort({ "pro_name": 1 }),
+        selectProductTransfer: async (parent: any, args: any, context: any) => {
+            try {
+                const { type_of_product } = args
+
+                return await ProductSchema.find({
+                    $and: [
+                        type_of_product === "All" ? {} : { type_of_product }
+                    ]
+                })
+            } catch (error: any) {
+
+            }
+        },
         selectSupplier: async () => await SupplierSchema.find({ isDelete: { $ne: true } }).sort({ "supplier_name": 1 }),
         selectCustomer: async () => await CustomerSchema.find({ isDelete: { $ne: true } }).sort({ "customer_name": 1 }),
         storageUsage: async () => {

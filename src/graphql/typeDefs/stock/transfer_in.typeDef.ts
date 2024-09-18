@@ -12,6 +12,7 @@ const transferin = gql`
     type Products {
         product_details: Product
         qty: Int
+        price: Float
     }
 
     input TransferInInput {
@@ -23,6 +24,7 @@ const transferin = gql`
     input ProductsInputTranferIn {
         product_details: ID
         qty: Int
+        price: Float
     }
 
     type Query {

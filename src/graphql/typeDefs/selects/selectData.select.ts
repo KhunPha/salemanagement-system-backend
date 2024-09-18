@@ -52,6 +52,7 @@ const selectData = gql`
         selectColor: [SelectColor]
         selectBrand: [SelectBrand]
         selectProduct: [SelectProduct]
+        selectProductTransfer(type_of_product: String): [SelectProduct]
         selectSupplier: [SelectSupplier]
         selectCustomer: [SelectCustomer]
         storageUsage: StorageUsage

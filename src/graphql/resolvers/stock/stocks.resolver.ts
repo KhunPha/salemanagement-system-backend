@@ -94,14 +94,16 @@ const stock = {
                     args.input.product_id.map(async (product_id: any) => {
                         const findStock: any = await StockSchema.findOne({ product_details: product_id })
                         let after_discount: number = 0;
+                        let discount_type = "%"
                         if (args.input.type === "Cash") {
+                            discount_type = "$"
                             after_discount = findStock?.price - args.input.discount;
                         } else {
                             const price_discount = findStock?.price * (args.input.discount / 100)
                             after_discount = findStock?.price - price_discount;
                         }
 
-                        await StockSchema.findByIdAndUpdate(findStock._id, { $set: { discount_id: discountProduct._id, discount: args.input.discount, after_discount, isDiscount: true } })
+                        await StockSchema.findByIdAndUpdate(findStock._id, { $set: { discount_id: discountProduct._id, discount: args.input.discount, after_discount, discount_type, isDiscount: true } })
                     })
                 }
 
@@ -131,7 +133,7 @@ const stock = {
                     await DiscountProductSchema.findByIdAndUpdate(findStock?.discount_id, { $set: { product_id: product_id } })
                 }
 
-                const updateDoc = { $set: { discount: 0, after_discount: 0, discount_id: null, isDiscount: false } }
+                const updateDoc = { $set: { discount: 0, after_discount: 0, discount_id: null, discount_type: null, isDiscount: false } }
 
                 await StockSchema.findByIdAndUpdate(id, updateDoc)
 

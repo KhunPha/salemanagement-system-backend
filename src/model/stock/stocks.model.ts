@@ -7,6 +7,7 @@ export interface IStocks extends Document {
     product_details: object
     stock_on_hand: number
     price: number
+    discount_type: string
     discount_id: object
     discount: number
     after_discount: number
@@ -28,6 +29,10 @@ const stock = new Schema<IStocks>({
     price: {
         type: Number,
         default: 0
+    },
+    discount_type: {
+        type: String,
+        enum: ["Cash", "Percentage"]
     },
     discount_id: {
         type: mongoose.Schema.Types.ObjectId

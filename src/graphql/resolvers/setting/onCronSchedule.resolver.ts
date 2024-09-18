@@ -88,7 +88,7 @@ cron.schedule('0 0 * * *', async () => {
             deadline: { $ne: true }
         })
 
-        const removeDiscountDoc = { $set: { discount: 0, after_discount: 0, discount_id: null, isDiscount: false } }
+        const removeDiscountDoc = { $set: { discount: 0, after_discount: 0, discount_id: null, discount_type: null, isDiscount: false } }
 
         if (findDiscountToRemoveDiscount) {
             await DiscountProductSchema.findByIdAndUpdate(findDiscountToRemoveDiscount._id, { $set: { deadline: true, isActive: false } })
@@ -114,14 +114,16 @@ cron.schedule('0 0 * * *', async () => {
                 const findStock: any = await StockSchema.findOne({ product_details: discountData })
 
                 let after_discount: number = 0;
+                let discount_type = "%"
                 if (findDiscountToAddDiscount.type === "Cash") {
+                    discount_type = "$"
                     after_discount = findStock?.price - findDiscountToAddDiscount.discount;
                 } else {
                     const price_discount = findStock?.price * (findDiscountToAddDiscount.discount / 100)
                     after_discount = findStock?.price - price_discount;
                 }
 
-                await StockSchema.findByIdAndUpdate(findStock._id, { $set: { discount_id: findDiscountToAddDiscount._id, discount: findDiscountToAddDiscount.discount, after_discount, isDiscount: true } })
+                await StockSchema.findByIdAndUpdate(findStock._id, { $set: { discount_id: findDiscountToAddDiscount._id, discount: findDiscountToAddDiscount.discount, after_discount, discount_type, isDiscount: true } })
             })
         }
     } catch (error: any) {

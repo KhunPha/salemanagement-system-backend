@@ -6,8 +6,7 @@ import ProductSchema from "../../../model/product/products.model";
 import SupplierSchema from "../../../model/stock/suppliers.model";
 import CustomerSchema from "../../../model/marketing/customers.model";
 import getStorageUsage from "../../../helper/checkcloudinary.helper";
-import { verify } from "crypto";
-const cron = require("node-cron")
+import { ApolloError } from "apollo-server-express";
 
 const selectData = {
     Query: {
@@ -26,7 +25,7 @@ const selectData = {
                     ]
                 })
             } catch (error: any) {
-
+                throw new ApolloError(error)
             }
         },
         selectSupplier: async () => await SupplierSchema.find({ isDelete: { $ne: true } }).sort({ "supplier_name": 1 }),

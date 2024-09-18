@@ -464,7 +464,6 @@ const marketing = {
             }
 
             try {
-                console.log(phoneNumber)
                 const stringSession = new StringSession('');
                 const client = new TelegramClient(stringSession, apiId, apiHash, {
                     connectionRetries: 5,
@@ -500,7 +499,7 @@ const marketing = {
                 const sessionData: any = sessions[phoneNumber];
 
                 if (!sessionData) {
-                    // throw new ApolloError("Session not found")
+                    throw new ApolloError("Session not found")
                 }
 
                 const { client, stringSession, phoneCodeHash } = sessionData

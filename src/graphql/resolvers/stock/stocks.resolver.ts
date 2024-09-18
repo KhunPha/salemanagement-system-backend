@@ -133,7 +133,7 @@ const stock = {
                     await DiscountProductSchema.findByIdAndUpdate(findStock?.discount_id, { $set: { product_id: product_id } })
                 }
 
-                const updateDoc = { $set: { discount: 0, after_discount: 0, discount_id: null, discount_type: null, isDiscount: false } }
+                const updateDoc = { $set: { discount: 0, after_discount: 0, discount_id: null, discount_type: "", isDiscount: false } }
 
                 await StockSchema.findByIdAndUpdate(id, updateDoc)
 
@@ -162,7 +162,7 @@ const stock = {
                         await DiscountProductSchema.findByIdAndUpdate(findStock?.discount_id, { $set: { product_id: product_id } })
                     }
 
-                    const updateDoc = { $set: { discount: 0, after_discount: 0, discount_id: null, isDiscount: false } }
+                    const updateDoc = { $set: { discount: 0, after_discount: 0, discount_id: null, discount_type: "", isDiscount: false } }
 
                     await StockSchema.findByIdAndUpdate(id, updateDoc)
                 })

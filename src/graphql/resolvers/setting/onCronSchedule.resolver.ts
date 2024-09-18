@@ -88,7 +88,7 @@ cron.schedule('0 0 * * *', async () => {
             deadline: { $ne: true }
         })
 
-        const removeDiscountDoc = { $set: { discount: 0, after_discount: 0, discount_id: null, discount_type: null, isDiscount: false } }
+        const removeDiscountDoc = { $set: { discount: 0, after_discount: 0, discount_id: null, discount_type: "", isDiscount: false } }
 
         if (findDiscountToRemoveDiscount) {
             await DiscountProductSchema.findByIdAndUpdate(findDiscountToRemoveDiscount._id, { $set: { deadline: true, isActive: false } })

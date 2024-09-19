@@ -5,13 +5,11 @@ const stock = gql`
         _id: ID
         product_details: Product
         stock_on_hand: Int
-        price: Float
         discount: Float
         discount_type: String
         discount_id: String
         after_discount: Float
         isDiscount: Boolean
-        cost: Float
     }
 
     type Paginator {
@@ -35,8 +33,6 @@ const stock = gql`
     input StockInput {
         product_details: ID
         stock_on_hand: Int
-        price: Float
-        cost: Float
     }
 
     input ProductDiscounts {

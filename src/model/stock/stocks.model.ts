@@ -6,15 +6,14 @@ import Notification from "../notification/notification.model";
 export interface IStocks extends Document {
     product_details: object
     stock_on_hand: number
-    price: number
     discount_type: string
     discount_id: object
     discount: number
     after_discount: number
     isDiscount: boolean
-    cost: number
     isDelete: boolean
     deadline: Date
+    isNewInsert: boolean
 }
 
 const stock = new Schema<IStocks>({
@@ -23,10 +22,6 @@ const stock = new Schema<IStocks>({
         ref: "Product",
     },
     stock_on_hand: {
-        type: Number,
-        default: 0
-    },
-    price: {
         type: Number,
         default: 0
     },
@@ -49,16 +44,16 @@ const stock = new Schema<IStocks>({
         type: Boolean,
         default: false
     },
-    cost: {
-        type: Number,
-        default: 0
-    },
     isDelete: {
         type: Boolean,
         default: false
     },
     deadline: {
         type: Date
+    },
+    isNewInsert: {
+        type: Boolean,
+        default: true
     }
 }, { timestamps: true })
 

@@ -36,6 +36,8 @@ const receiveproduct = {
 
                 const purchase: any = await PurchaseSchema.findById(purchase_id)
 
+                // នៅថែម dollars and reils
+
                 await PurchaseSchema.findByIdAndUpdate(purchase_id, { $set: { total_pay: purchase.total_pay + args.input.total_pay, remiding_date: args.input.date_notify, due: purchase.amounts - args.input.total_pay } })
 
                 const product_map: any = newproductreceive.product_lists
@@ -51,9 +53,9 @@ const receiveproduct = {
                     await newproductreceive.save()
 
                     if (args.input.product_type === "Second Hand") {
-                        stockDoc = { $set: { stock_in_hand: getStock.stock_in_hand + product_map[i].whole } }
+                        stockDoc = { $set: { stock_in_hand: getStock.stock_in_hand + product_map[i].whole, isNewInsert: false } }
                     } else {
-                        stockDoc = { $set: { stock_in_hand: getStock.stock_in_hand + (product_map[i].retail_in_whole * product_map[i].whole) } }
+                        stockDoc = { $set: { stock_in_hand: getStock.stock_in_hand + (product_map[i].retail_in_whole * product_map[i].whole), isNewInsert: false } }
                     }
 
                     await StockSchema.findOneAndUpdate({ product_details: product_id }, stockDoc, { new: true })

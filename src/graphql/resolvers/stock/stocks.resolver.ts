@@ -92,15 +92,15 @@ const stock = {
                         modifiedBy: userToken.data.user._id
                     })
                     args.input.product_id.map(async (product_id: any) => {
-                        const findStock: any = await StockSchema.findOne({ product_details: product_id })
+                        const findStock: any = await StockSchema.findOne({ product_details: product_id }).populate("product_details")
                         let after_discount: number = 0;
                         let discount_type = "%"
                         if (args.input.type === "Cash") {
                             discount_type = "$"
-                            after_discount = findStock?.price - args.input.discount;
+                            after_discount = findStock?.product_details?.price - args.input.discount;
                         } else {
-                            const price_discount = findStock?.price * (args.input.discount / 100)
-                            after_discount = findStock?.price - price_discount;
+                            const price_discount = findStock?.product_details?.price * (args.input.discount / 100)
+                            after_discount = findStock?.product_details?.price - price_discount;
                         }
 
                         await StockSchema.findByIdAndUpdate(findStock._id, { $set: { discount_id: discountProduct._id, discount: args.input.discount, after_discount, discount_type, isDiscount: true } })

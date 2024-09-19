@@ -105,7 +105,8 @@ const marketing = {
                     connectionRetries: 5
                 });
 
-                await client.connect();
+                if (telegramLogin)
+                    await client.connect();
 
                 const loginExist = await client.getMe().then(function (value: any) { return value }).catch(function (error: any) { return false })
 

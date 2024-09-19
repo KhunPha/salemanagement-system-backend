@@ -17,6 +17,7 @@ const product = gql`
         image: String,
         publicId: String
         price: Float,
+        cost: Float
         discount: Float,
         remark: String,
         createdBy: User

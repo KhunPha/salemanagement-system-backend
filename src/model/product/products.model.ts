@@ -12,6 +12,7 @@ export interface IProduct extends Document {
     unit: object,
     barcode: string,
     image: string,
+    cost: number,
     price: number,
     discount: number,
     remark: string,
@@ -56,6 +57,9 @@ const product = new Schema<IProduct>({
     },
     image: {
         type: String
+    },
+    cost: {
+        type: Number
     },
     price: {
         type: Number

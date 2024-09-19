@@ -24,6 +24,7 @@ import report from "./reports/report.resolver";
 import shift from "./sale/shift.resolver";
 import restoreMongoDb from "./restoreDatabase/restoreDatabase.resolver";
 import aboutsystem from "./setting/about_system.resolver";
+import notification from "./notification/notification.resolver"
 
 require("./setting/onCronSchedule.resolver")
 
@@ -53,7 +54,8 @@ const resolvers = [
     report,
     shift,
     restoreMongoDb,
-    aboutsystem
+    aboutsystem,
+    notification
 ]
 
 export default resolvers

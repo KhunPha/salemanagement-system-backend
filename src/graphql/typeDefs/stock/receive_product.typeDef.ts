@@ -8,6 +8,7 @@ const receiveproduct = gql`
         purchase_id: ID
         product_lists: [ProductReceiver]
         product_unit_type: String
+        pay: Pay
         createdBy: User
         modifiedBy: User
     }
@@ -17,6 +18,12 @@ const receiveproduct = gql`
         unit_price: Float
         whole: Int
         retail_in_whole: Int
+        product_unit_type: String
+    }
+
+    type Pay {
+        reils: Float
+        dollars: Float
     }
 
     input ProductInputReceiver {
@@ -24,14 +31,20 @@ const receiveproduct = gql`
         unit_price: Float
         whole: Int
         retail_in_whole: Int
+        product_unit_type: String
     }
 
     input ReceiveProductInput {
         purchase_id: ID
         product_lists: [ProductInputReceiver]
         product_type: String
-        total_pay: Float
+        pay: PayInput
         date_notify: Date
+    }
+
+    input PayInput {
+        reils: Float
+        dollars: Float
     }
 
     type Query {

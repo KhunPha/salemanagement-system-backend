@@ -2,26 +2,41 @@
 import mongoose, { Schema, Document } from 'mongoose';
 
 export interface INotification extends Document {
-    title: string;
-    body: string;
-    read: boolean;
+    name: string
+    title: string
+    image: string
+    read: boolean
+    id_to_notify: object
+    date_condition: Date
+    section: string
 }
 
-const NotificationSchema: Schema = new Schema({
+const notificationSchema = new Schema<INotification>({
+    name: {
+        type: String
+    },
     title: {
         type: String,
-        required: true
     },
-    body: {
+    image: {
         type: String,
-        required: true
     },
     read: {
         type: Boolean,
         default: false
+    },
+    id_to_notify: {
+        type: mongoose.Schema.Types.ObjectId
+    },
+    date_condition: {
+        type: Date
+    },
+    section: {
+        type: String,
+        enum: ["Stock", "Purchase", "Sale"]
     }
 }, { timestamps: true });
 
-const Notification = mongoose.model<INotification>('Notification', NotificationSchema, "Notifications");
+const NotificationSchema = mongoose.model<INotification>('Notification', notificationSchema, "Notifications");
 
-export default Notification;
+export default NotificationSchema;

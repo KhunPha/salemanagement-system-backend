@@ -36,9 +36,9 @@ const receiveproduct = {
 
                 const purchase: any = await PurchaseSchema.findById(purchase_id)
 
-                // នៅថែម dollars and reils
+                // នៅថែម dollar and reil
 
-                await PurchaseSchema.findByIdAndUpdate(purchase_id, { $set: { total_pay: purchase.total_pay + args.input.total_pay, remiding_date: args.input.date_notify, due: purchase.amounts - args.input.total_pay } })
+                await PurchaseSchema.findByIdAndUpdate(purchase_id, { $set: { remiding_date: args.input.date_notify, due: purchase.amounts - args.input.total_pay } })
 
                 const product_map: any = newproductreceive.product_lists
 

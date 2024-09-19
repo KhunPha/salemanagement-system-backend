@@ -21,11 +21,6 @@ const receiveproduct = gql`
         product_unit_type: String
     }
 
-    type Pay {
-        reils: Float
-        dollars: Float
-    }
-
     input ProductInputReceiver {
         product_details: ID
         unit_price: Float
@@ -40,11 +35,6 @@ const receiveproduct = gql`
         product_type: String
         pay: PayInput
         date_notify: Date
-    }
-
-    input PayInput {
-        reils: Float
-        dollars: Float
     }
 
     type Query {

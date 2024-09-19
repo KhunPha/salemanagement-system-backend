@@ -81,7 +81,7 @@ const stock = {
                     modifiedBy: userToken.data.user._id
                 })
 
-                if(args.input.from_date === args.input.to_date || args.input.to_date > args.input.from_date){
+                if (args.input.from_date === args.input.to_date || args.input.to_date > args.input.from_date) {
                     messageError.message_en = "The To date cannot be the same as or earlier than the From date."
                     messageError.message_kh = "ថ្ងៃផុតកំណត់មិនអាចជាដូចគ្នា ឬតូចជាងជាងថ្ងៃចាប់ផ្ដើមទេ។"
 
@@ -105,6 +105,16 @@ const stock = {
                     })
                     args.input.product_id.map(async (product_id: any) => {
                         const findStock: any = await StockSchema.findOne({ product_details: product_id }).populate("product_details")
+
+                        const findDiscount: any = await DiscountProductSchema.findById(findStock?.discount_id)
+
+                        const pro_id = findDiscount?.product_id.filter((product_id: any) => product_id.toString() !== findStock?.product_details.toString())
+
+                        if (pro_id?.length <= 0) {
+                            await DiscountProductSchema.findByIdAndUpdate(findStock?.discount_id, { $set: { deadline: true, isActive: false, product_id: pro_id } })
+                        } else {
+                            await DiscountProductSchema.findByIdAndUpdate(findStock?.discount_id, { $set: { product_id: pro_id } })
+                        }
 
                         let after_discount: number = 0;
                         let discount_type = "%"

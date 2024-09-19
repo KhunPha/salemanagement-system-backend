@@ -142,7 +142,7 @@ cron.schedule('0 0 * * *', async () => {
                 after_discount = findStock.price - price_discount
             }
 
-            await StockSchema.findOneAndUpdate({ discount_id }, { $set: { discount_id: findDiscount?._id, discount: findDiscount?.discount, after_discount, discount_type, isDiscount: true, discount_day: Math.round(diffInDays) } })
+            await StockSchema.findOneAndUpdate({ discount_id }, { $set: { discount_id: findDiscount?._id, discount: findDiscount?.discount, after_discount, discount_type, isDiscount: true, discount_day: Math.ceil(diffInDays) } })
         })
 
         // Update Date Duration
@@ -158,7 +158,7 @@ cron.schedule('0 0 * * *', async () => {
             const diffInDays = diffInTime / (1000 * 3600 * 24); // convert to days
 
             data.product_id.map(async (product_id: any) => {
-                await StockSchema.findOneAndUpdate({ product_details: product_id }, { $set: { discount_day: Math.round(diffInDays) } })
+                await StockSchema.findOneAndUpdate({ product_details: product_id }, { $set: { discount_day: Math.ceil(diffInDays) } })
             })
         })
     } catch (error: any) {

@@ -126,7 +126,7 @@ const stock = {
                             after_discount = findStock?.product_details?.price - price_discount;
                         }
 
-                        await StockSchema.findByIdAndUpdate(findStock._id, { $set: { discount_id: discountProduct._id, discount: args.input.discount, after_discount, discount_type, isDiscount: true, discount_day: Math.round(diffInDays) } })
+                        await StockSchema.findByIdAndUpdate(findStock._id, { $set: { discount_id: discountProduct._id, discount: args.input.discount, after_discount, discount_type, isDiscount: true, discount_day: Math.ceil(diffInDays) } })
                     })
                 }
 

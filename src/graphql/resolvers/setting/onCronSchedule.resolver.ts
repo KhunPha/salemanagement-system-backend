@@ -97,7 +97,7 @@ cron.schedule('0 0 * * *', async () => {
             { deadline: true, isActive: false }
         )
 
-        const removeDiscount = { $set: { discount: 0, after_discount: 0, discount_id: null, discount_type: "", isDiscount: false } }
+        const removeDiscount = { $set: { discount: 0, after_discount: 0, discount_id: null, discount_type: "", isDiscount: false, discount_day: 0 } }
 
         affectdIdsRemove.map(async (discount_id: any) => {
             await StockSchema.findOneAndUpdate({ discount_id }, removeDiscount)
@@ -127,6 +127,11 @@ cron.schedule('0 0 * * *', async () => {
             const findDiscount: any = await DiscountProductSchema.findById(discount_id)
             const findStock: any = await StockSchema.findOne({ discount_id }).populate("product_details")
 
+            const to_date: any = new Date(findDiscount.to_date);
+            const endDate: any = new Date();
+            const diffInTime = to_date - endDate; // difference in milliseconds
+            const diffInDays = diffInTime / (1000 * 3600 * 24); // convert to days
+
             let after_discount: number = 0;
             let discount_type = "%";
             if (findDiscount?.type == "Cash") {
@@ -137,7 +142,24 @@ cron.schedule('0 0 * * *', async () => {
                 after_discount = findStock.price - price_discount
             }
 
-            await StockSchema.findOneAndUpdate({ discount_id }, { $set: { discount_id: findDiscount?._id, discount: findDiscount?.discount, after_discount, discount_type, isDiscount: true } })
+            await StockSchema.findOneAndUpdate({ discount_id }, { $set: { discount_id: findDiscount?._id, discount: findDiscount?.discount, after_discount, discount_type, isDiscount: true, discount_day: Math.round(diffInDays) } })
+        })
+
+        // Update Date Duration
+        const affectedDocumentsDuration = await DiscountProductSchema.find({
+            deadline: { $ne: true },
+            isActive: { $ne: false }
+        })
+
+        affectedDocumentsDuration.map(async (data: any) => {
+            const to_date: any = new Date(data.to_date);
+            const endDate: any = new Date();
+            const diffInTime = to_date - endDate; // difference in milliseconds
+            const diffInDays = diffInTime / (1000 * 3600 * 24); // convert to days
+
+            data.product_id.map(async (product_id: any) => {
+                await StockSchema.findOneAndUpdate({ product_details: product_id }, { $set: { discount_day: Math.round(diffInDays) } })
+            })
         })
     } catch (error: any) {
         console.error(`Error during scheduled task: ${error.message}`);

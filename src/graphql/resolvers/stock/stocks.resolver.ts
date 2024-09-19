@@ -81,6 +81,13 @@ const stock = {
                     modifiedBy: userToken.data.user._id
                 })
 
+                if(args.input.from_date === args.input.to_date || args.input.to_date > args.input.from_date){
+                    messageError.message_en = "The To date cannot be the same as or earlier than the From date."
+                    messageError.message_kh = "ថ្ងៃផុតកំណត់មិនអាចជាដូចគ្នា ឬតូចជាងជាងថ្ងៃចាប់ផ្ដើមទេ។"
+
+                    return messageError
+                }
+
                 const today = new Date();
                 const formattedDate = today.toLocaleDateString('en-CA');
 

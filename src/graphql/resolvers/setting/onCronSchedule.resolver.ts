@@ -80,7 +80,6 @@ cron.schedule('1 12 * * *', async () => {
         // Remove Discount
         const affectedDocumentsRemove = await DiscountProductSchema.find({
             to_date: { $lte: new Date() },
-            from_date: { $lte: new Date() },
             deadline: { $ne: true },
             isActive: { $ne: false }
         })
@@ -90,7 +89,6 @@ cron.schedule('1 12 * * *', async () => {
         await DiscountProductSchema.updateMany(
             {
                 to_date: { $lte: new Date() },
-                from_date: { $lte: new Date() },
                 deadline: { $ne: true },
                 isActive: { $ne: false }
             },
@@ -105,7 +103,6 @@ cron.schedule('1 12 * * *', async () => {
 
         // Add Discount
         const affectedDocumentsAdd = await DiscountProductSchema.find({
-            to_date: { $gte: new Date() },
             from_date: { $lte: new Date() },
             deadline: { $ne: true },
             isActive: { $ne: true }
@@ -115,10 +112,9 @@ cron.schedule('1 12 * * *', async () => {
 
         await DiscountProductSchema.updateMany(
             {
-                to_date: { $lte: new Date() },
                 from_date: { $lte: new Date() },
                 deadline: { $ne: true },
-                isActive: { $ne: false }
+                isActive: { $ne: true }
             },
             { isActive: true }
         )
@@ -147,7 +143,6 @@ cron.schedule('1 12 * * *', async () => {
         })
 
         affectedDocumentsDuration.map(async (data: any) => {
-
             data.product_id.map(async (product_id: any) => {
                 await StockSchema.findOneAndUpdate({ product_details: product_id }, { $set: { discount_day: data.to_date } })
             })

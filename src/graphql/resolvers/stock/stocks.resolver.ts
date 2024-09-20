@@ -107,7 +107,7 @@ const stock = {
 
                         if (pro_id?.length <= 0) {
                             await DiscountProductSchema.findByIdAndUpdate(findStock?.discount_id, { $set: { deadline: true, isActive: false, product_id: pro_id } })
-                        } else if (findDiscount.product_id.length === 1) {
+                        } else if (findDiscount?.product_id?.length === 1) {
                             await DiscountProductSchema.findByIdAndUpdate(findStock?.discount_id, { $set: { product_id: pro_id, deadline: true, isActive: false } })
                         } else {
                             await DiscountProductSchema.findByIdAndUpdate(findStock?.discount_id, { $set: { product_id: pro_id } })

@@ -8,7 +8,7 @@ const stock = gql`
         discount: Float
         discount_type: String
         discount_id: String
-        discount_day: Int
+        discount_day: Date
         after_discount: Float
         isDiscount: Boolean
     }

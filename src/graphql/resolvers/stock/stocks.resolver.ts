@@ -91,11 +91,6 @@ const stock = {
                 const today = new Date();
                 const formattedDate = today.toLocaleDateString('en-CA');
 
-                const to_date: any = new Date(args.input.to_date);
-                const endDate: any = new Date();
-                const diffInTime = to_date - endDate; // difference in milliseconds
-                const diffInDays = diffInTime / (1000 * 3600 * 24); // convert to days
-
                 if (args.input.from_date <= formattedDate && args.input.to_date >= formattedDate) {
                     discountProduct = new DiscountProductSchema({
                         ...args.input,
@@ -126,7 +121,7 @@ const stock = {
                             after_discount = findStock?.product_details?.price - price_discount;
                         }
 
-                        await StockSchema.findByIdAndUpdate(findStock._id, { $set: { discount_id: discountProduct._id, discount: args.input.discount, after_discount, discount_type, isDiscount: true, discount_day: Math.ceil(diffInDays) } })
+                        await StockSchema.findByIdAndUpdate(findStock._id, { $set: { discount_id: discountProduct._id, discount: args.input.discount, after_discount, discount_type, isDiscount: true, discount_day: args.input.to_date } })
                     })
                 }
 

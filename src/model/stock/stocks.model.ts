@@ -8,7 +8,7 @@ export interface IStocks extends Document {
     stock_on_hand: number
     discount_type: string
     discount_id: object
-    discount_day: number
+    discount_day: Date
     discount: number
     after_discount: number
     isDiscount: boolean
@@ -34,7 +34,7 @@ const stock = new Schema<IStocks>({
         type: mongoose.Schema.Types.ObjectId
     },
     discount_day: {
-        type: Number
+        type: Date
     },
     discount: {
         type: Number,
@@ -64,7 +64,7 @@ const stock = new Schema<IStocks>({
 stock.plugin(paginate)
 
 stock.pre('findOneAndUpdate', async function (next) {
-    
+
     const update: any = this.getUpdate() as Partial<IStocks>; // Type assertion to ensure correct type
     // Check if update is defined and if stock_on_hand is in the update
     if (update && update.$set.stock_on_hand != null && update.$set.stock_on_hand <= 5) {
@@ -81,14 +81,14 @@ stock.pre('findOneAndUpdate', async function (next) {
 
 async function sendStockNotification(stockId: any, stockOnHand: number) {
     try {
-        const stock: any = await StockSchema.findOne({product_details: stockId.product_details}).populate('product_details');
+        const stock: any = await StockSchema.findOne({ product_details: stockId.product_details }).populate('product_details');
         if (stock) {
             const title = 'Stock Alert';
             const body = `The stock for product ${stock.product_details.pro_name} is running low: ${stockOnHand} items left.`;
-            
+
             // Create a new notification
             await Notification.create({ title, body });
-            
+
             console.log(`Notification sent for stock: ${stockId}`);
         }
     } catch (error) {

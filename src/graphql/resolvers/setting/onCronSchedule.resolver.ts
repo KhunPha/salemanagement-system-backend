@@ -74,8 +74,8 @@ cron.schedule('0 12 * * *', async () => {
 });
 
 // Discount Product
-// Mid Night
-cron.schedule('0 0 * * *', async () => {
+// 1AM
+cron.schedule('0 1 * * *', async () => {
     try {
         // Remove Discount
         const affectedDocumentsRemove = await DiscountProductSchema.find({
@@ -127,11 +127,6 @@ cron.schedule('0 0 * * *', async () => {
             const findDiscount: any = await DiscountProductSchema.findById(discount_id)
             const findStock: any = await StockSchema.findOne({ discount_id }).populate("product_details")
 
-            const to_date: any = new Date(findDiscount.to_date);
-            const endDate: any = new Date();
-            const diffInTime = to_date - endDate; // difference in milliseconds
-            const diffInDays = diffInTime / (1000 * 3600 * 24); // convert to days
-
             let after_discount: number = 0;
             let discount_type = "%";
             if (findDiscount?.type == "Cash") {
@@ -142,7 +137,7 @@ cron.schedule('0 0 * * *', async () => {
                 after_discount = findStock.price - price_discount
             }
 
-            await StockSchema.findOneAndUpdate({ discount_id }, { $set: { discount_id: findDiscount?._id, discount: findDiscount?.discount, after_discount, discount_type, isDiscount: true, discount_day: Math.ceil(diffInDays) } })
+            await StockSchema.findOneAndUpdate({ discount_id }, { $set: { discount_id: findDiscount?._id, discount: findDiscount?.discount, after_discount, discount_type, isDiscount: true, discount_day: findDiscount.to_date } })
         })
 
         // Update Date Duration

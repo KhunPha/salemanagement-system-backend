@@ -74,8 +74,8 @@ cron.schedule('0 12 * * *', async () => {
 });
 
 // Discount Product
-// 1AM
-cron.schedule('0 1 * * *', async () => {
+// 0H 1MN
+cron.schedule('1 12 * * *', async () => {
     try {
         // Remove Discount
         const affectedDocumentsRemove = await DiscountProductSchema.find({
@@ -105,8 +105,8 @@ cron.schedule('0 1 * * *', async () => {
 
         // Add Discount
         const affectedDocumentsAdd = await DiscountProductSchema.find({
-            to_date: { $lte: new Date() },
-            from_date: { $gt: new Date() },
+            to_date: { $gte: new Date() },
+            from_date: { $lte: new Date() },
             deadline: { $ne: true },
             isActive: { $ne: true }
         })

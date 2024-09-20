@@ -28,7 +28,8 @@ const stock = new Schema<IStocks>({
     },
     discount_type: {
         type: String,
-        enum: ["$", "%"]
+        enum: ["$", "%"],
+        default: ""
     },
     discount_id: {
         type: mongoose.Schema.Types.ObjectId

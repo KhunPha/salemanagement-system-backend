@@ -3,7 +3,6 @@ import mongoose, { Schema, Document } from "mongoose";
 export interface IReceiveProductTransaction extends Document {
     purchase_id: object
     product_lists: object
-    pay: object
     createdBy: object
     modifiedBy: object
 }
@@ -31,14 +30,6 @@ const receiveproductT = new Schema<IReceiveProductTransaction>({
             enum: ["Whole", "Retail"]
         }
     }],
-    pay: {
-        dollars: {
-            type: Number
-        },
-        reils: {
-            type: Number
-        }
-    },
     createdBy: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User"

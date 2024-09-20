@@ -4,6 +4,7 @@ import ReceiveProductTransactionSchema from "../../../model/stock/receive_produc
 import { message, messageError } from "../../../helper/message.helper"
 import StockSchema from "../../../model/stock/stocks.model"
 import PurchaseSchema from "../../../model/stock/purchases.model"
+import PaymentTransacPurSchema from "../../../model/stock/paymentTransacPur.model"
 
 const receiveproduct = {
     Query: {
@@ -34,6 +35,14 @@ const receiveproduct = {
                     modifiedBy: userToken.data.user._id
                 })
 
+                const newTransac = new PaymentTransacPurSchema({
+                    ...args.input,
+                    reil: args.input.pay.reil,
+                    dollar: args.input.pay.dollar,
+                    createdBy: userToken.data.user._id,
+                    modifiedBy: userToken.data.user._id
+                })
+
                 const purchase: any = await PurchaseSchema.findById(purchase_id)
 
                 const total_pay = (args.input.pay.reil / 4000) + args.input.pay.dollar;
@@ -49,6 +58,8 @@ const receiveproduct = {
                     }
 
                     await newproductreceive.save()
+
+                    await newTransac.save()
 
                     if (args.input.product_type === "Second Hand") {
                         stockDoc = { $set: { stock_on_hand: getStock.stock_on_hand + product_map[i].whole, isNewInsert: false } }

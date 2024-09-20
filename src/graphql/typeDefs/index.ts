@@ -14,8 +14,8 @@ import exchange_rate from "./setting/exchange_rate.typeDef";
 import shop_information from "./setting/shop_information.typeDef";
 import marketing from "./marketing/marketing.typeDef";
 import stock from "./stock/stocks.typeDef";
-import payment_purchase from "./stock/payment_purchase.typeDef";
 import purchase from "./stock/purchases.typeDef";
+import paymentTransacPur from "./stock/paymentTransacPur.typeDef";
 import secondhand from "./stock/second_hand.typeDef";
 import slicesecondhandhistory from "./stock/slice_second_hand_history.typeDef";
 import ResponseMessage from "./response/response.typeDef";
@@ -47,8 +47,8 @@ const typeDefs = [
     shop_information,
     marketing,
     stock,
-    payment_purchase,
     purchase,
+    paymentTransacPur,
     secondhand,
     slicesecondhandhistory,
     ResponseMessage,

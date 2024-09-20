@@ -12,7 +12,7 @@ import shop_information from "./setting/shop_information.resolver";
 import marketing from "./marketing/marketing.resolver";
 import stock from "./stock/stocks.resolver";
 import purchase from "./stock/purchases.resolver";
-import payment_purchase from "./stock/payment_purchase.resolver";
+import paymentTransacPur from "./stock/paymentTransacPur.resolver";
 import secondhand from "./stock/second_hand.resolver";
 import slicesecondhandhistory from "./stock/slice_second_hand_history.resolver";
 import transferin from "./stock/transfer_in.resolver";
@@ -43,7 +43,7 @@ const resolvers = [
     marketing,
     stock,
     purchase,
-    payment_purchase,
+    paymentTransacPur,
     secondhand,
     slicesecondhandhistory,
     transferin,

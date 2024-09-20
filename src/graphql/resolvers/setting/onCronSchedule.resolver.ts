@@ -14,7 +14,7 @@ import NotificationSchema from "../../../model/notification/notification.model";
 import PurchaseSchema from "../../../model/stock/purchases.model";
 const cron = require("node-cron")
 
-// Afternoon
+// Clear Recovery
 cron.schedule('0 12 * * *', async () => {
     try {
         const now = new Date();
@@ -97,7 +97,7 @@ cron.schedule('0 1 * * *', async () => {
             { deadline: true, isActive: false }
         )
 
-        const removeDiscount = { $set: { discount: 0, after_discount: 0, discount_id: null, discount_type: "", isDiscount: false, discount_day: 0 } }
+        const removeDiscount = { $set: { discount: 0, after_discount: 0, discount_id: null, discount_type: "", isDiscount: false, discount_day: null } }
 
         affectdIdsRemove.map(async (discount_id: any) => {
             await StockSchema.findOneAndUpdate({ discount_id }, removeDiscount)
@@ -147,13 +147,9 @@ cron.schedule('0 1 * * *', async () => {
         })
 
         affectedDocumentsDuration.map(async (data: any) => {
-            const to_date: any = new Date(data.to_date);
-            const endDate: any = new Date();
-            const diffInTime = to_date - endDate; // difference in milliseconds
-            const diffInDays = diffInTime / (1000 * 3600 * 24); // convert to days
 
             data.product_id.map(async (product_id: any) => {
-                await StockSchema.findOneAndUpdate({ product_details: product_id }, { $set: { discount_day: Math.ceil(diffInDays) } })
+                await StockSchema.findOneAndUpdate({ product_details: product_id }, { $set: { discount_day: data.to_date } })
             })
         })
     } catch (error: any) {
@@ -161,6 +157,7 @@ cron.schedule('0 1 * * *', async () => {
     }
 });
 
+// Notification
 cron.schedule('*/1 * * * *', async () => {
     try {
         const findLowStock = await StockSchema.find({

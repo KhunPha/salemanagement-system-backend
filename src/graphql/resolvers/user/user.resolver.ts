@@ -215,8 +215,13 @@ const user = {
 
                 const updateDoc: any = await UserShcema.findByIdAndUpdate(id, userDoc)
 
-                if (args.input.publicId) {
-                    if (args.input.publicId != updateDoc?.publicId)
+                const parts = args.input.publicId.split('/');
+                const fileNameWithExtension = parts[parts.length - 1]; // Get the last part after the last '/'
+
+                const fileName = fileNameWithExtension.split('.')[0];
+
+                if (fileName) {
+                    if (fileName != updateDoc?.publicId)
                         try {
                             if (updateDoc?.publicId) {
                                 await cloudinary.uploader.destroy(updateDoc?.publicId);

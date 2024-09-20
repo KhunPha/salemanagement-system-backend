@@ -38,12 +38,10 @@ const receiveproduct = {
 
                 const total_pay = (args.input.pay.reil / 4000) + args.input.pay.dollar;
 
-                await PurchaseSchema.findByIdAndUpdate(purchase_id, { $set: { total_pay: purchase.total_pay + total_pay, remiding_date: args.input.date_notify, due: purchase.amounts - total_pay } })
-
                 const product_map: any = newproductreceive.product_lists
 
                 for (var i = 0; i < product_map.length; i++) {
-                    const product_id = product_map[i].products
+                    const product_id = product_map[i].product_details
                     const getStock: any = await StockSchema.findOne({ product_details: product_id })
 
                     if (!getStock) {
@@ -53,12 +51,14 @@ const receiveproduct = {
                     await newproductreceive.save()
 
                     if (args.input.product_type === "Second Hand") {
-                        stockDoc = { $set: { stock_in_hand: getStock.stock_in_hand + product_map[i].whole, isNewInsert: false } }
+                        stockDoc = { $set: { stock_on_hand: getStock.stock_on_hand + product_map[i].whole, isNewInsert: false } }
                     } else {
-                        stockDoc = { $set: { stock_in_hand: getStock.stock_in_hand + (product_map[i].retail_in_whole * product_map[i].whole), isNewInsert: false } }
+                        stockDoc = { $set: { stock_on_hand: getStock.stock_on_hand + (product_map[i].retail_in_whole * product_map[i].whole), isNewInsert: false } }
                     }
 
                     await StockSchema.findOneAndUpdate({ product_details: product_id }, stockDoc, { new: true })
+
+                    await PurchaseSchema.findByIdAndUpdate(purchase_id, { $set: { total_pay: purchase.total_pay + total_pay, remiding_date: args.input.date_notify, due: purchase.amounts - total_pay } })
                 }
 
                 return message

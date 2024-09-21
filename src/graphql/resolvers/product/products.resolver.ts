@@ -68,11 +68,9 @@ const product = {
             },
             type_of_product === "All" ? {} : { type_of_product },
             unit ? { unit } : {},
-            category ? { category } : {},
-            {
-              isDelete: { $ne: true }
-            }
+            category ? { category } : {}
           ],
+          isDelete: { $ne: true }
         }
         return await ProductSchema.paginate(query, options)
       } catch (error: any) {
@@ -175,6 +173,7 @@ const product = {
     },
     createProduct: async (parent: any, args: any, context: any) => {
       try {
+        console.log(args.input)
         const userToken: any = await verifyToken(context.user)
         if (!userToken.status) throw new ApolloError("Unauthorization")
 
@@ -187,17 +186,16 @@ const product = {
           modifiedBy: userToken.data.user._id
         });
 
-        await newproduct.save();
-
         const newstock = new StockSchema({
           product_details: newproduct._id
         })
 
-        await newstock.save()
-
         if (!newproduct) {
           return messageError;
         }
+
+        await newproduct.save()
+        await newstock.save()
 
         return message;
       } catch (error: any) {

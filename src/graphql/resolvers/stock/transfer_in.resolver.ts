@@ -10,6 +10,7 @@ const transferin = {
             try {
                 const userToken: any = await verifyToken(context.user)
                 if (!userToken.status) throw new ApolloError("Unauthorization")
+
                 return await TransferInSchema.find().populate(["product_lists.product_details", "supplier_details", "createdBy", "modifiedBy"])
             } catch (error: any) {
                 throw new ApolloError(error.message)

@@ -205,17 +205,16 @@ const marketing = {
                 if (!args.input.publicId) {
                     const findMarketing = await MarketingSchema.findById(id)
                     args.input.image = findMarketing?.image
-                    args.input.publicId = findMarketing?.image
+                    args.input.publicId = findMarketing?.publicId
                 }
 
                 const MarketingDoc = { $set: { ...args.input, modifiedBy: userToken.data.user._id } }
 
                 const updateDoc: any = await MarketingSchema.findByIdAndUpdate(id, MarketingDoc)
 
-                const parts = args.input.publicId.split('/');
-                const fileNameWithExtension = parts[parts.length - 1]; // Get the last part after the last '/'
+                const parts = args.input.publicId.split('/')[1];
 
-                const fileName = fileNameWithExtension.split('.')[0];
+                const fileName = parts.split('.')[0];
 
                 if (fileName) {
                     if (fileName !== updateDoc?.publicId)

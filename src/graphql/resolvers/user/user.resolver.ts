@@ -215,10 +215,9 @@ const user = {
 
                 const updateDoc: any = await UserShcema.findByIdAndUpdate(id, userDoc)
 
-                const parts = args.input.publicId.split('/');
-                const fileNameWithExtension = parts[parts.length - 1]; // Get the last part after the last '/'
+                const parts = args.input.publicId.split('/')[1];
 
-                const fileName = fileNameWithExtension.split('.')[0];
+                const fileName = parts.split('.')[0];
 
                 if (fileName) {
                     if (fileName != updateDoc?.publicId)

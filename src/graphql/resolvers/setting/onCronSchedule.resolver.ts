@@ -75,7 +75,7 @@ cron.schedule('0 12 * * *', async () => {
 
 // Discount Product
 // 0H 1MN
-cron.schedule('1 12 * * *', async () => {
+cron.schedule('1 0 * * *', async () => {
     try {
         // Remove Discount
         const affectedDocumentsRemove = await DiscountProductSchema.find({
@@ -121,19 +121,24 @@ cron.schedule('1 12 * * *', async () => {
 
         affectdIdsAdd.map(async (discount_id: any) => {
             const findDiscount: any = await DiscountProductSchema.findById(discount_id)
-            const findStock: any = await StockSchema.findOne({ discount_id }).populate("product_details")
 
-            let after_discount: number = 0;
-            let discount_type = "%";
-            if (findDiscount?.type == "Cash") {
-                discount_type = "$";
-                after_discount = findStock?.product_details.price - findDiscount?.discount
-            } else {
-                const price_discount = findStock?.product_details?.price * (findDiscount.discount / 100);
-                after_discount = findStock.price - price_discount
-            }
+            findDiscount?.product_id?.map(async (product_id: any) => {
+                const findStock: any = await StockSchema.findOne({ product_details: product_id }).populate("product_details")
 
-            await StockSchema.findOneAndUpdate({ discount_id }, { $set: { discount_id: findDiscount?._id, discount: findDiscount?.discount, after_discount, discount_type, isDiscount: true, discount_day: findDiscount.to_date } })
+                let after_discount: number = 0;
+                let discount_type = "%";
+                if (findDiscount?.type == "Cash") {
+                    discount_type = "$";
+                    after_discount = findStock?.product_details?.price - findDiscount?.discount
+                } else {
+                    const price_discount = findStock?.product_details?.price * (findDiscount.discount / 100);
+                    after_discount = findStock?.product_details?.price - price_discount
+                }
+    
+                await StockSchema.findOneAndUpdate({ product_details: product_id }, { $set: { discount_id: findDiscount?._id, discount: findDiscount?.discount, after_discount, discount_type, isDiscount: true, discount_day: findDiscount.to_date } })
+
+                console.log("Add discount successfully")
+            })
         })
 
         // Update Date Duration

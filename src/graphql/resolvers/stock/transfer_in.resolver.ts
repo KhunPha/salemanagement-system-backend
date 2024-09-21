@@ -20,6 +20,8 @@ const transferin = {
     Mutation: {
         TransferIn: async (parent: any, args: any, context: any) => {
             try {
+
+                console.log(args.input)
                 const userToken: any = await verifyToken(context.user)
                 if (!userToken.status) throw new ApolloError("Unauthorization")
 
@@ -30,6 +32,8 @@ const transferin = {
                 })
 
                 const transferinproduct_map: any = newtransferin.product_lists
+
+                if(!newtransferin?.product_lists || transferinproduct_map?.length <= 0) return messageError
 
                 for (var i = 0; i < transferinproduct_map.length; i++) {
                     const product_id = transferinproduct_map[i].product_details

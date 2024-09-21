@@ -14,7 +14,6 @@ export interface IProduct extends Document {
     image: string,
     cost: number,
     price: number,
-    discount: number,
     remark: string,
     status: boolean,
     createdBy: object
@@ -38,7 +37,8 @@ const product = new Schema<IProduct>({
         ref: "Color"
     },
     type_of_product: {
-        type: String
+        type: String,
+        enum: ["New", "Second Hand"]
     },
     publicId: {
         type: String
@@ -61,9 +61,6 @@ const product = new Schema<IProduct>({
         type: Number
     },
     price: {
-        type: Number
-    },
-    discount: {
         type: Number
     },
     remark: {

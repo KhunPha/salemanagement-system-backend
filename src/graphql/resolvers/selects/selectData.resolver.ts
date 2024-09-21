@@ -22,7 +22,8 @@ const selectData = {
                 return await ProductSchema.find({
                     $and: [
                         type_of_product === "All" ? {} : { type_of_product }
-                    ]
+                    ],
+                    isDelete: { $ne: true }
                 })
             } catch (error: any) {
                 throw new ApolloError(error)

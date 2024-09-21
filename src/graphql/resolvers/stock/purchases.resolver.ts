@@ -17,7 +17,8 @@ const purchase = {
                     customLabels,
                     populate: [
                         {
-                            path: "supplier_details"
+                            path: "supplier_details",
+                            model: "Supplier"
                         },
                         {
                             path: "products_lists.product_details",
@@ -44,10 +45,11 @@ const purchase = {
 
                 const query = {
                     $and: [
-
+                        keyword ? { "supplier_details.supplier_name": { $regex: keyword, $options: "i" } } : {}
                     ]
                 }
-                return await PurchaseSchema.paginate({}, options)
+
+                return await PurchaseSchema.paginate(query, options)
             } catch (error: any) {
                 throw new ApolloError(error.message)
             }

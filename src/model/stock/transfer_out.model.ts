@@ -3,6 +3,7 @@ import mongoose, { Schema, Document } from "mongoose";
 export interface ITransferOut extends Document {
     product_lists: object
     supplier_details: object
+    date: Date
     remark: string
     createdBy: object
     modifiedBy: object 
@@ -26,6 +27,9 @@ const transferout = new Schema<ITransferOut>({
     supplier_details: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Supplier"
+    },
+    date: {
+        type: Date
     },
     remark: {
         type: String

@@ -4,6 +4,7 @@ const transferin = gql`
     type TransferIn {
         product_lists: [Products]
         supplier_details: Supplier
+        date: Date
         remark: String
         createdBy: User
         modifiedBy: User
@@ -18,6 +19,7 @@ const transferin = gql`
     input TransferInInput {
         product_lists: [ProductsInputTranferIn]
         supplier_details: ID
+        date: Date
         remark: String
     }
 

@@ -3,6 +3,7 @@ import mongoose, { Schema, Document, mongo } from "mongoose";
 export interface ITransferIn extends Document {
     product_lists: object
     supplier_details: object
+    date: Date
     remark: string
     createdBy: object
     modifiedBy: object
@@ -26,6 +27,9 @@ const transferin = new Schema<ITransferIn>({
     supplier_details: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Supplier"
+    },
+    date: {
+        type: Date
     },
     remark: {
         type: String

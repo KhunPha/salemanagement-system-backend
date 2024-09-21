@@ -20,8 +20,6 @@ const transferin = {
     Mutation: {
         TransferIn: async (parent: any, args: any, context: any) => {
             try {
-
-                console.log(args.input)
                 const userToken: any = await verifyToken(context.user)
                 if (!userToken.status) throw new ApolloError("Unauthorization")
 

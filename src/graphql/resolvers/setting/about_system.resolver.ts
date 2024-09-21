@@ -2,7 +2,7 @@ import { ApolloError } from "apollo-server-express"
 import { verifyToken } from "../../../middleware/auth.middleware"
 import AboutSystemSchema from "../../../model/setting/about_system.model"
 import cloudinary from "../../../util/cloudinary"
-import { message } from "telegram/client"
+import { message } from "../../../helper/message.helper"
 
 const aboutsystem = {
     Query: {
@@ -62,6 +62,7 @@ const aboutsystem = {
             try {
                 const userToken: any = await verifyToken(context.user)
                 if (!userToken.status) throw new ApolloError("Unauthorization")
+
                 const newaboutsystem = new AboutSystemSchema({
                     ...args.input
                 })

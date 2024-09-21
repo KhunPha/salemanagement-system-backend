@@ -26,7 +26,7 @@ const aboutsystem = gql`
     }
 
     type Query {
-        getAboutSystem(section: String): AboutSystem 
+        getAboutSystem(section: String): [AboutSystem] 
     }
 
     type Mutation {

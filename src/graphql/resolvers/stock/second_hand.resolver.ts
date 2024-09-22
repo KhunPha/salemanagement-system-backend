@@ -17,6 +17,14 @@ const GradeProduct = {
                 const options: PaginateOptions = {
                     pagination,
                     customLabels,
+                    populate: [
+                        {
+                            path: "category",
+                        },
+                        {
+                            path: "unit"
+                        },
+                    ],
                     page: page,
                     limit: limit,
                     sort: { createdAt: -1 }

@@ -5,6 +5,7 @@ const transferout = gql`
         product_lists: [Products]
         supplier_details: Supplier
         date: Date
+        total_qty: Int
         remark: String
         createdBy: User
         modifiedBy: User
@@ -14,6 +15,24 @@ const transferout = gql`
         product_details: Product
         qty: Int
         price: Float
+    }
+
+    type Paginator {
+        slNo: Int
+        prev: Int
+        next: Int
+        perPage: Int
+        totalPosts: Int
+        totalPages: Int
+        currentPage: Int
+        hasPrevPage: Boolean
+        hasNextPage: Boolean
+        totalDocs: Int
+    }
+
+    type TransferOutPagination {
+        data: [TransferOut]
+        paginator: Paginator
     }
 
     input TransferOutInput {
@@ -30,7 +49,7 @@ const transferout = gql`
     }
 
     type Query {
-        getTransferOuts(page: Int, limit: Int, pagination: Boolean): [TransferOut]
+        getTransferOuts(page: Int, limit: Int, pagination: Boolean): TransferOutPagination
     }
 
     type Mutation {

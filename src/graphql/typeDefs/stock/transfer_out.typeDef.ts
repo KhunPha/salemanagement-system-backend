@@ -6,6 +6,7 @@ const transferout = gql`
         supplier_details: Supplier
         date: Date
         total_qty: Int
+        total_price: Float
         remark: String
         createdBy: User
         modifiedBy: User

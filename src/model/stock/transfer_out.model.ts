@@ -6,6 +6,7 @@ export interface ITransferOut extends Document {
     supplier_details: object
     date: Date
     total_qty: number
+    total_price: number
     remark: string
     createdBy: object
     modifiedBy: object
@@ -34,6 +35,9 @@ const transferout = new Schema<ITransferOut>({
         type: Date
     },
     total_qty: {
+        type: Number
+    },
+    total_price: {
         type: Number
     },
     remark: {

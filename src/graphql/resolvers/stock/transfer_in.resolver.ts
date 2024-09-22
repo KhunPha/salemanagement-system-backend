@@ -50,14 +50,17 @@ const transferin = {
                 if (!userToken.status) throw new ApolloError("Unauthorization")
 
                 let total_qty = 0;
+                let total_price = 0;
 
                 args.input.product_lists.map((product: any) => {
                     total_qty += product.qty;
+                    total_price += product.qty * product.price
                 })
 
                 const newtransferin = new TransferInSchema({
                     ...args.input,
                     total_qty,
+                    total_price,
                     createdBy: userToken.data.user._id,
                     modifiedBy: userToken.data.user._id
                 })

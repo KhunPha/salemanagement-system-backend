@@ -14,7 +14,8 @@ const selectData = {
         selectBank: async () => await BankSchema.find({ isDelete: { $ne: true } }).sort({ "bank_name": 1 }),
         selectCategory: async () => await CategoriesSchema.find({ isDelete: { $ne: true } }).sort({ "category_name": 1 }),
         selectColor: async () => await ColorSchema.find({ isDelete: { $ne: true } }).sort({ "color_name": 1 }),
-        selectProduct: async () => await ProductSchema.find({ isDelete: { $ne: true } }).sort({ "pro_name": 1 }),
+        selectProduct: async () => await ProductSchema.find({ isDelete: { $ne: true }, status: { $ne: false } }).sort({ "pro_name": 1 }),
+        selectGradeProduct: async () => await ProductSchema.find({ status: { $ne: true } }).sort({ "pro_name": 1 }),
         selectProductTransfer: async (parent: any, args: any, context: any) => {
             try {
                 const { type_of_product } = args
@@ -23,7 +24,8 @@ const selectData = {
                     $and: [
                         type_of_product === "All" ? {} : { type_of_product }
                     ],
-                    isDelete: { $ne: true }
+                    isDelete: { $ne: true },
+                    isDividedProduct: { $ne: true }
                 })
             } catch (error: any) {
                 throw new ApolloError(error)

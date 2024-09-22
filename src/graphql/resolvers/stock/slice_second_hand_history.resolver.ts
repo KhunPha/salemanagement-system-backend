@@ -21,23 +21,26 @@ const slicesecondhandhistory = {
             try {
                 const userToken: any = await verifyToken(context.user)
                 if (!userToken.status) throw new ApolloError("Unauthorization")
-                for (var i = 0; i < args.input.length; i++) {
 
-                    const newslicesecondhand = new SliceSecondHandHistorySchema({
-                        ...args.input[i],
-                        createdBy: userToken.data.user._id,
-                        modifiedBy: userToken.data.user._id
-                    })
-                    await newslicesecondhand.save()
+                const newslicesecondhand = new SliceSecondHandHistorySchema({
+                    ...args.input,
+                    createdBy: userToken.data.user._id,
+                    modifiedBy: userToken.data.user._id
+                })
 
-                    if (!newslicesecondhand) {
-                        return messageError
-                    }
+                await newslicesecondhand.save()
 
-                    const getStock = await StockSchema.findOne({ product_details: newslicesecondhand.grade_details })
-                    const stockDoc = { $set: { stock_on_hand: getStock?.stock_on_hand + args.input[i].qty } }
-                    await StockSchema.findOneAndUpdate({ product_details: newslicesecondhand.grade_details }, stockDoc, { new: true })
+                if (!newslicesecondhand) {
+                    return messageError
                 }
+
+                args.input.grade_lists.map(async (grade_detail: any) => {
+                    const getStock = await StockSchema.findOne({ product_details: grade_detail?.grade_details })
+
+                    const stockDoc = { $set: { stock_on_hand: getStock?.stock_on_hand + grade_detail.input.qty } }
+
+                    await StockSchema.findOneAndUpdate({ product_details: grade_detail?.grade_details }, stockDoc, { new: true })
+                })
 
                 return message
             } catch (error: any) {

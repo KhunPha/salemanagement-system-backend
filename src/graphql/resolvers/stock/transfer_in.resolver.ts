@@ -5,7 +5,6 @@ import { message, messageError } from "../../../helper/message.helper"
 import StockSchema from "../../../model/stock/stocks.model"
 import { PaginateOptions } from "mongoose"
 import { customLabels } from "../../../helper/customeLabels.helper"
-import paginate from "mongoose-paginate-v2"
 
 const transferin = {
     Query: {
@@ -15,6 +14,7 @@ const transferin = {
                 if (!userToken.status) throw new ApolloError("Unauthorization")
 
                 const { page, limit, pagination } = args
+
                 const options: PaginateOptions = {
                     pagination,
                     customLabels,

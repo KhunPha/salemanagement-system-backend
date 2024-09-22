@@ -3,12 +3,22 @@ import { gql } from "apollo-server-express";
 const slicesecondhandhistory = gql`
     type SliceSecondHand {
         _id: ID
-        grade_details: SecondHand
+        grade_lists: [GradeLists]
+    }
+
+    type GradeLists {
+        grade_details: GradeProductSecondHand
+        price: Float
         qty: Int
+    }
+
+    input GradeListsInput {
+        grade_lists: [SliceSecondHandInput]
     }
 
     input SliceSecondHandInput {
         grade_details: ID
+        price: Float
         qty: Int
     }
 
@@ -17,7 +27,7 @@ const slicesecondhandhistory = gql`
     }
 
     type Mutation {
-        SliceSecondHand(input: [SliceSecondHandInput]): ResponseMessage!
+        SliceSecondHand(input: GradeListsInput): ResponseMessage!
     }
 `
 

@@ -71,6 +71,7 @@ const product = {
           ],
           isDelete: { $ne: true }
         }
+
         return await ProductSchema.paginate(query, options)
       } catch (error: any) {
         throw new ApolloError(error.message);
@@ -180,11 +181,13 @@ const product = {
 
         const newproduct = new ProductSchema({
           ...args.input,
+          isDividedProduct: args.input.type_of_product == "Second Hand" ? true : false,
           createdBy: userToken.data.user._id,
           modifiedBy: userToken.data.user._id
         });
 
         const newstock = new StockSchema({
+          isDividedProduct: args.input.type_of_product == "Second Hand" ? true : false,
           product_details: newproduct._id
         })
 
@@ -216,12 +219,8 @@ const product = {
 
         const updateDoc: any = await ProductSchema.findByIdAndUpdate(id, productDoc);
 
-        const parts = args.input.publicId.split('/')[1];
-
-        const fileName = parts.split('.')[0];
-
-        if (fileName) {
-          if (fileName != updateDoc?.publicId)
+        if (args.input.publicId) {
+          if (args.input.publicId != updateDoc?.publicId)
             try {
               if (updateDoc?.publicId) {
                 new Promise(async () => {

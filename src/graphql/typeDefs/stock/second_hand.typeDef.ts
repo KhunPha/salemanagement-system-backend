@@ -1,12 +1,19 @@
 import { gql } from "apollo-server-express";
 
 const secondhand = gql`
-    type SecondHand {
+    type GradeProductSecondHand {
         _id: ID
         pro_name: String
-        price: Float
+        category: Category
+        unit: Unit
         barcode: String
-        remark: String
+        image: String,
+        publicId: String
+        price: Float,
+        cost: Float
+        remark: String,
+        createdBy: User
+        modifiedBy: User
     }
 
     type Paginator {
@@ -23,25 +30,34 @@ const secondhand = gql`
     }
 
     type SecondHandPagination {
-        data: [SecondHand]
+        data: [GradeProductSecondHand]
         paginator: Paginator
     }
 
-    input SecondHandInput {
+    input GradeProductInput {
         pro_name: String
-        price: Float
+        category: ID
+        unit: ID
         barcode: String
+        image: String
+        publicId: String
+        price: Float
+        cost: Float
         remark: String
+        createdAt: Date,
+        updatedAt: Date,
     }
 
     type Query {
-        getSecondHands(page: Int, limit: Int, pagination: Boolean, keyword: String): SecondHandPagination
+        getGradeProducts(page: Int, limit: Int, pagination: Boolean, keyword: String): SecondHandPagination
     }
 
     type Mutation {
-        createSecondHand(input: SecondHandInput): ResponseMessage!
-        updateSecondHand(id: ID, input: SecondHandInput): ResponseMessage!
-        deleteSecondHand(id: ID): ResponseMessage!
+        uploadGradeProductImage(file: Upload): imageUpload
+        deleteGradeProductImage(publicId: String): Boolean
+        createGradeProduct(input: GradeProductInput): ResponseMessage!
+        updateGradeProduct(id: ID, input: GradeProductInput): ResponseMessage!
+        deleteGradeProduct(id: ID): ResponseMessage!
     }
 `
 

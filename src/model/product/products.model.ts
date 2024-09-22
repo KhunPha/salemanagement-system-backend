@@ -19,7 +19,8 @@ export interface IProduct extends Document {
     createdBy: object
     modifiedBy: object
     isDelete: boolean
-    deadline: Date
+    deadline: Date,
+    isDividedProduct: boolean
 }
 
 const product = new Schema<IProduct>({
@@ -38,7 +39,8 @@ const product = new Schema<IProduct>({
     },
     type_of_product: {
         type: String,
-        enum: ["New", "Second Hand"]
+        enum: ["New", "Second Hand"],
+        default: "Second Hand"
     },
     publicId: {
         type: String
@@ -84,6 +86,10 @@ const product = new Schema<IProduct>({
     },
     deadline: {
         type: Date
+    },
+    isDividedProduct: {
+        type: Boolean,
+        default: false
     }
 }, { timestamps: true })
 

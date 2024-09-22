@@ -51,8 +51,7 @@ const stock = {
                                 category ? { category } : {},
                                 type_of_product === "All" ? {} : { type_of_product },
                                 { isDelete: { $ne: true } }
-                            ],
-                            type_of_product: { $ne: "Second Hand" }
+                            ]
                         }
                     },
                     page: page,
@@ -60,8 +59,8 @@ const stock = {
                     sort: { createdAt: -1 }
                 }
 
-                const stocks: any = await StockSchema.paginate({ isDelete: { $ne: true } }, options)
-                const data = stocks.data.filter((data: any) => data.product_details !== null && data.product_details.type_of_product && data?.product_details?.category !== null);
+                const stocks: any = await StockSchema.paginate({ isDividedProduct: { $ne: true } }, options)
+                const data = stocks.data.filter((data: any) => data.product_details !== null && data?.product_details?.category !== null);
                 const paginator = stocks.paginator
 
                 return { data, paginator }
@@ -111,7 +110,6 @@ const stock = {
                                 },
                                 { isDelete: { $ne: true } }
                             ],
-                            type_of_product: { $ne: "New" }
                         }
                     },
                     page: page,
@@ -119,8 +117,8 @@ const stock = {
                     sort: { createdAt: -1 }
                 }
 
-                const stocks: any = await StockSchema.paginate({ isDelete: { $ne: true } }, options)
-                const data = stocks.data.filter((data: any) => data.product_details !== null && data.product_details.type_of_product && data?.product_details?.category !== null);
+                const stocks: any = await StockSchema.paginate({ isDividedProduct: { $ne: false } }, options)
+                const data = stocks.data.filter((data: any) => data.product_details !== null && data?.product_details?.category !== null);
                 const paginator = stocks.paginator
 
                 return { data, paginator }

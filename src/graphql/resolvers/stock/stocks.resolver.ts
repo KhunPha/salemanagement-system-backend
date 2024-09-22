@@ -51,7 +51,8 @@ const stock = {
                                 category ? { category } : {},
                                 type_of_product === "All" ? {} : { type_of_product },
                                 { isDelete: { $ne: true } }
-                            ]
+                            ],
+                            type_of_product: { $ne: "Second Hand" }
                         }
                     },
                     page: page,
@@ -60,7 +61,66 @@ const stock = {
                 }
 
                 const stocks: any = await StockSchema.paginate({ isDelete: { $ne: true } }, options)
-                const data = stocks.data.filter((data: any) => data.product_details !== null && data?.product_details?.category !== null);
+                const data = stocks.data.filter((data: any) => data.product_details !== null && data.product_details.type_of_product && data?.product_details?.category !== null);
+                const paginator = stocks.paginator
+
+                return { data, paginator }
+            } catch (error: any) {
+                throw new ApolloError(error.message)
+            }
+        },
+        getDiviceStock: async (parent: any, args: any, context: any) => {
+            try {
+                const userToken: any = await verifyToken(context.user)
+                if (!userToken.status) throw new ApolloError("Unauthorization")
+                const { page, limit, pagination, keyword } = args
+                const options: PaginateOptions = {
+                    pagination,
+                    customLabels,
+                    populate: {
+                        path: "product_details",
+                        populate: [
+                            {
+                                path: "category",
+                                match: {
+                                    $and: {
+                                        isDelete: { $ne: true }
+                                    }
+                                }
+                            },
+                            {
+                                path: "unit",
+                                match: {
+                                    isDelete: { $ne: true }
+                                }
+                            },
+                            {
+                                path: "color",
+                                match: {
+                                    isDelete: { $ne: true }
+                                }
+                            },
+                        ],
+                        match: {
+                            $and: [
+                                {
+                                    $or: [
+                                        keyword ? { pro_name: { $regex: keyword, $options: "i" } } : {},
+                                        keyword ? { barcode: { $regex: keyword, $options: "i" } } : {}
+                                    ]
+                                },
+                                { isDelete: { $ne: true } }
+                            ],
+                            type_of_product: { $ne: "New" }
+                        }
+                    },
+                    page: page,
+                    limit: limit,
+                    sort: { createdAt: -1 }
+                }
+
+                const stocks: any = await StockSchema.paginate({ isDelete: { $ne: true } }, options)
+                const data = stocks.data.filter((data: any) => data.product_details !== null && data.product_details.type_of_product && data?.product_details?.category !== null);
                 const paginator = stocks.paginator
 
                 return { data, paginator }

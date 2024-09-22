@@ -1,12 +1,14 @@
-import mongoose, { Schema, Document } from "mongoose";
+import mongoose, { Schema, Document, PaginateModel } from "mongoose";
+import paginate from "mongoose-paginate-v2";
 
 export interface ITransferOut extends Document {
     product_lists: object
     supplier_details: object
     date: Date
+    total_qty: number
     remark: string
     createdBy: object
-    modifiedBy: object 
+    modifiedBy: object
 }
 
 const transferout = new Schema<ITransferOut>({
@@ -31,6 +33,9 @@ const transferout = new Schema<ITransferOut>({
     date: {
         type: Date
     },
+    total_qty: {
+        type: Number
+    },
     remark: {
         type: String
     },
@@ -44,6 +49,8 @@ const transferout = new Schema<ITransferOut>({
     },
 })
 
-const TransferOutSchema = mongoose.model<ITransferOut>("TransferOut", transferout, "TransferOuts")
+transferout.plugin(paginate)
+
+const TransferOutSchema = mongoose.model<ITransferOut, PaginateModel<ITransferOut>>("TransferOut", transferout, "TransferOuts")
 
 export default TransferOutSchema

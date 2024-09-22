@@ -46,7 +46,8 @@ const stock = gql`
     }
 
     type Query {
-        getStocks(page: Int, limit: Int, pagination: Boolean,type_of_product: String, category: ID, keyword: String): StockPagination
+        getStocks(page: Int, limit: Int, pagination: Boolean, type_of_product: String, category: ID, keyword: String): StockPagination
+        getDiviceStock(page: Int, limit: Int, pagination: Boolean,type_of_product: String, category: ID, keyword: String): StockPagination
     }
 
     type Mutation {

@@ -1,9 +1,11 @@
-import mongoose, { Schema, Document, mongo } from "mongoose";
+import mongoose, { Schema, Document, plugin, PaginateModel } from "mongoose";
+import paginate from "mongoose-paginate-v2";
 
 export interface ITransferIn extends Document {
     product_lists: object
     supplier_details: object
     date: Date
+    total_qty: number
     remark: string
     createdBy: object
     modifiedBy: object
@@ -31,6 +33,9 @@ const transferin = new Schema<ITransferIn>({
     date: {
         type: Date
     },
+    total_qty: {
+        type: Number
+    },
     remark: {
         type: String
     },
@@ -44,6 +49,8 @@ const transferin = new Schema<ITransferIn>({
     },
 }, { timestamps: true })
 
-const TransferInSchema = mongoose.model<ITransferIn>("TransferIn", transferin, "TransferIns")
+transferin.plugin(paginate)
+
+const TransferInSchema = mongoose.model<ITransferIn, PaginateModel<ITransferIn>>("TransferIn", transferin, "TransferIns")
 
 export default TransferInSchema

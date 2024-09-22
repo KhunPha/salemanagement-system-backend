@@ -3,6 +3,8 @@ import { verifyToken } from "../../../middleware/auth.middleware"
 import TransferOutSchema from "../../../model/stock/transfer_out.model"
 import { message, messageError } from "../../../helper/message.helper"
 import StockSchema from "../../../model/stock/stocks.model"
+import { PaginateOptions } from "mongoose"
+import { customLabels } from "../../../helper/customeLabels.helper"
 
 const transferout = {
     Query: {
@@ -10,7 +12,31 @@ const transferout = {
             try {
                 const userToken: any = await verifyToken(context.user)
                 if (!userToken.status) throw new ApolloError("Unauthorization")
-                return await TransferOutSchema.find().populate(["product_lists.product_details", "supplier_details", "createdBy", "modifiedBy"])
+
+                const { page, limit, pagination } = args
+                const options: PaginateOptions = {
+                    pagination,
+                    customLabels,
+                    populate: [
+                        {
+                            path: "product_lists.product_details"
+                        },
+                        {
+                            path: "supplier_details"
+                        },
+                        {
+                            path: "createdBy"
+                        },
+                        {
+                            path: "modifiedBy"
+                        }
+                    ],
+                    page: page,
+                    limit: limit,
+                    sort: { createdAt: -1 }
+                }
+
+                return await TransferOutSchema.paginate({}, options)
             } catch (error: any) {
                 throw new ApolloError(error.message)
             }
@@ -22,8 +48,15 @@ const transferout = {
                 const userToken: any = await verifyToken(context.user)
                 if (!userToken.status) throw new ApolloError("Unauthorization")
 
+                let total_qty = 0;
+
+                args.input.product_lists.map((product: any) => {
+                    total_qty += product.qty;
+                })
+
                 const newtransferout = new TransferOutSchema({
                     ...args.input,
+                    total_qty,
                     createdBy: userToken.data.user._id,
                     modifiedBy: userToken.data.user._id
                 })

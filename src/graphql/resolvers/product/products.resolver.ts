@@ -8,7 +8,6 @@ import {
 } from "../../../helper/message.helper";
 import { PaginateOptions } from "mongoose";
 import { customLabels } from "../../../helper/customeLabels.helper";
-import DiscountProductSchema from "../../../model/product/discount_products.model";
 import StockSchema from "../../../model/stock/stocks.model";
 import cloudinary from "../../../util/cloudinary";
 import { createObjectCsvWriter } from "csv-writer";

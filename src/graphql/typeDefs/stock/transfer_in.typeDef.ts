@@ -30,7 +30,7 @@ const transferin = gql`
     }
 
     type Query {
-        getTransferIns(page: Int, limit: Int, search: String): [TransferIn]
+        getTransferIns(page: Int, limit: Int, pagination: Boolean): [TransferIn]
     }
 
     type Mutation {

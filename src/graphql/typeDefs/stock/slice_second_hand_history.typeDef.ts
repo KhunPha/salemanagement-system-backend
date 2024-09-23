@@ -4,6 +4,9 @@ const slicesecondhandhistory = gql`
     type SliceSecondHand {
         _id: ID
         grade_lists: [GradeLists]
+        total_qty: Int
+        total_amount: Float
+        unit_divided: Int
         createdAt: Date
     }
 
@@ -15,6 +18,7 @@ const slicesecondhandhistory = gql`
 
     input GradeListsInput {
         grade_lists: [SliceSecondHandInput]
+        unit_divided: Int
         remark: String
     }
 

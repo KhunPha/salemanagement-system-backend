@@ -3,6 +3,9 @@ import mongoose, { Schema, Document } from "mongoose";
 export interface ISliceSecondHandHistory extends Document {
     divided_id: object
     grade_lists: object
+    total_qty: number
+    total_amount: number
+    unit_divided: number
     remark: string
     createdBy: object
     modifiedBy: object
@@ -24,6 +27,15 @@ const slicesecondhandhistory = new Schema<ISliceSecondHandHistory>({
             type: Number
         }
     }],
+    total_qty: {
+        type: Number
+    },
+    total_amount: {
+        type: Number
+    },
+    unit_divided: {
+        type: Number
+    },
     remark: {
         type: String
     },

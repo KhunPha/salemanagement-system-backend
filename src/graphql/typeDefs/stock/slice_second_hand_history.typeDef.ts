@@ -6,7 +6,6 @@ const slicesecondhandhistory = gql`
         grade_lists: [GradeLists]
         total_qty: Int
         total_amount: Float
-        unit_divided: Int
         createdAt: Date
     }
 
@@ -33,7 +32,7 @@ const slicesecondhandhistory = gql`
     }
 
     type Mutation {
-        DividedProduct(divided_id: ID, input: GradeListsInput): ResponseMessage!
+        DividedProduct(divided_id: ID, unit_divided: Int, input: GradeListsInput): ResponseMessage!
     }
 `
 

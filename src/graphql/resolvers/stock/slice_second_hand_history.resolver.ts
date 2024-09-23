@@ -51,6 +51,7 @@ const slicesecondhandhistory = {
                     ...args.input,
                     total_qty,
                     total_amount,
+                    unit_divided,
                     createdBy: userToken.data.user._id,
                     modifiedBy: userToken.data.user._id
                 })

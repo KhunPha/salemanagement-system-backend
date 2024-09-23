@@ -31,6 +31,12 @@ const selectData = gql`
         pro_name: String
     }
 
+    type SelectGradeProduct {
+        _id: ID
+        pro_name: String
+        price: Float
+    }
+
     type SelectSupplier {
         _id: ID
         supplier_name: String
@@ -52,7 +58,7 @@ const selectData = gql`
         selectColor: [SelectColor]
         selectBrand: [SelectBrand]
         selectProduct: [SelectProduct]
-        selectGradeProduct: [SelectProduct]
+        selectGradeProduct: [SelectGradeProduct]
         selectProductTransfer(type_of_product: String): [SelectProduct]
         selectSupplier: [SelectSupplier]
         selectCustomer: [SelectCustomer]

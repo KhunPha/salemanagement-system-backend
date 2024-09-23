@@ -72,7 +72,10 @@ const transferout = {
                     const product_id = transferinproduct_map[i].product_details
                     const getStock = await StockSchema.findOne({ product_details: product_id })
 
-                    if (!getStock) {
+                    if (!getStock || getStock.stock_on_hand <= 0) {
+                        messageError.message_kh = "ទំនិញមិនគ្រប់គ្រាន់";
+                        messageError.message_en = "stock not enough"
+
                         return messageError
                     }
 

@@ -11,9 +11,16 @@ const report = {
         purchaseReport: async (parent: any, args: any, context: any) => {
             try {
                 // Step 1: Fetch all purchases with their product details
-                const PurchaseData: any = await PurchaseSchema.find({})
-                    .populate("products_lists.product_details")
-                    .exec();
+                const { from_date, to_date } = args
+                const fromDate = new Date("2024-09-23T00:00:00.000Z");
+                const toDate = new Date("2024-09-23T23:59:59.999Z");
+
+                const PurchaseData: any = await PurchaseSchema.find({
+                    createdAt: {
+                        $gte: fromDate,
+                        $lte: toDate
+                    }
+                }).populate("products_lists.product_details");
 
                 const productSum: any = {};
                 let total_qty = 0, total_receive = 0, total_amount = 0;
@@ -51,7 +58,7 @@ const report = {
 
                                 if (receivedProductId === productId) {
                                     // Sum the receive value for this product
-                                    const receiveQty = receiveProduct !== 0 ? receivedProduct.whole * receivedProduct.retail_in_whole: receivedProduct.retail_in_whole;
+                                    const receiveQty = receiveProduct !== 0 ? receivedProduct.whole * receivedProduct.retail_in_whole : receivedProduct.retail_in_whole;
                                     productSum[productId].receive += receiveQty;
                                     total_receive += receiveQty;
                                 }
@@ -78,9 +85,16 @@ const report = {
         revenueReport: async () => "Go to World",
         expenseReport: async (parent: any, args: any, context: any) => {
             try {
-                const userToken: any = await verifyToken(context.user)
-                if (!userToken.status) throw new ApolloError("Unauthorization")
-                const ExpenseData = await PurchaseSchema.find({}).populate("products_lists.product_details")
+                const { from_date, to_date } = args
+                const fromDate = new Date("2024-09-23T00:00:00.000Z");
+                const toDate = new Date("2024-09-23T23:59:59.999Z");
+
+                const ExpenseData: any = await PurchaseSchema.find({
+                    createdAt: {
+                        $gte: fromDate,
+                        $lte: toDate
+                    }
+                }).populate("products_lists.product_details");
 
                 const productSum: any = {};
                 let total_qty: any = 0, total_price: any = 0, total_amount: any = 0;

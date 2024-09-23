@@ -56,12 +56,12 @@ const report = gql`
 
     type Query {
         dailyReport: String
-        salesReport: String
-        purchaseReport: PurchaseReportData
-        invoiceSaleReport: String
-        revenueReport: String
-        expenseReport: ExpenseReportData
-        stockReport: StockReportData
+        salesReport(from_date: Date, to_date: Date): String
+        purchaseReport(from_date: Date, to_date: Date): PurchaseReportData
+        invoiceSaleReport(from_date: Date, to_date: Date): String
+        revenueReport(from_date: Date, to_date: Date): String
+        expenseReport(from_date: Date, to_date: Date): ExpenseReportData
+        stockReport(type_of_product: String): StockReportData
     }
 `
 

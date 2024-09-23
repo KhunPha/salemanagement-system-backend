@@ -23,11 +23,11 @@ const slicesecondhandhistory = gql`
     }
 
     type Query {
-        getSecondHandSliceHistories(id: ID): [SliceSecondHand]
+        getDividedProductHistory(id: ID): [SliceSecondHand]
     }
 
     type Mutation {
-        SliceSecondHand(input: GradeListsInput): ResponseMessage!
+        DividedProduct(input: GradeListsInput): ResponseMessage!
     }
 `
 

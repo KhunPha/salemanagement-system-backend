@@ -4,7 +4,6 @@ const sales = gql`
     scalar Date
 
     type Pay {
-        reil: Float
         dollar: Float
     }
 
@@ -48,7 +47,6 @@ const sales = gql`
     }
 
     input PayInput {
-        reil: Float
         dollar: Float
     }
 

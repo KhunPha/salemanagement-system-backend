@@ -6,7 +6,7 @@ import StockSchema from "../../../model/stock/stocks.model"
 
 const slicesecondhandhistory = {
     Query: {
-        getSecondHandSliceHistories: async (parent: any, args: any, context: any) => {
+        getDividedProductHistory: async (parent: any, args: any, context: any) => {
             try {
                 const userToken: any = await verifyToken(context.user)
                 if (!userToken.status) throw new ApolloError("Unauthorization")
@@ -17,7 +17,7 @@ const slicesecondhandhistory = {
         }
     },
     Mutation: {
-        SliceSecondHand: async (parent: any, args: any, context: any) => {
+        DividedProduct: async (parent: any, args: any, context: any) => {
             try {
                 const userToken: any = await verifyToken(context.user)
                 if (!userToken.status) throw new ApolloError("Unauthorization")

@@ -8,6 +8,9 @@ export interface ISliceSecondHandHistory extends Document {
 }
 
 const slicesecondhandhistory = new Schema<ISliceSecondHandHistory>({
+    divided_id: {
+        type: mongoose.Schema.Types.ObjectId
+    },
     grade_lists: [{
         grade_details: {
             type: mongoose.Schema.Types.ObjectId,

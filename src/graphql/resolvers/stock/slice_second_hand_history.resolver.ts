@@ -39,7 +39,7 @@ const slicesecondhandhistory = {
                 args.input.grade_lists.map(async (grade_detail: any) => {
                     const getStock = await StockSchema.findOne({ product_details: grade_detail?.grade_details })
 
-                    const stockDoc = { $set: { stock_on_hand: getStock?.stock_on_hand + grade_detail.input.qty } }
+                    const stockDoc = { $set: { stock_on_hand: getStock?.stock_on_hand + grade_detail.qty } }
 
                     await StockSchema.findOneAndUpdate({ product_details: grade_detail?.grade_details }, stockDoc, { new: true })
                 })

@@ -1,9 +1,6 @@
 import { gql } from "apollo-server-express";
 
 const report = gql`
-    type SummaryReport {
-        message: String
-    }
 
     type DailyReport {
         message: String
@@ -14,7 +11,10 @@ const report = gql`
     }
 
     type PurchaseReport {
-        message: String
+        pro_name: String
+        qty: Int
+        receive: Int
+        amount: Float
     }
 
     type InvoiceSaleReport {
@@ -33,10 +33,14 @@ const report = gql`
     type ExpenseReport {
         pro_name: String
         qty: Int
-        price: Float
-        total: Float
-        discount: Float
         amount: Float
+    }
+
+    type PurchaseReportData {
+        data: [PurchaseReport]
+        total_qty: Int 
+        total_receive: Int 
+        total_amount: Float
     }
 
     type StockReportData {
@@ -47,15 +51,13 @@ const report = gql`
     type ExpenseReportData {
         data: [ExpenseReport]
         total_qty: Int
-        total_price: Float
         total_amount: Float
     }
 
     type Query {
-        summaryReport: String
         dailyReport: String
         salesReport: String
-        purchaseReport: String
+        purchaseReport: PurchaseReportData
         invoiceSaleReport: String
         revenueReport: String
         expenseReport: ExpenseReportData

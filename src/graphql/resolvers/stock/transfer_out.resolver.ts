@@ -64,11 +64,13 @@ const transferout = {
                     modifiedBy: userToken.data.user._id
                 })
 
-                const transferoutproduct_map: any = newtransferout.product_lists
+                const transferinproduct_map: any = newtransferout.product_lists
 
-                for (var i = 0; i < transferoutproduct_map.length; i++) {
-                    const product_id = transferoutproduct_map[i].product_details
-                    const getStock = await StockSchema.findOne({ product_lists: product_id })
+                if (!newtransferout?.product_lists || transferinproduct_map?.length <= 0) return messageError
+
+                for (var i = 0; i < transferinproduct_map.length; i++) {
+                    const product_id = transferinproduct_map[i].product_details
+                    const getStock = await StockSchema.findOne({ product_details: product_id })
 
                     if (!getStock) {
                         return messageError
@@ -76,9 +78,9 @@ const transferout = {
 
                     await newtransferout.save()
 
-                    const stockDoc = { $set: { stock_on_hand: getStock.stock_on_hand - transferoutproduct_map[i].qty } }
+                    const stockDoc = { $set: { stock_on_hand: getStock.stock_on_hand - transferinproduct_map[i].qty } }
 
-                    await StockSchema.findOneAndUpdate({ product_lists: product_id }, stockDoc, { new: true })
+                    await StockSchema.findOneAndUpdate({ product_details: product_id }, stockDoc, { new: true, runValidators: true })
                 }
 
                 if (!newtransferout) {

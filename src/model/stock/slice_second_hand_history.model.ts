@@ -1,24 +1,25 @@
 import mongoose, { Schema, Document } from "mongoose";
 
 export interface ISliceSecondHandHistory extends Document {
-    grade_details: object
-    qty: number
-    price: number
+    divided_id: object
+    grade_lists: object
     createdBy: object
     modifiedBy: object
 }
 
 const slicesecondhandhistory = new Schema<ISliceSecondHandHistory>({
-    grade_details: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Product"
-    },
-    qty: {
-        type: Number
-    },
-    price: {
-        type: Number
-    },
+    grade_lists: [{
+        grade_details: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Product"
+        },
+        qty: {
+            type: Number
+        },
+        price: {
+            type: Number
+        }
+    }],
     createdBy: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User"

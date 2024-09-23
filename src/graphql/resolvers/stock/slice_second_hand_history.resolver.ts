@@ -10,7 +10,9 @@ const slicesecondhandhistory = {
             try {
                 const userToken: any = await verifyToken(context.user)
                 if (!userToken.status) throw new ApolloError("Unauthorization")
-                return await SliceSecondHandHistorySchema.find().populate("grade_details")
+                const { divided_id } = args
+
+                return await SliceSecondHandHistorySchema.find({ divided_id }).populate("grade_details")
             } catch (error: any) {
                 throw new ApolloError(error.message)
             }

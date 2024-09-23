@@ -23,8 +23,10 @@ const slicesecondhandhistory = {
             try {
                 const userToken: any = await verifyToken(context.user)
                 if (!userToken.status) throw new ApolloError("Unauthorization")
+                    const { divided_id } = args
 
                 const newslicesecondhand = new SliceSecondHandHistorySchema({
+                    divided_id,
                     ...args.input,
                     createdBy: userToken.data.user._id,
                     modifiedBy: userToken.data.user._id

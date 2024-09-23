@@ -22,7 +22,7 @@ const slicesecondhandhistory = {
                 const userToken: any = await verifyToken(context.user)
                 const { divided_id, unit_divided } = args
 
-                const findStock: any = await StockSchema.findById(divided_id)
+                const findStock: any = await StockSchema.findById(divided_id).populate("product_details")
 
                 if (!findStock || findStock?.stock_on_hand <= 0 || findStock?.stock_on_hand < unit_divided) {
                     messageError.message_kh = `${findStock?.product_details.pro_name} ចំនួនមិនគ្រប់គ្រាន់`;
@@ -35,34 +35,34 @@ const slicesecondhandhistory = {
 
                 let total_qty = 0, total_amount = 0;
 
-                args.input.grade_lists.map(async (grade_detail: any) => {
+                args.input.grade_lists.map(async (grade_detail: any, index: any) => {
                     const getStock = await StockSchema.findOne({ product_details: grade_detail?.grade_details })
 
                     total_qty += grade_detail?.qty;
                     total_amount += grade_detail?.price * grade_detail?.qty;
 
-                    console.log(total_qty, total_amount)
-
                     const stockDoc = { $set: { stock_on_hand: getStock?.stock_on_hand + grade_detail?.qty } }
 
                     await StockSchema.findOneAndUpdate({ product_details: grade_detail?.grade_details }, stockDoc, { new: true })
+
+                    if (index === args.input.grade_lists.length - 1) {
+                        const newslicesecondhand = new SliceSecondHandHistorySchema({
+                            divided_id,
+                            ...args.input,
+                            total_qty,
+                            total_amount,
+                            unit_divided,
+                            createdBy: userToken.data.user._id,
+                            modifiedBy: userToken.data.user._id
+                        })
+
+                        await newslicesecondhand.save()
+
+                        if (!newslicesecondhand) {
+                            return messageError
+                        }
+                    }
                 })
-
-                const newslicesecondhand = new SliceSecondHandHistorySchema({
-                    divided_id,
-                    ...args.input,
-                    total_qty,
-                    total_amount,
-                    unit_divided,
-                    createdBy: userToken.data.user._id,
-                    modifiedBy: userToken.data.user._id
-                })
-
-                await newslicesecondhand.save()
-
-                if (!newslicesecondhand) {
-                    return messageError
-                }
 
                 return message
             } catch (error: any) {

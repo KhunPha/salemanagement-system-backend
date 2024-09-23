@@ -24,14 +24,14 @@ const slicesecondhandhistory = {
 
                 const findStock: any = await StockSchema.findById(divided_id)
 
-                if(!findStock || findStock?.stock_on_hand <= 0 || findStock?.stock_on_hand < unit_divided){
+                if (!findStock || findStock?.stock_on_hand <= 0 || findStock?.stock_on_hand < unit_divided) {
                     messageError.message_kh = `${findStock?.product_details.pro_name} ចំនួនមិនគ្រប់គ្រាន់`;
                     messageError.message_en = `${findStock?.product_details.pro_name} qty not enought`;
 
                     return messageError;
                 }
 
-                await StockSchema.findByIdAndUpdate(divided_id, { $set: { stock_on_hand: findStock?.stock_on_hand - unit_divided}})
+                await StockSchema.findByIdAndUpdate(divided_id, { $set: { stock_on_hand: findStock?.stock_on_hand - unit_divided } })
 
                 let total_qty = 0, total_amount = 0;
 
@@ -41,7 +41,9 @@ const slicesecondhandhistory = {
                     total_qty += grade_detail?.qty;
                     total_amount += grade_detail?.price * grade_detail?.qty;
 
-                    const stockDoc = { $set: { stock_on_hand: getStock?.stock_on_hand + grade_detail.qty } }
+                    console.log(total_qty, total_amount)
+
+                    const stockDoc = { $set: { stock_on_hand: getStock?.stock_on_hand + grade_detail?.qty } }
 
                     await StockSchema.findOneAndUpdate({ product_details: grade_detail?.grade_details }, stockDoc, { new: true })
                 })

@@ -4,6 +4,7 @@ const slicesecondhandhistory = gql`
     type SliceSecondHand {
         _id: ID
         grade_lists: [GradeLists]
+        unit_divided: Int
         total_qty: Int
         total_amount: Float
         createdAt: Date

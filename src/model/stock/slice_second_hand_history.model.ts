@@ -3,6 +3,7 @@ import mongoose, { Schema, Document } from "mongoose";
 export interface ISliceSecondHandHistory extends Document {
     divided_id: object
     grade_lists: object
+    remark: string
     createdBy: object
     modifiedBy: object
 }
@@ -23,6 +24,9 @@ const slicesecondhandhistory = new Schema<ISliceSecondHandHistory>({
             type: Number
         }
     }],
+    remark: {
+        type: String
+    },
     createdBy: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User"

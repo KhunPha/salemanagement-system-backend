@@ -15,6 +15,7 @@ const slicesecondhandhistory = gql`
 
     input GradeListsInput {
         grade_lists: [SliceSecondHandInput]
+        remark: String
     }
 
     input SliceSecondHandInput {

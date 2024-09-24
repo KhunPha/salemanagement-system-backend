@@ -54,6 +54,7 @@ const supplier = gql`
         exportSupplierExcel(savePath: String!): ResponseMessage!
         exportSupplierCSV(savePath: String!): ResponseMessage!
         recoverySupplier(id: ID!): ResponseMessage!
+        recoveryManySupplier(id: [ID]): ResponseMessage!
         recoverySupplierDelete(id: ID!): ResponseMessage!
     }
 `

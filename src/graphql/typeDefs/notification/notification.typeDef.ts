@@ -2,6 +2,7 @@ import { gql } from "apollo-server-express";
 
 const notification = gql`
     type Notification {
+        _id: ID
         name: String
         title: String
         read: Boolean
@@ -13,6 +14,12 @@ const notification = gql`
 
     type Query {
         getNotifications: [Notification]
+        getNotificationNotRead: [Notification]
+        getCountNotification: Int
+    }
+
+    type Mutation {
+        readNotification(notification_id: ID): Boolean
     }
 `
 

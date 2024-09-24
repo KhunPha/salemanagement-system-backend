@@ -48,6 +48,7 @@ const bank = gql`
         exportBankExcel(savePath: String!): ResponseMessage!
         exportBankCSV(savePath: String!): ResponseMessage!
         recoveryBank(id: ID!): ResponseMessage!
+        recoveryManyBank(id: [ID]): ResponseMessage!
         recoveryBankDelete(id: ID!): ResponseMessage!
     }
 `

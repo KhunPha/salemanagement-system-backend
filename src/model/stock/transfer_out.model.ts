@@ -51,7 +51,7 @@ const transferout = new Schema<ITransferOut>({
         type: mongoose.Schema.Types.ObjectId,
         ref: "User"
     },
-})
+}, { timestamps: true })
 
 transferout.plugin(paginate)
 

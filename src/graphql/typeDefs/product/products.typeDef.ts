@@ -84,6 +84,7 @@ const product = gql`
         exportProductExcel(savePath: String!): ResponseMessage!
         exportProductCSV(savePath: String!): ResponseMessage!
         recoveryProduct(id: ID!): ResponseMessage!
+        recoveryManyProduct(id: [ID]): ResponseMessage!
         recoveryProductDelete(id: ID!): ResponseMessage!
     }
 `

@@ -86,6 +86,7 @@ const marketing = gql`
         exportMarketingExcel(savePath: String!): ResponseMessage!
         exportMarketingCSV(savePath: String!): ResponseMessage!
         recoveryMarketing(id: ID!): ResponseMessage!
+        recoveryManyMarketing(id: [ID]): ResponseMessage!
         recoveryMarketingDelete(id: ID!): ResponseMessage!
     }
 `

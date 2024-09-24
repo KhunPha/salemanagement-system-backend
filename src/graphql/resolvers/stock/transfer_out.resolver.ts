@@ -70,11 +70,11 @@ const transferout = {
 
                 for (var i = 0; i < transferinproduct_map.length; i++) {
                     const product_id = transferinproduct_map[i].product_details
-                    const getStock = await StockSchema.findOne({ product_details: product_id })
+                    const getStock: any = await StockSchema.findOne({ product_details: product_id }).populate("product_details")
 
-                    if (!getStock || getStock.stock_on_hand <= 0) {
-                        messageError.message_kh = "ទំនិញមិនគ្រប់គ្រាន់";
-                        messageError.message_en = "stock not enough"
+                    if (!getStock || getStock.stock_on_hand <= 0 || getStock?.stock_on_hand < transferinproduct_map[i].qty) {
+                        messageError.message_kh = `${getStock?.product_details?.pro_name} ទំនិញមិនគ្រប់គ្រាន់`;
+                        messageError.message_en = `${getStock?.product_details?.pro_name} stock not enough`;
 
                         return messageError
                     }

@@ -5,6 +5,7 @@ const sales = gql`
 
     type Pay {
         dollar: Float
+        reil: Float
     }
 
     type Sales {
@@ -16,14 +17,11 @@ const sales = gql`
         total_qty: Int
         total_amount: Float
         exchange_rate: Float
-        discount_type: String
         discount: Float
         remind_status: Boolean
         date_remind: Date
         pay: Pay
         bank: Bank
-        product_add: [ProductAdd]
-        unit_product_discount: [UnitProductDiscount]
         createdBy: User
         modifiedBy: User
     }
@@ -48,28 +46,28 @@ const sales = gql`
 
     input PayInput {
         dollar: Float
+        reil: Float
     }
 
     input SalesInput {
         product_lists: [ProductListInput]
-        cashier: String
-        customer: String
         paymethod: String
+        customer: String
         total_qty: Int
         total_amount: Float
         exchange_rate: Float
-        discount_type: String
         discount: Float
         remind_status: Boolean
         date_remind: Date
         pay: PayInput
         bank: ID
-        product_add: [ProductAddInput]
-        unit_product_discount: [UnitProductDiscountInput]
+        isSuspend: Boolean
     }
 
     type Query {
         getSales(page: Int, limit: Int, pagination: Boolean, keyword: String): SalesPagination
+        getSaleSuspend(page: Int, limit: Int, pagination: Boolean, keyword: String): SalesPagination
+        getInvoiceNumber: String
     }
 
     type Mutation {

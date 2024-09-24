@@ -50,6 +50,7 @@ const color = gql`
         exportColorExcel(savePath: String!): ResponseMessage!
         exportColorCSV(savePath: String!): ResponseMessage!
         recoveryColor(id: ID!): ResponseMessage!
+        recoveryManyColor(id: [ID]): ResponseMessage!
         recoveryColorDelete(id: ID!): ResponseMessage!
     }
 `

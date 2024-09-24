@@ -62,9 +62,17 @@ const receiveproduct = {
                     await newTransac.save()
 
                     if (args.input.product_type === "Second Hand") {
-                        stockDoc = { $set: { stock_on_hand: getStock.stock_on_hand + product_map[i].whole, isNewInsert: false } }
+                        stockDoc = { $set: { stock_on_hand: getStock.stock_on_hand + product_map[i].whole, isNewInsert: true } }
                     } else {
-                        stockDoc = { $set: { stock_on_hand: getStock.stock_on_hand + (product_map[i].retail_in_whole * product_map[i].whole), isNewInsert: false } }
+                        const stockQty = getStock?.stock_on_hand + (product_map[i].retail_in_whole * product_map[i].whole);
+
+                        let isNewInsert = true
+
+                        if (stockQty >= 5) {
+                            isNewInsert = false
+                        }
+
+                        stockDoc = { $set: { stock_on_hand: getStock.stock_on_hand + stockQty, isNewInsert } }
                     }
 
                     await StockSchema.findOneAndUpdate({ product_details: product_id }, stockDoc, { new: true })

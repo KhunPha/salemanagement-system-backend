@@ -10,7 +10,7 @@ const slicesecondhandhistory = {
             try {
                 const { divided_id } = args
 
-                return await SliceSecondHandHistorySchema.find({ divided_id }).populate("grade_lists.grade_details")
+                return await SliceSecondHandHistorySchema.find({ divided_id }).populate("grade_lists.grade_details").sort({ createdAt: -1 })
             } catch (error: any) {
                 throw new ApolloError(error.message)
             }
@@ -20,18 +20,16 @@ const slicesecondhandhistory = {
         DividedProduct: async (parent: any, args: any, context: any) => {
             try {
                 const userToken: any = await verifyToken(context.user)
-                const { divided_id, unit_divided } = args
+                const { divided_id } = args
 
                 const findStock: any = await StockSchema.findById(divided_id).populate("product_details")
 
-                if (!findStock || findStock?.stock_on_hand <= 0 || findStock?.stock_on_hand < unit_divided) {
+                if (!findStock || findStock?.stock_on_hand <= 0 || findStock?.stock_on_hand < args?.input?.unit_divided) {
                     messageError.message_kh = `${findStock?.product_details.pro_name} ចំនួនមិនគ្រប់គ្រាន់`;
                     messageError.message_en = `${findStock?.product_details.pro_name} qty not enought`;
 
                     return messageError;
                 }
-
-                await StockSchema.findByIdAndUpdate(divided_id, { $set: { stock_on_hand: findStock?.stock_on_hand - unit_divided } })
 
                 let total_qty = 0, total_amount = 0;
 
@@ -51,7 +49,6 @@ const slicesecondhandhistory = {
                             ...args.input,
                             total_qty,
                             total_amount,
-                            unit_divided,
                             createdBy: userToken.data.user._id,
                             modifiedBy: userToken.data.user._id
                         })
@@ -61,6 +58,8 @@ const slicesecondhandhistory = {
                         if (!newslicesecondhand) {
                             return messageError
                         }
+
+                        await StockSchema.findByIdAndUpdate(divided_id, { $set: { stock_on_hand: findStock?.stock_on_hand - args?.input?.unit_divided } })
                     }
                 })
 

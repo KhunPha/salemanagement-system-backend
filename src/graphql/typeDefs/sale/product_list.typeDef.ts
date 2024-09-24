@@ -5,12 +5,14 @@ const product_lists = gql`
         product: Product
         qty: Int
         amount: Float
+        discount: Float
     }
 
     input ProductListInput {
         product: ID
         qty: Int
         amount: Float
+        discount: Float
     }
 `
 

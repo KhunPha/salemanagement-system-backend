@@ -346,6 +346,22 @@ const customer = {
                 throw new ApolloError(error.message)
             }
         },
+        recoveryManyCustomer: async (parent: any, args: any, context: any) => {
+            try {
+                const userToken: any = await verifyToken(context.user)
+                const { id } = args
+
+                const updateDoc = { $set: { isDelete: false, modified: userToken.data.user._id } }
+
+                id.map(async (id: any) => {
+                    await CustomerSchema.findByIdAndUpdate(id, updateDoc)
+                })
+
+                return message
+            } catch (error: any) {
+                throw new ApolloError(error)
+            }
+        },
         recoveryCustomerDelete: async (parent: any, args: any, context: any) => {
             try {
                 const userToken: any = await verifyToken(context.user)

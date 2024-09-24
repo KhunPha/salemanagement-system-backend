@@ -22,9 +22,7 @@ const stock = {
                             {
                                 path: "category",
                                 match: {
-                                    $and: {
-                                        isDelete: { $ne: true }
-                                    }
+                                    isDelete: { $ne: true }
                                 }
                             },
                             {
@@ -82,19 +80,11 @@ const stock = {
                             {
                                 path: "category",
                                 match: {
-                                    $and: {
-                                        isDelete: { $ne: true }
-                                    }
-                                }
-                            },
-                            {
-                                path: "unit",
-                                match: {
                                     isDelete: { $ne: true }
                                 }
                             },
                             {
-                                path: "color",
+                                path: "unit",
                                 match: {
                                     isDelete: { $ne: true }
                                 }

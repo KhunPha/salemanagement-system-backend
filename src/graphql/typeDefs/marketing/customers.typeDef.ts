@@ -56,6 +56,7 @@ const customer = gql`
         exportCustomerExcel(savePath: String!): ResponseMessage!
         exportCustomerCSV(savePath: String!): ResponseMessage!
         recoveryCustomer(id: ID!): ResponseMessage!
+        recoveryManyCustomer(id: [ID]): ResponseMessage!
         recoveryCustomerDelete(id: ID!): ResponseMessage!
     }
 `

@@ -1,11 +1,12 @@
 import mongoose, { Schema, Document, mongo, Date, PaginateModel } from "mongoose";
 import paginate from "mongoose-paginate-v2";
+import Sequence from "./sequent.model";
 
 export interface ISales extends Document {
     invoice_number: string
     product_lists: object
-    cashier: object
-    customer: object
+    cashier: string
+    customer: string
     paymethod: string
     total_qty: number
     total_amount: number
@@ -14,8 +15,9 @@ export interface ISales extends Document {
     discount: number
     remind_status: boolean
     date_remind: Date,
-    pay: object
     bank: object
+    due: number
+    isSuspend: boolean
     createdBy: object
     modifiedBy: object
 }
@@ -37,12 +39,10 @@ const sale = new Schema<ISales>({
         }
     }],
     cashier: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User"
+        type: String
     },
     customer: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Customer"
+        type: String
     },
     paymethod: {
         type: String
@@ -68,17 +68,12 @@ const sale = new Schema<ISales>({
     date_remind: {
         type: Date
     },
-    pay: {
-        reil: {
-            type: Number
-        },
-        dollar: {
-            type: Number
-        }
+    due: {
+        type: Number
     },
-    bank: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Bank"
+    isSuspend: {
+        type: Boolean,
+        default: false
     },
     createdBy: {
         type: mongoose.Schema.Types.ObjectId,
@@ -87,10 +82,23 @@ const sale = new Schema<ISales>({
     modifiedBy: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User"
-    },
+    }
 }, { timestamps: true })
 
 sale.plugin(paginate)
+
+sale.pre('save', async function (next) {
+    if (this.isNew) {
+        const seq = await Sequence.findOneAndUpdate(
+            { name: 'invoice_number' },
+            { $inc: { value: 1 } },
+            { new: true, upsert: true }
+        );
+
+        this.invoice_number = `INV-${100000 + seq.value}`;
+    }
+    next();
+});
 
 const SaleSchema = mongoose.model<ISales, PaginateModel<ISales>>("Sale", sale, "Sales")
 

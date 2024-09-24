@@ -48,6 +48,7 @@ const unit = gql`
         exportUnitExcel(savePath: String!): ResponseMessage!
         exportUnitCSV(savePath: String!): ResponseMessage!
         recoveryUnit(id: ID!): ResponseMessage!
+        recoveryManyUnit(id: [ID]): ResponseMessage!
         recoveryUnitDelete(id: ID!): ResponseMessage!
     }
 

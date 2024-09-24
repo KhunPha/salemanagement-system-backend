@@ -48,6 +48,7 @@ const category = gql`
         exportCategoryExcel(savePath: String!): ResponseMessage!
         exportCategoryCSV(savePath: String!): ResponseMessage!
         recoveryCategory(id: ID!): ResponseMessage!
+        recoveryManyCategory(id: [ID]): ResponseMessage!
         recoveryCategoryDelete(id: ID!): ResponseMessage!
     }
 `

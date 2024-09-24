@@ -3,11 +3,15 @@ import { gql } from "apollo-server-express";
 const report = gql`
 
     type DailyReport {
-        message: String
+        pro_name: String
+        type_of_product: String
+        qty: Int
     }
 
     type SalesReport {
-        message: String
+        pro_name: String
+        amount: Float
+        qty: Int
     }
 
     type PurchaseReport {
@@ -17,8 +21,16 @@ const report = gql`
         amount: Float
     }
 
-    type InvoiceSaleReport {
-        message: String
+    type InvoiceReport {
+        invoice_number: String
+        createdAt: Date
+        customer: String
+        cashier: String
+        total_qty: Int
+        discount: Float
+        total_price: Float
+        total_amount: Float
+        due: Float
     }
 
     type StockReport {
@@ -30,10 +42,27 @@ const report = gql`
         amount: Float
     }
 
+    type RevenueReport {
+        pro_name: String
+        qty: Int
+        amount: Float
+    }
+
     type ExpenseReport {
         pro_name: String
         qty: Int
         amount: Float
+    }
+
+    type DailyReportData {
+        data: [DailyReport]
+        total_qty: Int
+    }
+
+    type SaleReportData {
+        data: [SalesReport]
+        total_qty: Int
+        total_amount: Float
     }
 
     type PurchaseReportData {
@@ -43,9 +72,15 @@ const report = gql`
         total_amount: Float
     }
 
-    type StockReportData {
-        data: [StockReport],
-        total: Float
+    type InvoiceReportData {
+        data: [InvoiceReport]
+        total_invoice: Int
+    }
+
+    type RevenueReportData {
+        data: [RevenueReport]
+        total_qty: Int
+        total_amount: Float
     }
 
     type ExpenseReportData {
@@ -54,12 +89,17 @@ const report = gql`
         total_amount: Float
     }
 
+    type StockReportData {
+        data: [StockReport],
+        total: Float
+    }
+
     type Query {
-        dailyReport: String
-        salesReport(from_date: Date, to_date: Date): String
+        dailyReport(from_date: Date, to_date: Date): DailyReportData
+        salesReport(from_date: Date, to_date: Date): SaleReportData
         purchaseReport(from_date: Date, to_date: Date): PurchaseReportData
-        invoiceSaleReport(from_date: Date, to_date: Date): String
-        revenueReport(from_date: Date, to_date: Date): String
+        invoiceSaleReport(from_date: Date, to_date: Date): InvoiceReportData
+        revenueReport(from_date: Date, to_date: Date): RevenueReportData
         expenseReport(from_date: Date, to_date: Date): ExpenseReportData
         stockReport(type_of_product: String): StockReportData
     }

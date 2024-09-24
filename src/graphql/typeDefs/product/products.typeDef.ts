@@ -86,6 +86,7 @@ const product = gql`
         recoveryProduct(id: ID!): ResponseMessage!
         recoveryManyProduct(id: [ID]): ResponseMessage!
         recoveryProductDelete(id: ID!): ResponseMessage!
+        recoveryProductDeleteMany(id: [ID]): ResponseMessage!
     }
 `
 

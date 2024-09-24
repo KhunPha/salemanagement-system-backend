@@ -50,6 +50,7 @@ const unit = gql`
         recoveryUnit(id: ID!): ResponseMessage!
         recoveryManyUnit(id: [ID]): ResponseMessage!
         recoveryUnitDelete(id: ID!): ResponseMessage!
+        recoveryUnitDeleteMany(id: [ID]): ResponseMessage!
     }
 
     type Subscription {

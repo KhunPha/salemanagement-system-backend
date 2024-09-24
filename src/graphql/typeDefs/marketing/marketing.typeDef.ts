@@ -88,6 +88,7 @@ const marketing = gql`
         recoveryMarketing(id: ID!): ResponseMessage!
         recoveryManyMarketing(id: [ID]): ResponseMessage!
         recoveryMarketingDelete(id: ID!): ResponseMessage!
+        recoveryMarketingDeleteMany(id: [ID]): ResponseMessage!
     }
 `
 

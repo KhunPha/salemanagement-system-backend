@@ -50,6 +50,7 @@ const category = gql`
         recoveryCategory(id: ID!): ResponseMessage!
         recoveryManyCategory(id: [ID]): ResponseMessage!
         recoveryCategoryDelete(id: ID!): ResponseMessage!
+        recoveryCategoryDeleteMany(id: [ID]): ResponseMessage!
     }
 `
 

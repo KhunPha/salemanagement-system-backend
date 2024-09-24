@@ -356,6 +356,20 @@ const category = {
             } catch (error: any) {
                 throw new ApolloError(error.message)
             }
+        },
+        recoveryCategoryDeleteMany: async (parent: any, args: any, context: any) => {
+            try {
+                const userToken: any = await verifyToken(context.user)
+                const { id } = args
+
+                id.map(async (id: any) => {
+                    await CategoriesSchema.findByIdAndDelete(id)
+                })
+
+                return message
+            } catch (error: any) {
+                throw new ApolloError(error)
+            }
         }
     }
 }

@@ -58,6 +58,7 @@ const customer = gql`
         recoveryCustomer(id: ID!): ResponseMessage!
         recoveryManyCustomer(id: [ID]): ResponseMessage!
         recoveryCustomerDelete(id: ID!): ResponseMessage!
+        recoveryCustomerDeleteMany(id: [ID]): ResponseMessage!
     }
 `
 

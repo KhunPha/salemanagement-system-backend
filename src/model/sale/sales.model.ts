@@ -6,7 +6,7 @@ export interface ISales extends Document {
     invoice_number: string
     product_lists: object
     cashier: string
-    customer: string
+    customer: object
     paymethod: string
     total_qty: number
     total_amount: number
@@ -17,6 +17,7 @@ export interface ISales extends Document {
     date_remind: Date,
     bank: object
     due: number
+    total_price: number
     isSuspend: boolean
     createdBy: object
     modifiedBy: object
@@ -42,7 +43,8 @@ const sale = new Schema<ISales>({
         type: String
     },
     customer: {
-        type: String
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Customer"
     },
     paymethod: {
         type: String
@@ -69,6 +71,9 @@ const sale = new Schema<ISales>({
         type: Date
     },
     due: {
+        type: Number
+    },
+    total_price: {
         type: Number
     },
     isSuspend: {

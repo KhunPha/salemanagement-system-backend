@@ -52,6 +52,7 @@ const color = gql`
         recoveryColor(id: ID!): ResponseMessage!
         recoveryManyColor(id: [ID]): ResponseMessage!
         recoveryColorDelete(id: ID!): ResponseMessage!
+        recoveryColorDeleteMany(id: [ID]): ResponseMessage!
     }
 `
 

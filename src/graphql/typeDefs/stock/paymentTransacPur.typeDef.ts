@@ -3,7 +3,7 @@ import { gql } from "apollo-server-express";
 const paymentTransacPur = gql`
     type PaymentTransacPur {
         purchase_id: ID
-        reil: Int
+        reil: Float
         dollar: Float
     }
 

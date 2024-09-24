@@ -50,6 +50,7 @@ const bank = gql`
         recoveryBank(id: ID!): ResponseMessage!
         recoveryManyBank(id: [ID]): ResponseMessage!
         recoveryBankDelete(id: ID!): ResponseMessage!
+        recoveryBankDeleteMany(id: [ID]): ResponseMessage!
     }
 `
 

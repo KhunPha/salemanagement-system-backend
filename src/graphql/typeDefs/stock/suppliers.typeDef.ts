@@ -56,6 +56,7 @@ const supplier = gql`
         recoverySupplier(id: ID!): ResponseMessage!
         recoveryManySupplier(id: [ID]): ResponseMessage!
         recoverySupplierDelete(id: ID!): ResponseMessage!
+        recoverySupplierDeleteMany(id: [ID]): ResponseMessage!
     }
 `
 

@@ -3,11 +3,100 @@ import { verifyToken } from "../../../middleware/auth.middleware"
 import StockSchema from "../../../model/stock/stocks.model"
 import PurchaseSchema from "../../../model/stock/purchases.model"
 import ReceiveProductTransactionSchema from "../../../model/stock/receive_product.model"
+import SaleSchema from "../../../model/sale/sales.model"
 
 const report = {
     Query: {
-        dailyReport: async () => "Hello World",
-        salesReport: async () => "Bye World",
+        dailyReport: async (parent: any, args: any, context: any) => {
+            try {
+                const { from_date, to_date } = args
+
+                const SaleData: any = await SaleSchema.find().populate("product_lists.product")
+
+                const saleSum: any = {};
+                let total_qty = 0;
+
+                for (const sale of SaleData) {
+                    for (const product of sale.product_lists) {
+                        const saleId = product?.product_details?._id?.toString
+
+                        if (!saleSum[saleId]) {
+                            saleSum[saleId] = {
+                                pro_name: product?.product?.pro_name,
+                                type_of_product: product?.product?.type_of_product,
+                                qty: 0
+                            };
+                        }
+
+                        saleSum[saleId].qty += product.qty;
+                        total_qty += product.qty;
+                    }
+                }
+
+                const data = Object.keys(saleSum).map(saleId => ({
+                    pro_name: saleSum[saleId].pro_name,
+                    type_of_product: saleSum[saleId].type_of_product,
+                    qty: saleSum[saleId].qty
+                }));
+
+                console.log(data, total_qty)
+
+                return { data, total_qty }
+            } catch (error: any) {
+                throw new ApolloError(error)
+            }
+        },
+        salesReport: async (parent: any, args: any, context: any) => {
+            try {
+                // Step 1: Fetch all purchases with their product details
+                const { from_date, to_date } = args
+                const fromDate = new Date("2024-09-23T00:00:00.000Z");
+                const toDate = new Date("2024-09-23T23:59:59.999Z");
+
+                const SaleData: any = await SaleSchema.find({
+                    isSuspend: false
+                }).populate("product_lists.product");
+
+                const productSum: any = {};
+                let total_qty = 0, total_amount = 0;
+
+                for (const sale of SaleData) {
+                    for (const product of sale.product_lists) {
+                        const productId = product?.product?._id.toString();
+
+                        // Initialize productSum entry if it doesn't exist
+                        if (!productSum[productId]) {
+                            productSum[productId] = {
+                                pro_name: product?.product?.pro_name,
+                                qty: 0,
+                                amount: 0
+                            };
+                        }
+
+                        // Sum the quantity and amount for this product
+                        productSum[productId].qty += product.qty;
+                        total_qty += product.qty;
+
+                        const productAmount = product.amount * product.qty;
+                        productSum[productId].amount += productAmount;
+                        total_amount += productAmount; // Accumulate total amount for all products
+
+                    }
+                }
+
+                // Map the data to include in the final output
+                const data = Object.keys(productSum).map(productId => ({
+                    pro_name: productSum[productId].pro_name,
+                    qty: productSum[productId].qty,
+                    amount: productSum[productId].amount,
+                }));
+
+                // Log the results
+                return { data, total_qty, total_amount };
+            } catch (error: any) {
+                throw new ApolloError(error)
+            }
+        },
         purchaseReport: async (parent: any, args: any, context: any) => {
             try {
                 // Step 1: Fetch all purchases with their product details
@@ -81,8 +170,55 @@ const report = {
                 throw new ApolloError(error)
             }
         },
-        invoiceSaleReport: async () => "Back World",
-        revenueReport: async () => "Go to World",
+        invoiceSaleReport: async (parent: any, args: any, context: any) => {
+            try {
+                const data = await SaleSchema.find({ isSuspend: false })
+
+                const total_invoice = await SaleSchema.countDocuments()
+
+                return { data, total_invoice }
+            } catch (error: any) {
+                throw new ApolloError(error)
+            }
+        },
+        revenueReport: async (parent: any, args: any, context: any) => {
+            try {
+                const { from_date, to_date } = args
+                const fromDate = new Date("2024-09-23T00:00:00.000Z");
+                const toDate = new Date("2024-09-23T23:59:59.999Z");
+
+                const RevenueData: any = await SaleSchema.find({ isSuspend: false }).populate("product_lists.product");
+
+                const productSum: any = {};
+                let total_qty: any = 0, total_price: any = 0, total_amount: any = 0;
+
+                RevenueData.map((data: any) => {
+                    data.product_lists.map((product: any, index: any) => {
+                        const productId = product?.product?._id.toString();
+                        if (!productSum[productId]) {
+                            productSum[productId] = { pro_name: product?.product?.pro_name, qty: 0, amount: 0 }
+                            total_amount += product.amount * product.qty
+                        } else {
+                            total_amount += product.amount * product.qty
+                        }
+
+                        productSum[productId].qty += product.qty
+                        productSum[productId].amount += product.amount * product.qty
+                        total_qty += product.qty
+                    })
+                })
+
+                const data = Object.keys(productSum).map(productId => ({
+                    pro_name: productSum[productId].pro_name,
+                    qty: productSum[productId].qty,
+                    amount: productSum[productId].amount
+                }))
+
+                return { data, total_qty, total_price, total_amount }
+            } catch (error: any) {
+                throw new ApolloError(error.message)
+            }
+        },
         expenseReport: async (parent: any, args: any, context: any) => {
             try {
                 const { from_date, to_date } = args

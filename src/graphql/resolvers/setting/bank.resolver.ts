@@ -363,6 +363,20 @@ const bank = {
             } catch (error: any) {
                 throw new ApolloError(error.message)
             }
+        },
+        recoveryBankDeleteMany: async (parent: any, args: any, context: any) => {
+            try {
+                const userToken: any = await verifyToken(context.user)
+                const { id } = args
+
+                id.map(async (id: any) => {
+                    await BankSchema.findByIdAndDelete(id)
+                })
+
+                return message
+            } catch (error: any) {
+                throw new ApolloError(error)
+            }
         }
     }
 }

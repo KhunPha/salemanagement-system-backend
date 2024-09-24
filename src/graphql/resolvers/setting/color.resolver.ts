@@ -359,6 +359,20 @@ const color = {
             } catch (error: any) {
                 throw new ApolloError(error.message)
             }
+        },
+        recoveryColorDeleteMany: async (parent: any, args: any, context: any) => {
+            try {
+                const userToken: any = await verifyToken(context.user)
+                const { id } = args
+
+                id.map(async (id: any) => {
+                    await ColorSchema.findByIdAndDelete(id)
+                })
+
+                return message
+            } catch (error: any) {
+                throw new ApolloError(error)
+            }
         }
     }
 }

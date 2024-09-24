@@ -19,7 +19,7 @@ const notification = {
         },
         getCountNotification: async (parent: any, args: any, context: any) => {
             try {
-                return await NotificationSchema.countDocuments();
+                return await NotificationSchema.countDocuments({ read: false });
             } catch (error: any) {
                 throw new ApolloError(error)
             }

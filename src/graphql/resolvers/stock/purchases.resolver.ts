@@ -76,6 +76,7 @@ const purchase = {
 
                 const newpurchase = new PurchaseSchema({
                     ...args.input,
+                    due: total_amount,
                     createdBy: userToken.data.user._id,
                     modifiedBy: userToken.data.user._id
                 })

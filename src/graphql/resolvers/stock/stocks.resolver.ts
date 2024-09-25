@@ -189,7 +189,7 @@ const stock = {
 
                 const { id } = args
 
-                const findStock = await StockSchema.findById(id)
+                const findStock: any = await StockSchema.findById(id).populate("product_details")
 
                 const findDiscount: any = await DiscountProductSchema.findById(findStock?.discount_id)
 
@@ -201,7 +201,7 @@ const stock = {
                     await DiscountProductSchema.findByIdAndUpdate(findStock?.discount_id, { $set: { product_id: product_id } })
                 }
 
-                const updateDoc = { $set: { discount: 0, after_discount: 0, discount_id: null, discount_type: "", isDiscount: false, discount_day: null } }
+                const updateDoc = { $set: { discount: 0, after_discount: findStock?.product_details?.price, discount_id: null, discount_type: "", isDiscount: false, discount_day: null } }
 
                 await StockSchema.findByIdAndUpdate(id, updateDoc)
 
@@ -218,7 +218,7 @@ const stock = {
                 const { id } = args
 
                 id.map(async (id: any) => {
-                    const findStock = await StockSchema.findById(id)
+                    const findStock: any = await StockSchema.findById(id).populate("product_details")
 
                     const findDiscount: any = await DiscountProductSchema.findById(findStock?.discount_id)
 
@@ -230,7 +230,7 @@ const stock = {
                         await DiscountProductSchema.findByIdAndUpdate(findStock?.discount_id, { $set: { product_id: product_id } })
                     }
 
-                    const updateDoc = { $set: { discount: 0, after_discount: 0, discount_id: null, discount_type: "", isDiscount: false, discount_day: null } }
+                    const updateDoc = { $set: { discount: 0, after_discount: findStock?.product_details?.price, discount_id: null, discount_type: "", isDiscount: false, discount_day: null } }
 
                     await StockSchema.findByIdAndUpdate(id, updateDoc)
                 })

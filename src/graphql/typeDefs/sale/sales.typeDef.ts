@@ -71,8 +71,20 @@ const sales = gql`
     type PaymentTransacSale {
         sale_id: ID
         pay: Pay
+        payment_method: String
         bank: Bank
+        remind_status: Boolean
+        date_remind: Date
         createAt: Date
+    }
+
+    input PaymentTransacSaleInput {
+        sale_id: ID
+        payment_method: String
+        pay: PayInput
+        bank: ID
+        remind_status: Boolean
+        date_remind: Date
     }
 
     type Query {
@@ -84,6 +96,7 @@ const sales = gql`
 
     type Mutation {
         createSales(input: SalesInput): ResponseMessage!
+        salePayment(input: PaymentTransacSaleInput): ResponseMessage!
         clearSaleSuspend(id: ID): ResponseMessage!
     }
 `

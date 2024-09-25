@@ -12,6 +12,7 @@ import DiscountProductSchema from "../../../model/product/discount_products.mode
 import { ApolloError } from "apollo-server-express";
 import NotificationSchema from "../../../model/notification/notification.model";
 import PurchaseSchema from "../../../model/stock/purchases.model";
+import SaleSchema from "../../../model/sale/sales.model";
 const cron = require("node-cron")
 
 // Clear Recovery
@@ -95,9 +96,12 @@ cron.schedule('*/1 * * * *', async () => {
             { deadline: true, isActive: false }
         )
 
-        const removeDiscount = { $set: { discount: 0, after_discount: 0, discount_id: null, discount_type: "", isDiscount: false, discount_day: null } }
 
         affectdIdsRemove.map(async (discount_id: any) => {
+            const findStock: any = await StockSchema.findOne({ discount_id }).populate("product_details")
+
+            const removeDiscount = { $set: { discount: 0, after_discount: findStock?.product_details?.price, discount_id: null, discount_type: "", isDiscount: false, discount_day: null } }
+
             await StockSchema.findOneAndUpdate({ discount_id }, removeDiscount)
         })
 
@@ -134,7 +138,7 @@ cron.schedule('*/1 * * * *', async () => {
                     const price_discount = findStock?.product_details?.price * (findDiscount.discount / 100);
                     after_discount = findStock?.product_details?.price - price_discount
                 }
-    
+
                 await StockSchema.findOneAndUpdate({ product_details: product_id }, { $set: { discount_id: findDiscount?._id, discount: findDiscount?.discount, after_discount, discount_type, isDiscount: true, discount_day: findDiscount.to_date } })
 
                 console.log("Add discount successfully")
@@ -160,28 +164,28 @@ cron.schedule('*/1 * * * *', async () => {
 // Notification
 cron.schedule('*/1 * * * *', async () => {
     try {
-        const findLowStock = await StockSchema.find({
+        const findLowStock: any = await StockSchema.find({
             isNewInsert: { $ne: true },
-            stock_on_hand: { $lt: 5 }
+            stock_on_hand: { $lt: 5 },
+            isNotify: { $ne: false }
         }).populate("product_details")
 
         findLowStock.map(async (data: any) => {
-            const findNotify = await NotificationSchema.findOne({ id_to_notify: data._id })
+            await StockSchema.findByIdAndUpdate(data?._id, { $set: { isNotify: false } })
 
-            if (!findNotify) {
-                await new NotificationSchema({
-                    name: data.product_details.pro_name,
-                    title: `Low Stock ${data.stock_on_hand} items`,
-                    image: data.product_details.image,
-                    id_to_notify: data._id,
-                    section: "Stock"
-                }).save()
-            }
+            await new NotificationSchema({
+                name: data.product_details.pro_name,
+                title: `Low Stock ${data.stock_on_hand} items`,
+                image: data.product_details.image,
+                id_to_notify: data._id,
+                section: "Stock"
+            }).save()
         })
 
         const findDueSupplier = await PurchaseSchema.find({
             remiding_date: { $lte: new Date() },
-            isVoid: { $ne: true }
+            isVoid: { $ne: true },
+            due: { $ne: 0 }
         }).populate("supplier_details")
 
         findDueSupplier.map(async (data: any) => {
@@ -190,13 +194,31 @@ cron.schedule('*/1 * * * *', async () => {
             if (!findNotify) {
                 await new NotificationSchema({
                     name: data.supplier_details.supplier_name,
-                    title: `We due ${data.supplier_details.supplier_name} ${"$" + data.due}`,
+                    title: `We due ${data.supplier_details.supplier_name} ${"$ " + data.due}`,
                     image: "https://res.cloudinary.com/duuux4gv5/image/upload/v1723769668/pyss4ndvbe2w2asi2rsy.png",
                     id_to_notify: data._id,
                     section: "Purchase",
                     date_condition: data.remiding_date
                 }).save()
             }
+        })
+
+        const findDueCustomer = await SaleSchema.find({
+            remind_status: true,
+            date_remind: { $lte: new Date() },
+            due: { $ne: 0 }
+        }).populate("customer")
+
+        findDueCustomer.map(async (data: any) => {
+            await SaleSchema.findByIdAndUpdate(data?._id, { $set: { remind_status: false } })
+
+            await new NotificationSchema({
+                name: data?.customer?.customer_name ? data?.customer?.customer_name : "General",
+                title: `${data?.customer?.customer_name ? data?.customer?.customer_name : "General"} Due ${"$ " + data?.due}`,
+                image: "https://res.cloudinary.com/duuux4gv5/image/upload/v1723769668/pyss4ndvbe2w2asi2rsy.png",
+                id_to_notify: data._id,
+                section: "Sale",
+            }).save()
         })
     } catch (error: any) {
         throw new ApolloError(error)

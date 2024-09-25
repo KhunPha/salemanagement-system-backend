@@ -187,6 +187,7 @@ const product = {
         });
 
         const newstock = new StockSchema({
+          after_discount: args.input.price,
           isDividedProduct: args.input.type_of_product == "Second Hand" ? true : false,
           product_details: newproduct._id
         })

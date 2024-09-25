@@ -7,7 +7,6 @@ export interface ISales extends Document {
     product_lists: object
     cashier: string
     customer: object
-    paymethod: string
     total_qty: number
     total_amount: number
     exchange_rate: number
@@ -45,9 +44,6 @@ const sale = new Schema<ISales>({
     customer: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Customer"
-    },
-    paymethod: {
-        type: String
     },
     total_qty: {
         type: Number

@@ -15,7 +15,6 @@ const salepayment = new Schema<ISalePayment>({
     },
     payment_method: {
         type: String,
-        enum: ["Bank", "Cash"]
     },
     bank: {
         type: mongoose.Schema.Types.ObjectId

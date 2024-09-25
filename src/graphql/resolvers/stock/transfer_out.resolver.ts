@@ -83,7 +83,15 @@ const transferout = {
 
                     const stockDoc = { $set: { stock_on_hand: getStock.stock_on_hand - transferinproduct_map[i].qty } }
 
-                    await StockSchema.findOneAndUpdate({ product_details: product_id }, stockDoc, { new: true, runValidators: true })
+                    const stockUpdate: any = await StockSchema.findOneAndUpdate({ product_details: product_id }, stockDoc)
+
+                    let isNotify = false
+
+                    if (stockUpdate?.stock_on_hand < 5) {
+                        isNotify = true
+                    }
+
+                    await StockSchema.findOneAndUpdate({ product_details: product_id }, { $set: { isNotify: true } })
                 }
 
                 if (!newtransferout) {

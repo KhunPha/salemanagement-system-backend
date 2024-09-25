@@ -66,13 +66,14 @@ const receiveproduct = {
                     } else {
                         const stockQty = getStock?.stock_on_hand + (product_map[i].retail_in_whole * product_map[i].whole);
 
-                        let isNewInsert = true
+                        let isNotify = false, isNewInsert = true;
 
                         if (stockQty >= 5) {
-                            isNewInsert = false
+                            isNotify = true;
+                            isNewInsert = false;
                         }
 
-                        stockDoc = { $set: { stock_on_hand: getStock.stock_on_hand + stockQty, isNewInsert } }
+                        stockDoc = { $set: { stock_on_hand: getStock.stock_on_hand + stockQty, isNotify, isNewInsert } }
                     }
 
                     await StockSchema.findOneAndUpdate({ product_details: product_id }, stockDoc, { new: true })

@@ -6,6 +6,7 @@ import { PaginateOptions } from "mongoose"
 import { customLabels } from "../../../helper/customeLabels.helper"
 import SalePaymentSchema from "../../../model/sale/salesPayment.model"
 import Sequence from "../../../model/sale/sequent.model"
+import StockSchema from "../../../model/stock/stocks.model"
 
 const sales = {
     Query: {
@@ -157,6 +158,7 @@ const sales = {
                 const newpayment = new SalePaymentSchema({
                     sale_id: newsales?._id,
                     ...args.input,
+                    payment_method: args?.input?.paymethod,
                     createdBy: userToken.data.user._id,
                     modifiedBy: userToken.data.user._id
                 })
@@ -167,12 +169,36 @@ const sales = {
 
                 await newsales.save()
                 if (!args.input.isSuspend) {
+                    args?.input?.product_lists?.map(async (product: any) => {
+                        const findStock: any = await StockSchema.findOne({ product_details: product?.product })
+                        await StockSchema.findByIdAndUpdate(findStock?._id, { $set: { stock_on_hand: findStock?.stock_on_hand - product.qty } })
+                    })
                     await newpayment.save()
                 }
 
                 return message
             } catch (error: any) {
                 throw new ApolloError(error.message)
+            }
+        },
+        salePayment: async (parent: any, args: any, context: any) => {
+            try {
+                const userToken: any = await verifyToken(context.user)
+                if (!userToken.status) throw new ApolloError("Unauthorization")
+
+                const { sale_id, remind_status, date_remind } = args.input
+
+                await SaleSchema.findByIdAndUpdate(sale_id, { $set: { remind_status, date_remind } })
+
+                await new SalePaymentSchema({
+                    ...args.input,
+                    createdBy: userToken.data.user._id,
+                    modifiedBy: userToken.data.user._id
+                }).save()
+
+                return message;
+            } catch (error: any) {
+                throw new ApolloError(error)
             }
         },
         clearSaleSuspend: async (parent: any, args: any, context: any) => {

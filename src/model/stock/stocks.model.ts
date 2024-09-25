@@ -14,6 +14,7 @@ export interface IStocks extends Document {
     deadline: Date
     isNewInsert: boolean
     isDividedProduct: boolean
+    isNotify: boolean
 }
 
 const stock = new Schema<IStocks>({
@@ -60,6 +61,10 @@ const stock = new Schema<IStocks>({
         default: true
     },
     isDividedProduct: {
+        type: Boolean,
+        default: false
+    },
+    isNotify: {
         type: Boolean,
         default: false
     }

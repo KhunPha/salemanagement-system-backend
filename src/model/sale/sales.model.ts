@@ -16,6 +16,7 @@ export interface ISales extends Document {
     date_remind: Date,
     bank: object
     due: number
+    total_pay: number
     total_price: number
     isSuspend: boolean
     createdBy: object
@@ -70,6 +71,9 @@ const sale = new Schema<ISales>({
         type: Number
     },
     total_price: {
+        type: Number
+    },
+    total_pay: {
         type: Number
     },
     isSuspend: {

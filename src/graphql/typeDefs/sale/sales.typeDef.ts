@@ -24,6 +24,7 @@ const sales = gql`
         pay: Pay
         due: Float
         bank: Bank
+        total_pay: Float
         total_price: Float
         createdBy: User
         modifiedBy: User

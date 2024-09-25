@@ -120,10 +120,12 @@ const sales = {
 
                 const { invoice_number } = args.input
 
-                let due = Number(args.input.total_amount) - Number(args.input.pay.dollar)
+                let due = Number(args.input.total_amount) - Number(args.input.pay.dollar);
+                let total_pay = Number(args.input.pay.dollar);
 
                 if (args.input.pay.reil > 0) {
-                    due = args.input.total_amount - ((args.input.pay.reil / args.input.exchange_rate) + args.input.pay.dollar)
+                    due = args.input.total_amount - ((args.input.pay.reil / args.input.exchange_rate) + args.input.pay.dollar);
+                    total_pay = ((args.input.pay.reil / args.input.exchange_rate) + args.input.pay.dollar);
                 }
 
                 const findSale = await SaleSchema.findOneAndDelete({ invoice_number });
@@ -133,6 +135,7 @@ const sales = {
                         invoice_number: args.input.invoice_number,
                         ...args.input,
                         due,
+                        total_pay,
                         cashier: userToken.data.user.firstname + userToken.data.user.lastname,
                         createdBy: userToken.data.user._id,
                         modifiedBy: userToken.data.user._id
@@ -213,10 +216,22 @@ const sales = {
 
                 const { sale_id, remind_status, date_remind } = args.input
 
+                const findSale: any = await SaleSchema.findById(sale_id)
+
+                let due = findSale?.total_amount - findSale?.total_pay + Number(args.input.pay.dollar);
+                let total_pay = Number(args.input.pay.dollar);
+
+                if (args.input.pay.reil > 0) {
+                    due = findSale?.total_amount - findSale?.total_pay + ((args.input.pay.reil / args.input.exchange_rate) + args.input.pay.dollar);
+                    total_pay = findSale?.total_pay + ((args.input.pay.reil / args.input.exchange_rate) + args.input.pay.dollar);
+                }
+
                 await SaleSchema.findByIdAndUpdate(sale_id, { $set: { remind_status, date_remind } })
 
                 await new SalePaymentSchema({
                     ...args.input,
+                    due,
+                    total_pay,
                     createdBy: userToken.data.user._id,
                     modifiedBy: userToken.data.user._id
                 }).save()

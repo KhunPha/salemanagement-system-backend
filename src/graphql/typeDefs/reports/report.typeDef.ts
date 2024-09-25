@@ -15,6 +15,7 @@ const report = gql`
     }
 
     type PurchaseReport {
+        date: Date
         pro_name: String
         qty: Int
         receive: Int
@@ -24,7 +25,7 @@ const report = gql`
     type InvoiceReport {
         invoice_number: String
         createdAt: Date
-        customer: String
+        customer: Customer
         cashier: String
         total_qty: Int
         discount: Float
@@ -43,15 +44,17 @@ const report = gql`
     }
 
     type RevenueReport {
+        date: Date
         pro_name: String
         qty: Int
-        amount: Float
+        total_price: Float
     }
 
     type ExpenseReport {
+        date: Date
         pro_name: String
         qty: Int
-        amount: Float
+        total_price: Float
     }
 
     type DailyReportData {
@@ -91,7 +94,7 @@ const report = gql`
 
     type StockReportData {
         data: [StockReport],
-        total: Float
+        total_amount: Float
     }
 
     type Query {

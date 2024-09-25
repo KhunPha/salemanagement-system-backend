@@ -34,7 +34,19 @@ const sales = {
                     sort: { createdAt: -1 }
                 }
 
-                return await SaleSchema.paginate({ isSuspend: { $ne: true } }, options)
+                const query = {
+                    $and: [
+                        {
+                            $or: [
+                                keyword ? { cashier: { $regex: keyword, $options: "i" } } : {},
+                                keyword ? { invoice_number: { $regex: keyword, $options: "i" } } : {}
+                            ]
+                        }
+                    ],
+                    isSuspend: { $ne: true }
+                }
+
+                return await SaleSchema.paginate(query, options)
             } catch (error: any) {
                 throw new ApolloError(error.message)
             }

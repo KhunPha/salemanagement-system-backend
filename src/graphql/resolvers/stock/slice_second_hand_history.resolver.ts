@@ -39,7 +39,7 @@ const slicesecondhandhistory = {
                     total_qty += grade_detail?.qty;
                     total_amount += grade_detail?.price * grade_detail?.qty;
 
-                    const stockDoc = { $set: { stock_on_hand: getStock?.stock_on_hand + grade_detail?.qty } }
+                    const stockDoc = { $set: { stock_on_hand: getStock?.stock_on_hand + grade_detail?.qty, isNewInsert: false, isNotify: true } }
 
                     await StockSchema.findOneAndUpdate({ product_details: grade_detail?.grade_details }, stockDoc, { new: true })
 

@@ -91,7 +91,7 @@ const transferout = {
                         isNotify = true
                     }
 
-                    await StockSchema.findOneAndUpdate({ product_details: product_id }, { $set: { isNotify: true } })
+                    await StockSchema.findOneAndUpdate({ product_details: product_id }, { $set: { isNotify: true, isNewInsert: false } })
                 }
 
                 if (!newtransferout) {

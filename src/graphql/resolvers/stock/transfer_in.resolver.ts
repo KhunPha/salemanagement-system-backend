@@ -81,14 +81,13 @@ const transferin = {
 
                     const stockQty = getStock?.stock_on_hand + transferinproduct_map[i].qty;
 
-                    let isNotify = false, isNewInsert = true;
+                    let isNotify = false;
 
                     if (stockQty >= 5) {
                         isNotify = true;
-                        isNewInsert = false;
                     }
 
-                    const stockDoc = { $set: { stock_on_hand: getStock.stock_on_hand + transferinproduct_map[i].qty, isNotify, isNewInsert } }
+                    const stockDoc = { $set: { stock_on_hand: getStock.stock_on_hand + transferinproduct_map[i].qty, isNotify, isNewInsert: false } }
 
                     await StockSchema.findOneAndUpdate({ product_details: product_id }, stockDoc, { new: true, runValidators: true })
                 }

@@ -26,7 +26,12 @@ const sales = {
                             }
                         },
                         {
-                            path: 'customer'
+                            path: 'customer',
+                            match: {
+                                $and: [
+                                    keyword ? { customer_name: { $regex: keyword, $options: "i" } } : {}
+                                ]
+                            }
                         }
                     ],
                     page: page,
@@ -46,7 +51,11 @@ const sales = {
                     isSuspend: { $ne: true }
                 }
 
-                return await SaleSchema.paginate(query, options)
+                const sales: any = await SaleSchema.paginate(query, options);
+                const data = sales.data.filter((data: any) => data.customer !== null)
+                const paginator = sales.paginator
+
+                return { data, paginator }
             } catch (error: any) {
                 throw new ApolloError(error.message)
             }

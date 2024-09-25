@@ -14,7 +14,7 @@ const sales = {
             try {
                 const userToken: any = await verifyToken(context.user)
                 if (!userToken.status) throw new ApolloError("Unauthorization")
-                const { page, limit, pagination, keyword } = await args
+                const { page, limit, pagination, keyword, customer, pay_status } = await args
                 const options: PaginateOptions = {
                     pagination,
                     customLabels,
@@ -27,11 +27,6 @@ const sales = {
                         },
                         {
                             path: 'customer',
-                            match: {
-                                $and: [
-                                    keyword ? { customer_name: { $regex: keyword, $options: "i" } } : {}
-                                ]
-                            }
                         }
                     ],
                     page: page,
@@ -39,23 +34,32 @@ const sales = {
                     sort: { createdAt: -1 }
                 }
 
+                let pay_stat: any = {};
+
+                if (pay_status === "UnPaid") {
+                    pay_stat = {
+                        due: { $gt: 0 }
+                    }
+                } else if (pay_status === "Paid") {
+                    pay_stat = {
+                        due: { $eq: 0 }
+                    }
+                } else {
+                    pay_stat = {
+                        due: { $gte: 0 }
+                    }
+                }
+
                 const query = {
                     $and: [
-                        {
-                            $or: [
-                                keyword ? { cashier: { $regex: keyword, $options: "i" } } : {},
-                                keyword ? { invoice_number: { $regex: keyword, $options: "i" } } : {}
-                            ]
-                        }
+                        keyword ? { invoice_number: { $regex: keyword, $options: "i" } } : {},
+                        customer ? { customer } : {},
+                        { due: pay_stat.due }
                     ],
                     isSuspend: { $ne: true }
                 }
 
-                const sales: any = await SaleSchema.paginate(query, options);
-                const data = sales.data.filter((data: any) => data.customer !== null)
-                const paginator = sales.paginator
-
-                return { data, paginator }
+                return await SaleSchema.paginate(query, options)
             } catch (error: any) {
                 throw new ApolloError(error.message)
             }

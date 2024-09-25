@@ -88,7 +88,7 @@ const sales = gql`
     }
 
     type Query {
-        getSales(page: Int, limit: Int, pagination: Boolean, keyword: String): SalesPagination
+        getSales(page: Int, limit: Int, pagination: Boolean, keyword: String, customer: ID, pay_status: String): SalesPagination
         getSaleSuspend(page: Int, limit: Int, pagination: Boolean, keyword: String): SalesPagination
         getInvoiceNumber: String
         getSalePayment(sale_id: ID): PaymentTransacSale

@@ -6,11 +6,15 @@ const report = gql`
         pro_name: String
         type_of_product: String
         qty: Int
+        cost: Float
+        profit: Float
     }
 
     type SalesReport {
         pro_name: String
-        amount: Float
+        sale_amount: Float
+        cost: Float
+        profit: Float
         qty: Int
     }
 
@@ -37,6 +41,7 @@ const report = gql`
     type StockReport {
         product_details: Product
         stock_on_hand: Int
+        type_of_product: String
         price: Float
         discount: Float
         cost: Float
@@ -60,12 +65,15 @@ const report = gql`
     type DailyReportData {
         data: [DailyReport]
         total_qty: Int
+        total_cost: Float
+        total_profit: Float
     }
 
     type SaleReportData {
         data: [SalesReport]
         total_qty: Int
         total_amount: Float
+        total_profit: Float
     }
 
     type PurchaseReportData {

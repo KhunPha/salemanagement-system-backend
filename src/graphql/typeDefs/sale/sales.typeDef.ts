@@ -27,7 +27,7 @@ const sales = gql`
         total_price: Float
         createdBy: User
         modifiedBy: User
-        createAt: Date
+        createdAt: Date
     }
 
     type Paginator {

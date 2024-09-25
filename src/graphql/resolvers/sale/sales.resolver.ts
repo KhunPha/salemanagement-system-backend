@@ -192,12 +192,12 @@ const sales = {
                     return messageError
                 }
 
-                await newsales.save()
                 if (!args.input.isSuspend) {
                     args?.input?.product_lists?.map(async (product: any) => {
                         const findStock: any = await StockSchema.findOne({ product_details: product?.product })
                         await StockSchema.findByIdAndUpdate(findStock?._id, { $set: { stock_on_hand: findStock?.stock_on_hand - product.qty } })
                     })
+                    await newsales.save()
                     await newpayment.save()
                 }
 

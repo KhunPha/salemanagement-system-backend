@@ -1,5 +1,4 @@
 import { ApolloError } from "apollo-server-express"
-import { verifyToken } from "../../../middleware/auth.middleware"
 import StockSchema from "../../../model/stock/stocks.model"
 import PurchaseSchema from "../../../model/stock/purchases.model"
 import ReceiveProductTransactionSchema from "../../../model/stock/receive_product.model"
@@ -9,11 +8,12 @@ const report = {
     Query: {
         dailyReport: async (parent: any, args: any, context: any) => {
             try {
-                const { from_date, to_date } = args
-                const fromDate = new Date("2024-09-25T00:00:00.000Z");
-                const toDate = new Date("2024-09-25T23:59:59.999Z");
+                const now = new Date()
+                const fromDate = new Date(now).toISOString().split('T')[0] + 'T00:00:00.000Z';
+                const toDate = new Date(now).toISOString().split('T')[0] + 'T23:59:59.999Z';
 
                 const SaleData: any = await SaleSchema.find({
+                    isSuspend: { $ne: true },
                     createdAt: {
                         $gte: fromDate,
                         $lte: toDate
@@ -21,7 +21,7 @@ const report = {
                 }).populate("product_lists.product")
 
                 const saleSum: any = {};
-                let total_qty = 0;
+                let total_qty = 0, total_cost = 0, total_profit = 0;
 
                 for (const sale of SaleData) {
                     for (const product of sale.product_lists) {
@@ -31,22 +31,32 @@ const report = {
                             saleSum[saleId] = {
                                 pro_name: product?.product?.pro_name,
                                 type_of_product: product?.product?.type_of_product,
-                                qty: 0
+                                qty: 0,
+                                cost: 0,
+                                profit: 0
                             };
                         }
 
                         saleSum[saleId].qty += product.qty;
                         total_qty += product.qty;
+
+                        saleSum[saleId].cost += product?.product?.cost * product?.qty
+                        total_cost += product?.product?.cost * product?.qty
+
+                        saleSum[saleId].profit += (product?.amount * product?.qty) - (product?.product?.cost * product?.qty)
+                        total_profit += (product?.amount * product?.qty) - (product?.product?.cost * product?.qty)
                     }
                 }
 
                 const data = Object.keys(saleSum).map(saleId => ({
                     pro_name: saleSum[saleId].pro_name,
                     type_of_product: saleSum[saleId].type_of_product,
-                    qty: saleSum[saleId].qty
+                    qty: saleSum[saleId].qty,
+                    cost: saleSum[saleId].cost,
+                    profit: saleSum[saleId].profit
                 }));
 
-                return { data, total_qty }
+                return { data, total_qty, total_cost, total_profit }
             } catch (error: any) {
                 throw new ApolloError(error)
             }
@@ -55,8 +65,8 @@ const report = {
             try {
                 // Step 1: Fetch all purchases with their product details
                 const { from_date, to_date } = args
-                const fromDate = from_date ? new Date(from_date).toISOString().split('T')[0] + 'T00:00:00.000Z': "";
-                const toDate = to_date ? new Date(to_date).toISOString().split('T')[0] + 'T23:59:59.999Z': "";
+                const fromDate = from_date ? new Date(from_date).toISOString().split('T')[0] + 'T00:00:00.000Z' : "";
+                const toDate = to_date ? new Date(to_date).toISOString().split('T')[0] + 'T23:59:59.999Z' : "";
 
                 const SaleData: any = await SaleSchema.find({
                     isSuspend: false,
@@ -67,7 +77,7 @@ const report = {
                 }).populate("product_lists.product");
 
                 const productSum: any = {};
-                let total_qty = 0, total_amount = 0;
+                let total_qty = 0, total_cost = 0, total_price = 0, total_amount = 0, total_profit = 0;
 
                 for (const sale of SaleData) {
                     for (const product of sale.product_lists) {
@@ -78,6 +88,9 @@ const report = {
                             productSum[productId] = {
                                 pro_name: product?.product?.pro_name,
                                 qty: 0,
+                                cost: 0,
+                                price: 0,
+                                profit: 0,
                                 amount: 0
                             };
                         }
@@ -85,6 +98,12 @@ const report = {
                         // Sum the quantity and amount for this product
                         productSum[productId].qty += product.qty;
                         total_qty += product.qty;
+
+                        productSum[productId].cost += product?.product?.cost * product?.qty
+                        total_cost += product?.product?.cost * product?.qty
+
+                        productSum[productId].profit += (product?.amount * product?.qty) - (product?.product?.cost * product?.qty)
+                        total_profit += (product?.amount * product?.qty) - (product?.product?.cost * product?.qty)
 
                         const productAmount = product.amount * product.qty;
                         productSum[productId].amount += productAmount;
@@ -97,11 +116,13 @@ const report = {
                 const data = Object.keys(productSum).map(productId => ({
                     pro_name: productSum[productId].pro_name,
                     qty: productSum[productId].qty,
-                    amount: productSum[productId].amount,
+                    cost: productSum[productId].cost,
+                    profit: productSum[productId].profit,
+                    sale_amount: productSum[productId].amount,
                 }));
 
                 // Log the results
-                return { data, total_qty, total_amount };
+                return { data, total_qty, total_amount, total_profit };
             } catch (error: any) {
                 throw new ApolloError(error)
             }
@@ -110,8 +131,8 @@ const report = {
             try {
                 // Step 1: Fetch all purchases with their product details
                 const { from_date, to_date } = args
-                const fromDate = from_date ? new Date(from_date).toISOString().split('T')[0] + 'T00:00:00.000Z': "";
-                const toDate = to_date ? new Date(to_date).toISOString().split('T')[0] + 'T23:59:59.999Z': "";
+                const fromDate = from_date ? new Date(from_date).toISOString().split('T')[0] + 'T00:00:00.000Z' : "";
+                const toDate = to_date ? new Date(to_date).toISOString().split('T')[0] + 'T23:59:59.999Z' : "";
 
                 const PurchaseData: any = await PurchaseSchema.find({
                     createdAt: {
@@ -194,8 +215,8 @@ const report = {
         invoiceSaleReport: async (parent: any, args: any, context: any) => {
             try {
                 const { from_date, to_date } = args
-                const fromDate = from_date ? new Date(from_date).toISOString().split('T')[0] + 'T00:00:00.000Z': "";
-                const toDate = to_date ? new Date(to_date).toISOString().split('T')[0] + 'T23:59:59.999Z': "";
+                const fromDate = from_date ? new Date(from_date).toISOString().split('T')[0] + 'T00:00:00.000Z' : "";
+                const toDate = to_date ? new Date(to_date).toISOString().split('T')[0] + 'T23:59:59.999Z' : "";
 
                 const data = await SaleSchema.find({
                     isSuspend: false,
@@ -205,7 +226,7 @@ const report = {
                     }
                 }).populate("customer")
 
-                const total_invoice = await SaleSchema.countDocuments()
+                const total_invoice = data.length;
 
                 return { data, total_invoice }
             } catch (error: any) {
@@ -215,10 +236,11 @@ const report = {
         revenueReport: async (parent: any, args: any, context: any) => {
             try {
                 const { from_date, to_date } = args
-                const fromDate = from_date ? new Date(from_date).toISOString().split('T')[0] + 'T00:00:00.000Z': "";
-                const toDate = to_date ? new Date(to_date).toISOString().split('T')[0] + 'T23:59:59.999Z': "";
+                const fromDate = from_date ? new Date(from_date).toISOString().split('T')[0] + 'T00:00:00.000Z' : "";
+                const toDate = to_date ? new Date(to_date).toISOString().split('T')[0] + 'T23:59:59.999Z' : "";
 
                 const RevenueData: any = await SaleSchema.find({
+                    isSuspend: { $ne: true },
                     createdAt: {
                         $gte: fromDate,
                         $lte: toDate
@@ -273,8 +295,8 @@ const report = {
         expenseReport: async (parent: any, args: any, context: any) => {
             try {
                 const { from_date, to_date } = args
-                const fromDate = from_date ? new Date(from_date).toISOString().split('T')[0] + 'T00:00:00.000Z': "";
-                const toDate = to_date ? new Date(to_date).toISOString().split('T')[0] + 'T23:59:59.999Z': "";
+                const fromDate = from_date ? new Date(from_date).toISOString().split('T')[0] + 'T00:00:00.000Z' : "";
+                const toDate = to_date ? new Date(to_date).toISOString().split('T')[0] + 'T23:59:59.999Z' : "";
 
                 const ExpenseData: any = await PurchaseSchema.find({
                     createdAt: {
@@ -332,10 +354,11 @@ const report = {
                 let total_amount = 0;
 
                 data.map((data: any) => {
-                    data.cost = data?.product_details?.cost
+                    data.type_of_product = data?.product_details?.type_of_product;
+                    data.cost = data?.product_details?.cost;
                     data.price = data?.product_details?.price;
                     data.amount = data?.product_details?.price * data.stock_on_hand;
-                    total_amount += data.amount;
+                    total_amount += data?.amount;
                 })
 
                 return { data, total_amount }

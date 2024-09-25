@@ -22,10 +22,12 @@ const sales = gql`
         remind_status: Boolean
         date_remind: Date
         pay: Pay
+        due: Float
         bank: Bank
         total_price: Float
         createdBy: User
         modifiedBy: User
+        createAt: Date
     }
 
     type Paginator {

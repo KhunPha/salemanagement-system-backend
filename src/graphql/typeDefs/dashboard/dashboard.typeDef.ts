@@ -29,8 +29,8 @@ const dashboard = gql`
         revenueInDashboard: Float
         expenseInDashboard: Float
         profitInDashboard: Float
-        annualSales(year: Date): AnnualSales
-        monthlySalesItems(month: Int): MonthlySales
+        annualSalesInDashboard(year: Date): AnnualSales
+        monthlySalesItemsInDashboard(month: Int): MonthlySales
     }
 `
 

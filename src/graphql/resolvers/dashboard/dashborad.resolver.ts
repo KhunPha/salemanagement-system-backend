@@ -66,7 +66,7 @@ const dashboard = {
                 throw new ApolloError(error)
             }
         },
-        annualSales: async (parent: any, args: any) => {
+        annualSalesInDashboard: async (parent: any, args: any) => {
             try {
                 const { year } = args;
                 const now = new Date();
@@ -119,7 +119,7 @@ const dashboard = {
                 throw new ApolloError(error)
             }
         },
-        monthlySalesItems: async (parent: any, args: any) => {
+        monthlySalesItemsInDashboard: async (parent: any, args: any) => {
             try {
                 const { month } = args
                 const now = new Date();

@@ -196,7 +196,7 @@ cron.schedule('0 * * * *', async () => {
                 await new NotificationSchema({
                     name: data.supplier_details.supplier_name,
                     title: `We due ${data.supplier_details.supplier_name} ${"$ " + data.due}`,
-                    image: "https://res.cloudinary.com/duuux4gv5/image/upload/v1723769668/pyss4ndvbe2w2asi2rsy.png",
+                    image: "https://res.cloudinary.com/duuux4gv5/image/upload/v1727342241/pgyf08xy18mipw3dqfjg.webp",
                     id_to_notify: data._id,
                     section: "Purchase",
                     date_condition: data.remiding_date
@@ -216,7 +216,7 @@ cron.schedule('0 * * * *', async () => {
             await new NotificationSchema({
                 name: data?.customer?.customer_name ? data?.customer?.customer_name : "General",
                 title: `${data?.customer?.customer_name ? data?.customer?.customer_name : "General"} Due ${"$ " + data?.due}`,
-                image: "https://res.cloudinary.com/duuux4gv5/image/upload/v1723769668/pyss4ndvbe2w2asi2rsy.png",
+                image: "https://res.cloudinary.com/duuux4gv5/image/upload/v1727342242/auenm9njbjqb4ktsant2.png",
                 id_to_notify: data._id,
                 section: "Sale",
             }).save()

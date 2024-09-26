@@ -151,15 +151,26 @@ const dashboard = {
                     })
                 })
 
-                const sortedProducts = Object.values(productSum).sort((a: any, b: any) => b.qty - a.qty);
-
-                // Get sample of sorted product names and quantities
-                const data = sortedProducts.map((product: any) => ({
-                    pro_name: product.pro_name,
-                    qty: product.qty
-                }));
-
-                return { data: data }
+                interface ProductSummary {
+                    pro_name: string;
+                    qty: number;
+                }
+                
+                const sortedProducts = Object.values(productSum) as ProductSummary[]; // Type assertion here
+                sortedProducts.sort((a, b) => b.qty - a.qty);
+                
+                // Create an array of 5 entries, filling with null where necessary
+                const data = Array.from({ length: 5 }, (_, index) => {
+                    if (sortedProducts[index]) {
+                        return {
+                            pro_name: sortedProducts[index].pro_name,
+                            qty: sortedProducts[index].qty
+                        };
+                    }
+                    return { pro_name: "", qty: 0 };
+                });
+                
+                return { data: data };
             } catch (error: any) {
                 throw new ApolloError(error)
             }

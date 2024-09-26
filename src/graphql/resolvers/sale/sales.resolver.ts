@@ -115,10 +115,10 @@ const sales = {
     Mutation: {
         createSales: async (parent: any, args: any, context: any) => {
             try {
-                const userToken: any = await verifyToken(context.user)
-                if (!userToken.status) throw new ApolloError("Unauthorization")
+                const userToken: any = await verifyToken(context.user);
+                if (!userToken.status) throw new ApolloError("Unauthorization");
 
-                const { invoice_number } = args.input
+                const { invoice_number } = args.input;
 
                 let due = Number(args.input.total_amount) - Number(args.input.pay.dollar);
                 let total_pay = Number(args.input.pay.dollar);
@@ -139,23 +139,23 @@ const sales = {
                         cashier: userToken.data.user.firstname + userToken.data.user.lastname,
                         createdBy: userToken.data.user._id,
                         modifiedBy: userToken.data.user._id
-                    })
+                    });
 
                     const newpayment = new SalePaymentSchema({
                         sale_id: newsales?._id,
                         ...args.input,
                         createdBy: userToken.data.user._id,
                         modifiedBy: userToken.data.user._id
-                    })
+                    });
 
                     if (!newsales) {
-                        return messageError
+                        return messageError;
                     }
 
-                    await newsales.save()
-                    await newpayment.save()
+                    await newsales.save();
+                    await newpayment.save();
 
-                    return message
+                    return message;
                 }
 
                 if (args.input.isSuspend) {
@@ -164,15 +164,15 @@ const sales = {
                         cashier: userToken.data.user.firstname + userToken.data.user.lastname,
                         createdBy: userToken.data.user._id,
                         modifiedBy: userToken.data.user._id
-                    })
+                    });
 
                     if (!newsales) {
-                        return messageError
+                        return messageError;
                     }
 
-                    await newsales.save()
+                    await newsales.save();
 
-                    return message
+                    return message;
                 }
 
                 const newsales = new SaleSchema({
@@ -181,7 +181,7 @@ const sales = {
                     cashier: userToken.data.user.firstname + userToken.data.user.lastname,
                     createdBy: userToken.data.user._id,
                     modifiedBy: userToken.data.user._id
-                })
+                });
 
                 const newpayment = new SalePaymentSchema({
                     sale_id: newsales?._id,
@@ -189,22 +189,33 @@ const sales = {
                     payment_method: args?.input?.paymethod,
                     createdBy: userToken.data.user._id,
                     modifiedBy: userToken.data.user._id
-                })
-
-                if (!newsales) {
-                    return messageError
-                }
+                });
 
                 if (!args.input.isSuspend) {
-                    args?.input?.product_lists?.map(async (product: any) => {
-                        const findStock: any = await StockSchema.findOne({ product_details: product?.product })
-                        await StockSchema.findByIdAndUpdate(findStock?._id, { $set: { stock_on_hand: findStock?.stock_on_hand - product.qty } })
-                    })
-                    await newsales.save()
-                    await newpayment.save()
+                    for (const product of args?.input?.product_lists) {
+                        const findStock: any = await StockSchema.findOne({ product_details: product?.product }).populate("product_details");
+
+                        if (findStock?.stock_on_hand <= 0 || findStock?.stock_on_hand < product?.qty) {
+                            messageError.message_kh = `${findStock?.product_details?.pro_name} ទំនិញមិនគ្រប់គ្រាន់`;
+                            messageError.message_en = `${findStock?.product_details?.pro_name} stock not enough`;
+
+                            return messageError;
+                        }
+
+                        await StockSchema.findByIdAndUpdate(findStock?._id, {
+                            $set: { stock_on_hand: findStock?.stock_on_hand - product.qty }
+                        });
+                    }
+
+                    await newsales.save();
+                    await newpayment.save();
                 }
 
-                return message
+                if (!newsales) {
+                    return messageError;
+                }
+
+                return message;
             } catch (error: any) {
                 throw new ApolloError(error.message)
             }

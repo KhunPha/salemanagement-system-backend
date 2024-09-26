@@ -106,7 +106,7 @@ const report = gql`
     }
 
     type Query {
-        dailyReport(from_date: Date, to_date: Date): DailyReportData
+        dailyReport: DailyReportData
         salesReport(from_date: Date, to_date: Date): SaleReportData
         purchaseReport(from_date: Date, to_date: Date): PurchaseReportData
         invoiceSaleReport(from_date: Date, to_date: Date): InvoiceReportData

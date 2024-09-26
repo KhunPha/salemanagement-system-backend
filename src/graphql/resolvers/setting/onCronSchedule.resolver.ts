@@ -13,6 +13,7 @@ import { ApolloError } from "apollo-server-express";
 import NotificationSchema from "../../../model/notification/notification.model";
 import PurchaseSchema from "../../../model/stock/purchases.model";
 import SaleSchema from "../../../model/sale/sales.model";
+import { exec } from "child_process";
 const cron = require("node-cron")
 
 // Clear Recovery
@@ -76,7 +77,7 @@ cron.schedule('0 12 * * *', async () => {
 
 // Discount Product
 // 0H 1MN
-cron.schedule('*/1 * * * *', async () => {
+cron.schedule('0 * * * *', async () => {
     try {
         // Remove Discount
         const affectedDocumentsRemove = await DiscountProductSchema.find({
@@ -162,7 +163,7 @@ cron.schedule('*/1 * * * *', async () => {
 });
 
 // Notification
-cron.schedule('*/1 * * * *', async () => {
+cron.schedule('0 * * * *', async () => {
     try {
         const findLowStock: any = await StockSchema.find({
             isNewInsert: { $ne: true },
@@ -220,6 +221,28 @@ cron.schedule('*/1 * * * *', async () => {
                 section: "Sale",
             }).save()
         })
+    } catch (error: any) {
+        throw new ApolloError(error)
+    }
+})
+
+cron.schedule('0 * * * *', async () => {
+    try {
+        const name = `${Math.floor((Math.random() * 10000) + 1000)}`
+        const newfoldername = `${name}-${Date.now()}`;
+        const command = `mongodump --uri="mongodb+srv://khunpha:Sopha3305@salemanagement.qbm94iq.mongodb.net/salemanagement?retryWrites=true&w=majority&appName=salemanagement" --out=D:/Backup/salemanagement_backup_${newfoldername}`;
+
+        // Execute the command
+        exec(command, (error, stdout, stderr) => {
+            if (error) {
+                console.error(`Error executing command: ${error.message}`);
+                return;
+            }
+            if (stderr) {
+                console.error(`Error output: ${stderr}`);
+                return;
+            }
+        });
     } catch (error: any) {
         throw new ApolloError(error)
     }

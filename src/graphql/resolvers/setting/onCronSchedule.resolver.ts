@@ -163,7 +163,7 @@ cron.schedule('0 * * * *', async () => {
 });
 
 // Notification
-cron.schedule('0 * * * *', async () => {
+cron.schedule('*/1 * * * *', async () => {
     try {
         const findLowStock: any = await StockSchema.find({
             isNewInsert: { $ne: true },

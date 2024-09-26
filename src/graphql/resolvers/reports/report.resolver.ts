@@ -9,8 +9,8 @@ const report = {
         dailyReport: async (parent: any, args: any, context: any) => {
             try {
                 const now = new Date()
-                const fromDate = new Date(now).toISOString().split('T')[0] + 'T00:00:00.000Z';
-                const toDate = new Date(now).toISOString().split('T')[0] + 'T23:59:59.999Z';
+                const fromDate = new Date(now.getTime() - (7 * 60 * 60 * 1000)).toISOString().split('T')[0] + 'T00:00:00.000Z';
+                const toDate = new Date(now.getTime() - (7 * 60 * 60 * 1000)).toISOString().split('T')[0] + 'T23:59:59.999Z';
 
                 const SaleData: any = await SaleSchema.find({
                     isSuspend: { $ne: true },
@@ -25,7 +25,7 @@ const report = {
 
                 for (const sale of SaleData) {
                     for (const product of sale.product_lists) {
-                        const saleId = product?.product_details?._id?.toString
+                        const saleId = product?.product?._id?.toString();
 
                         if (!saleSum[saleId]) {
                             saleSum[saleId] = {
@@ -65,8 +65,16 @@ const report = {
             try {
                 // Step 1: Fetch all purchases with their product details
                 const { from_date, to_date } = args
-                const fromDate = from_date ? new Date(from_date).toISOString().split('T')[0] + 'T00:00:00.000Z' : "";
-                const toDate = to_date ? new Date(to_date).toISOString().split('T')[0] + 'T23:59:59.999Z' : "";
+
+                // Convert from_date to UTC (subtract 7 hours)
+                const fromDate = from_date
+                    ? new Date(new Date(from_date).getTime() - (7 * 60 * 60 * 1000)).toISOString().split('T')[0] + 'T00:00:00.000Z'
+                    : "";
+
+                // Convert to_date to UTC (subtract 7 hours)
+                const toDate = to_date
+                    ? new Date(new Date(to_date).getTime() - (7 * 60 * 60 * 1000)).toISOString().split('T')[0] + 'T23:59:59.999Z'
+                    : "";
 
                 const SaleData: any = await SaleSchema.find({
                     isSuspend: false,
@@ -74,7 +82,7 @@ const report = {
                         $gte: fromDate,
                         $lte: toDate
                     }
-                }).populate("product_lists.product").sort({createdAt: -1});
+                }).populate("product_lists.product").sort({ createdAt: -1 });
 
                 const productSum: any = {};
                 let total_qty = 0, total_cost = 0, total_price = 0, total_amount = 0, total_profit = 0;
@@ -131,8 +139,16 @@ const report = {
             try {
                 // Step 1: Fetch all purchases with their product details
                 const { from_date, to_date } = args
-                const fromDate = from_date ? new Date(from_date).toISOString().split('T')[0] + 'T00:00:00.000Z' : "";
-                const toDate = to_date ? new Date(to_date).toISOString().split('T')[0] + 'T23:59:59.999Z' : "";
+
+                // Convert from_date to UTC (subtract 7 hours)
+                const fromDate = from_date
+                    ? new Date(new Date(from_date).getTime() - (7 * 60 * 60 * 1000)).toISOString().split('T')[0] + 'T00:00:00.000Z'
+                    : "";
+
+                // Convert to_date to UTC (subtract 7 hours)
+                const toDate = to_date
+                    ? new Date(new Date(to_date).getTime() - (7 * 60 * 60 * 1000)).toISOString().split('T')[0] + 'T23:59:59.999Z'
+                    : "";
 
                 const PurchaseData: any = await PurchaseSchema.find({
                     isVoid: false,
@@ -140,7 +156,7 @@ const report = {
                         $gte: fromDate,
                         $lte: toDate
                     }
-                }).populate("products_lists.product_details").sort({createdAt: -1});
+                }).populate("products_lists.product_details").sort({ createdAt: -1 });
 
                 const productSum: any = {};
                 let total_qty = 0, total_receive = 0, total_amount = 0;
@@ -216,8 +232,17 @@ const report = {
         invoiceSaleReport: async (parent: any, args: any, context: any) => {
             try {
                 const { from_date, to_date, customer } = args
-                const fromDate = from_date ? new Date(from_date).toISOString().split('T')[0] + 'T00:00:00.000Z' : "";
-                const toDate = to_date ? new Date(to_date).toISOString().split('T')[0] + 'T23:59:59.999Z' : "";
+
+                // Convert from_date to UTC (subtract 7 hours)
+                const fromDate = from_date
+                    ? new Date(new Date(from_date).getTime() - (7 * 60 * 60 * 1000)).toISOString().split('T')[0] + 'T00:00:00.000Z'
+                    : "";
+
+                // Convert to_date to UTC (subtract 7 hours)
+                const toDate = to_date
+                    ? new Date(new Date(to_date).getTime() - (7 * 60 * 60 * 1000)).toISOString().split('T')[0] + 'T23:59:59.999Z'
+                    : "";
+
 
                 const data = await SaleSchema.find({
                     $and: [
@@ -230,7 +255,7 @@ const report = {
                         },
                         customer ? { customer } : {}
                     ]
-                }).populate("customer").sort({createdAt: -1});
+                }).populate("customer").sort({ createdAt: -1 });
 
                 const total_invoice = data.length;
 
@@ -242,8 +267,16 @@ const report = {
         revenueReport: async (parent: any, args: any, context: any) => {
             try {
                 const { from_date, to_date } = args
-                const fromDate = from_date ? new Date(from_date).toISOString().split('T')[0] + 'T00:00:00.000Z' : "";
-                const toDate = to_date ? new Date(to_date).toISOString().split('T')[0] + 'T23:59:59.999Z' : "";
+
+                // Convert from_date to UTC (subtract 7 hours)
+                const fromDate = from_date
+                    ? new Date(new Date(from_date).getTime() - (7 * 60 * 60 * 1000)).toISOString().split('T')[0] + 'T00:00:00.000Z'
+                    : "";
+
+                // Convert to_date to UTC (subtract 7 hours)
+                const toDate = to_date
+                    ? new Date(new Date(to_date).getTime() - (7 * 60 * 60 * 1000)).toISOString().split('T')[0] + 'T23:59:59.999Z'
+                    : "";
 
                 const RevenueData: any = await SaleSchema.find({
                     isSuspend: { $ne: true },
@@ -251,7 +284,7 @@ const report = {
                         $gte: fromDate,
                         $lte: toDate
                     }
-                }).populate("product_lists.product").sort({createdAt: -1});
+                }).populate("product_lists.product").sort({ createdAt: -1 });
 
                 let products: any = {};
                 let total_qty = 0, total_amount = 0;
@@ -301,8 +334,16 @@ const report = {
         expenseReport: async (parent: any, args: any, context: any) => {
             try {
                 const { from_date, to_date } = args
-                const fromDate = from_date ? new Date(from_date).toISOString().split('T')[0] + 'T00:00:00.000Z' : "";
-                const toDate = to_date ? new Date(to_date).toISOString().split('T')[0] + 'T23:59:59.999Z' : "";
+
+                // Convert from_date to UTC (subtract 7 hours)
+                const fromDate = from_date
+                    ? new Date(new Date(from_date).getTime() - (7 * 60 * 60 * 1000)).toISOString().split('T')[0] + 'T00:00:00.000Z'
+                    : "";
+
+                // Convert to_date to UTC (subtract 7 hours)
+                const toDate = to_date
+                    ? new Date(new Date(to_date).getTime() - (7 * 60 * 60 * 1000)).toISOString().split('T')[0] + 'T23:59:59.999Z'
+                    : "";
 
                 const ExpenseData: any = await PurchaseSchema.find({
                     isVoid: false,
@@ -310,7 +351,7 @@ const report = {
                         $gte: fromDate,
                         $lte: toDate
                     }
-                }).populate("products_lists.product_details").sort({createdAt: -1});
+                }).populate("products_lists.product_details").sort({ createdAt: -1 });
 
                 let products: any = {};
                 let total_qty = 0, total_amount = 0;

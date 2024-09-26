@@ -29,6 +29,7 @@ import shift from "./sale/shfit.typeDef";
 import restoreMongoDb from "./restoreDatabase/restoreDatabase.typeDef";
 import aboutsystem from "./setting/about_system.typeDef";
 import notification from "./notification/notification.typeDef";
+import dashboard from "./dashboard/dashboard.typeDef";
 
 const typeDefs = [
     user,
@@ -61,7 +62,8 @@ const typeDefs = [
     shift,
     restoreMongoDb,
     aboutsystem,
-    notification
+    notification,
+    dashboard
 ]
 
 export default typeDefs

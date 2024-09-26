@@ -232,7 +232,7 @@ const sales = {
                     total_pay = findSale?.total_pay + ((args.input.pay.reil / args.input.exchange_rate) + args.input.pay.dollar);
                 }
 
-                await SaleSchema.findByIdAndUpdate(sale_id, { $set: { remind_status, date_remind, isNotify } })
+                await SaleSchema.findByIdAndUpdate(sale_id, { $set: { remind_status, date_remind, isNotify, due, total_pay } })
 
                 await new SalePaymentSchema({
                     ...args.input,

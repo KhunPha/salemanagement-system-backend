@@ -135,6 +135,7 @@ const report = {
                 const toDate = to_date ? new Date(to_date).toISOString().split('T')[0] + 'T23:59:59.999Z' : "";
 
                 const PurchaseData: any = await PurchaseSchema.find({
+                    isVoid: false,
                     createdAt: {
                         $gte: fromDate,
                         $lte: toDate
@@ -299,6 +300,7 @@ const report = {
                 const toDate = to_date ? new Date(to_date).toISOString().split('T')[0] + 'T23:59:59.999Z' : "";
 
                 const ExpenseData: any = await PurchaseSchema.find({
+                    isVoid: false,
                     createdAt: {
                         $gte: fromDate,
                         $lte: toDate

@@ -109,7 +109,7 @@ const report = gql`
         dailyReport: DailyReportData
         salesReport(from_date: Date, to_date: Date): SaleReportData
         purchaseReport(from_date: Date, to_date: Date): PurchaseReportData
-        invoiceSaleReport(from_date: Date, to_date: Date): InvoiceReportData
+        invoiceSaleReport(from_date: Date, to_date: Date, customer: ID): InvoiceReportData
         revenueReport(from_date: Date, to_date: Date): RevenueReportData
         expenseReport(from_date: Date, to_date: Date): ExpenseReportData
         stockReport(type_of_product: String): StockReportData

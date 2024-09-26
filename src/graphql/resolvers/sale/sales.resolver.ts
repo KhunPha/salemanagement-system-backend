@@ -178,6 +178,7 @@ const sales = {
                 const newsales = new SaleSchema({
                     ...args.input,
                     due,
+                    total_pay,
                     cashier: userToken.data.user.firstname + userToken.data.user.lastname,
                     createdBy: userToken.data.user._id,
                     modifiedBy: userToken.data.user._id
@@ -263,6 +264,30 @@ const sales = {
                 const { id } = args
 
                 await SaleSchema.findByIdAndDelete(id)
+
+                return message
+            } catch (error: any) {
+                throw new ApolloError(error)
+            }
+        },
+        voidSalePayment: async (parent: any, args: any) => {
+            try {
+                const {payment_id} = args
+
+                const findSalePayment: any = await SalePaymentSchema.findById(payment_id);
+                const findSale: any = await SaleSchema.findById(findSalePayment?._id);
+
+                let due = findSale?.due + findSalePayment?.pay?.dollar;
+                let total_pay = findSale?.total_pay - findSalePayment?.pay?.dollar;
+
+                if (args.input.pay.reil > 0) {
+                    due = findSale?.due + ((findSalePayment?.pay?.reil / findSale?.exchange_rate) + findSalePayment?.pay?.dollar);
+                    total_pay = findSale?.total_pay - ((findSalePayment?.pay?.reil / findSale?.exchange_rate) + findSalePayment?.pay?.dollar);
+                }
+
+                const updateDoc = { $set: {due: due, total_pay: total_pay}};
+
+                await SaleSchema.findByIdAndUpdate(findSale?._id, updateDoc);
 
                 return message
             } catch (error: any) {

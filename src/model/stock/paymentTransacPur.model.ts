@@ -4,6 +4,7 @@ export interface IPaymentTransacPur extends Document {
     purchase_id: object
     reil: number
     dollar: number
+    isVoid: boolean
     createdBy: object
     modifiedBy: object
 }
@@ -17,6 +18,10 @@ const paymentTransacPurSchema = new Schema<IPaymentTransacPur>({
     },
     dollar: {
         type: Number
+    },
+    isVoid: {
+        type: Boolean,
+        default: false
     },
     createdBy: {
         type: mongoose.Schema.Types.ObjectId,

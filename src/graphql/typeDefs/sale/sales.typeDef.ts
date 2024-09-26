@@ -101,6 +101,7 @@ const sales = gql`
         createSales(input: SalesInput): ResponseMessage!
         salePayment(input: PaymentTransacSaleInput): ResponseMessage!
         clearSaleSuspend(id: ID): ResponseMessage!
+        voidSalePayment(payment_id: ID): ResponseMessage!
     }
 `
 export default sales

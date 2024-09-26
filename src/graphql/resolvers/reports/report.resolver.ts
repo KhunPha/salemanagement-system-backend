@@ -215,16 +215,21 @@ const report = {
         },
         invoiceSaleReport: async (parent: any, args: any, context: any) => {
             try {
-                const { from_date, to_date } = args
+                const { from_date, to_date, customer } = args
                 const fromDate = from_date ? new Date(from_date).toISOString().split('T')[0] + 'T00:00:00.000Z' : "";
                 const toDate = to_date ? new Date(to_date).toISOString().split('T')[0] + 'T23:59:59.999Z' : "";
 
                 const data = await SaleSchema.find({
-                    isSuspend: false,
-                    createdAt: {
-                        $gte: fromDate,
-                        $lte: toDate
-                    }
+                    $and: [
+                        { isSuspend: false },
+                        {
+                            createdAt: {
+                                $gte: fromDate,
+                                $lte: toDate
+                            }
+                        },
+                        customer ? { customer } : {}
+                    ]
                 }).populate("customer")
 
                 const total_invoice = data.length;

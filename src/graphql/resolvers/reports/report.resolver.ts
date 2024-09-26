@@ -74,7 +74,7 @@ const report = {
                         $gte: fromDate,
                         $lte: toDate
                     }
-                }).populate("product_lists.product");
+                }).populate("product_lists.product").sort({createdAt: -1});
 
                 const productSum: any = {};
                 let total_qty = 0, total_cost = 0, total_price = 0, total_amount = 0, total_profit = 0;
@@ -140,7 +140,7 @@ const report = {
                         $gte: fromDate,
                         $lte: toDate
                     }
-                }).populate("products_lists.product_details");
+                }).populate("products_lists.product_details").sort({createdAt: -1});
 
                 const productSum: any = {};
                 let total_qty = 0, total_receive = 0, total_amount = 0;
@@ -230,7 +230,7 @@ const report = {
                         },
                         customer ? { customer } : {}
                     ]
-                }).populate("customer")
+                }).populate("customer").sort({createdAt: -1});
 
                 const total_invoice = data.length;
 
@@ -251,7 +251,7 @@ const report = {
                         $gte: fromDate,
                         $lte: toDate
                     }
-                }).populate("product_lists.product");
+                }).populate("product_lists.product").sort({createdAt: -1});
 
                 let products: any = {};
                 let total_qty = 0, total_amount = 0;
@@ -310,7 +310,7 @@ const report = {
                         $gte: fromDate,
                         $lte: toDate
                     }
-                }).populate("products_lists.product_details");
+                }).populate("products_lists.product_details").sort({createdAt: -1});
 
                 let products: any = {};
                 let total_qty = 0, total_amount = 0;

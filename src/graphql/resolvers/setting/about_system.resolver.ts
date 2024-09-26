@@ -12,7 +12,11 @@ const aboutsystem = {
                 if (!userToken.status) throw new ApolloError("Unauthorization")
                 const { section } = args
 
-                return await AboutSystemSchema.find({ section: section })
+                return await AboutSystemSchema.find({
+                    $and: [
+                        section === "All" ? {} : { section }
+                    ]
+                })
             } catch (error: any) {
                 throw new ApolloError(error.message)
             }

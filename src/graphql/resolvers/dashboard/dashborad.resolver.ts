@@ -4,11 +4,13 @@ import PurchaseSchema from "../../../model/stock/purchases.model";
 
 const dashboard = {
     Query: {
-        totalSales: async () => await SaleSchema.countDocuments({ isSuspend: { $ne: true } }),
-        revenueInDashboard: async () => {
+        topDashboard: async () => {
             try {
+                const totalSales = await SaleSchema.countDocuments({ isSuspend: false });
                 const RevenueData: any = await SaleSchema.find({ isSuspend: false }).populate("product_lists.product");
+                const ExpenseData: any = await PurchaseSchema.find({ isVoid: false });
 
+                // RevenueData
                 let total_revenue = 0;
 
                 RevenueData.map((revenueData: any) => {
@@ -17,15 +19,7 @@ const dashboard = {
                     })
                 })
 
-                return total_revenue
-            } catch (error: any) {
-                throw new ApolloError(error.message)
-            }
-        },
-        expenseInDashboard: async () => {
-            try {
-                const ExpenseData: any = await PurchaseSchema.find({ isVoid: false });
-
+                // ExpenseData
                 let total_expense = 0;
 
                 ExpenseData.map((expenseData: any) => {
@@ -34,34 +28,7 @@ const dashboard = {
                     })
                 })
 
-                return total_expense;
-            } catch (error: any) {
-                throw new ApolloError(error)
-            }
-        },
-        profitInDashboard: async () => {
-            try {
-                const RevenueData: any = await SaleSchema.find({ isSuspend: false }).populate("product_lists.product");
-
-                let total_revenue = 0;
-
-                RevenueData.map((revenueData: any) => {
-                    revenueData.product_lists.map((product: any) => {
-                        total_revenue += product?.amount * product?.qty;
-                    })
-                })
-
-                const ExpenseData: any = await PurchaseSchema.find({ isVoid: false });
-
-                let total_expense = 0;
-
-                ExpenseData.map((expenseData: any) => {
-                    expenseData.products_lists.map((product: any) => {
-                        total_expense = product?.unit_price * product?.qty;
-                    })
-                })
-
-                return total_revenue - total_expense;
+                return { totalSales: totalSales, revenueInDashboard: total_revenue, expenseInDashboard: total_expense, profitInDashboard: total_revenue - total_expense }
             } catch (error: any) {
                 throw new ApolloError(error)
             }
@@ -155,10 +122,10 @@ const dashboard = {
                     pro_name: string;
                     qty: number;
                 }
-                
+
                 const sortedProducts = Object.values(productSum) as ProductSummary[]; // Type assertion here
                 sortedProducts.sort((a, b) => b.qty - a.qty);
-                
+
                 // Create an array of 5 entries, filling with null where necessary
                 const data = Array.from({ length: 5 }, (_, index) => {
                     if (sortedProducts[index]) {
@@ -169,7 +136,7 @@ const dashboard = {
                     }
                     return { pro_name: "", qty: 0 };
                 });
-                
+
                 return { data: data };
             } catch (error: any) {
                 throw new ApolloError(error)

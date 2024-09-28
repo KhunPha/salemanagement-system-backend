@@ -1,6 +1,13 @@
 import { gql } from "apollo-server-express";
 
 const dashboard = gql`
+    type Dashboard {
+        totalSales: Int
+        revenueInDashboard: Float
+        expenseInDashboard: Float
+        profitInDashboard: Float
+    }
+    
     type AnnualSales {
         January: Int
         February: Int
@@ -24,11 +31,9 @@ const dashboard = gql`
         pro_name: String
         qty: Int
     }
+
     type Query {
-        totalSales: Int
-        revenueInDashboard: Float
-        expenseInDashboard: Float
-        profitInDashboard: Float
+        topDashboard: Dashboard
         annualSalesInDashboard(year: Date): AnnualSales
         monthlySalesItemsInDashboard(month: Int): MonthlySales
     }

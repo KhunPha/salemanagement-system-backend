@@ -162,7 +162,7 @@ const report = {
                 let total_qty = 0, total_receive = 0, total_amount = 0;
 
                 for (const purchase of PurchaseData) {
-                    const purchaseId = new Date(purchase?.date)
+                    const purchaseId = new Date(new Date(purchase?.date).getTime() + (7 * 60 * 60 * 1000))
                         .toISOString()
                         .split('T')[0] + 'T00:00:00.000Z';
 
@@ -290,7 +290,7 @@ const report = {
                 let total_qty = 0, total_amount = 0;
 
                 RevenueData.map((revenueData: any) => {
-                    const revenueId = new Date(revenueData?.createdAt)
+                    const revenueId = new Date(new Date(revenueData?.createdAt).getTime() + (7 * 60 * 60 * 1000))
                         .toISOString()
                         .split('T')[0] + 'T00:00:00.000Z';
 
@@ -357,7 +357,9 @@ const report = {
                 let total_qty = 0, total_amount = 0;
 
                 ExpenseData.map((expenseData: any) => {
-                    const expenseId = expenseData?.date?.toString();
+                    const expenseId = new Date(new Date(expenseData?.createdAt).getTime() + (7 * 60 * 60 * 1000))
+                    .toISOString()
+                    .split('T')[0] + 'T00:00:00.000Z';
 
                     if (!products[expenseId]) {
                         products[expenseId] = {}; // Initialize object for each expenseId

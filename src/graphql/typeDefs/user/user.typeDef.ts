@@ -65,6 +65,7 @@ const user = gql`
         deleteUserImage(publicId: String): Boolean
         createUser(input: UserInput!, file: Upload): ResponseMessage!
         login(input: Login): ResponseMessageLogin!
+        loginForMobile(input: Login): ResponseMessageLogin!
         logout: ResponseMessage!
         updateUser(id: ID!, input: UserInput): ResponseMessage!
         resetPassword(id: ID!, newPassword: String): ResponseMessage!

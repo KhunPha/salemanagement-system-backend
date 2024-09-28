@@ -14,6 +14,8 @@ import NotificationSchema from "../../../model/notification/notification.model";
 import PurchaseSchema from "../../../model/stock/purchases.model";
 import SaleSchema from "../../../model/sale/sales.model";
 import { exec } from "child_process";
+import path from "path";
+import fs from "fs";
 const cron = require("node-cron")
 
 // Clear Recovery
@@ -206,7 +208,7 @@ cron.schedule('*/1 * * * *', async () => {
 
         const findDueCustomer = await SaleSchema.find({
             remind_status: true,
-            date_remind: { $lte: new Date() },
+            date_remind: { $lte: new Date(new Date().getTime() + (7 * 60 * 60 * 1000)).toISOString() },
             due: { $ne: 0 }
         }).populate("customer")
 
@@ -226,14 +228,59 @@ cron.schedule('*/1 * * * *', async () => {
     }
 })
 
-cron.schedule('0 * * * *', async () => {
+cron.schedule('0 0 * * *', async () => {
     try {
-        const name = `${Math.floor((Math.random() * 10000) + 1000)}`
+        // Generate a random folder name for the new backup
+        const name = `${Math.floor((Math.random() * 10000) + 1000)}`;
         const newfoldername = `${name}-${Date.now()}`;
-        const command = `mongodump --uri="mongodb+srv://khunpha:Sopha3305@salemanagement.qbm94iq.mongodb.net/salemanagement?retryWrites=true&w=majority&appName=salemanagement" --out=D:/Backup/salemanagement_backup_${newfoldername}`;
 
-        // Execute the command
-        exec(command, (error, stdout, stderr) => {
+        // Define the backup directory and the path for the new backup
+        const backupDir: string = 'D:/Backup';
+        const newBackupPath: string = `${backupDir}/salemanagement_backup_${newfoldername}`;
+
+        // Function to delete backups older than 1 minute
+        const deleteOldBackups = (dirPath: string): void => {
+            fs.readdir(dirPath, (err: NodeJS.ErrnoException | null, files: string[]) => {
+                if (err) {
+                    console.error(`Error reading directory: ${err.message}`);
+                    return;
+                }
+
+                files.forEach((file: string) => {
+                    const filePath: string = path.join(dirPath, file);
+
+                    // Get the stats for each file/folder
+                    fs.stat(filePath, (err: NodeJS.ErrnoException | null, stats: fs.Stats) => {
+                        if (err) {
+                            console.error(`Error getting stats for file: ${err.message}`);
+                            return;
+                        }
+
+                        // Check if it's a directory and calculate its age in minutes
+                        if (stats.isDirectory()) {
+                            const now: number = Date.now();
+                            const modifiedTime: number = stats.mtime.getTime();
+                            const ageInMinutes: number = (now - modifiedTime) / (1000 * 60); // Age in minutes
+
+                            // If the folder is older than 1 minute, delete it
+                            if (ageInMinutes > 1) {
+                                fs.rm(filePath, { recursive: true, force: true }, (err: NodeJS.ErrnoException | null) => {
+                                    if (err) {
+                                        console.error(`Error deleting old backup: ${err.message}`);
+                                    } else {
+                                        console.log(`Deleted old backup: ${filePath}`);
+                                    }
+                                });
+                            }
+                        }
+                    });
+                });
+            });
+        };
+
+        // Execute the mongodump command
+        const command: string = `mongodump --uri="mongodb+srv://khunpha:Sopha3305@salemanagement.qbm94iq.mongodb.net/salemanagement?retryWrites=true&w=majority&appName=salemanagement" --out=${newBackupPath}`;
+        exec(command, (error: Error | null, stdout: string, stderr: string): void => {
             if (error) {
                 console.error(`Error executing command: ${error.message}`);
                 return;
@@ -242,6 +289,11 @@ cron.schedule('0 * * * *', async () => {
                 console.error(`Error output: ${stderr}`);
                 return;
             }
+
+            console.log(`Backup successful: ${newBackupPath}`);
+
+            // After the backup is created, delete old backups
+            deleteOldBackups(backupDir);
         });
     } catch (error: any) {
         throw new ApolloError(error)

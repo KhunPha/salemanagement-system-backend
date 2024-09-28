@@ -166,26 +166,38 @@ const user = {
 
                 messageLogin.token = await getToken(userfound, newSessionId)
 
-                const user_ip_address: any = context.client
-
-                await UserLogSchema.findOneAndUpdate({
-                    $and: [
-                        { user_details: userfound._id },
-                        { terminate: false }
-                    ]
-                }, { $set: { terminate: true } })
-
-                // const newlog = new UserLogSchema({
-                //     user_details: userfound._id,
-                //     user_ip_address: user_ip_address,
-                //     token: messageLogin.token
-                // })
-                // await newlog.save()
-
                 return messageLogin
             } catch (error: any) {
                 throw new ApolloError(error.message)
             }
+        },
+        loginForMobile: async (parent: any, args: any, context: any) => {
+            try {
+
+            } catch (error: any) {
+                throw new ApolloError(error)
+            } const { username, password } = await args.input
+
+            const userfound = await UserShcema.findOne({ username, roles: "ADMIN" }).select("-sessionId")
+
+            if (!userfound) {
+                messageError.message_en = "User not found or user does not have admin privileges!";
+                messageError.message_kh = "រកមិនឃើញអ្នកប្រើប្រាស់ ឬអ្នកប្រើប្រាស់មិនមានសិទ្ធិជា Admin"
+
+                return messageError;
+            }
+
+            const passTrue = await bcrypt.compare(password, userfound.password)
+
+            if (!passTrue) {
+                throw new ApolloError("Incorrect password!")
+            }
+
+            const newSessionId = uuidv4()
+            messageLogin.sessionId = newSessionId;
+            messageLogin.token = await getToken(userfound, newSessionId)
+
+            return messageLogin
         },
         logout: async (parent: any, args: any, context: any) => {
             try {

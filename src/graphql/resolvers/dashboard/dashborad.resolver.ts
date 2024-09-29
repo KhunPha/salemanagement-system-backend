@@ -89,9 +89,10 @@ const dashboard = {
         monthlySalesItemsInDashboard: async (parent: any, args: any) => {
             try {
                 const { month } = args
+                const getSaleMonth = new Date(month)
                 const now = new Date();
-                const fromDate = month ? new Date(`${now.getFullYear}-${month}-01`).toISOString().split('T')[0] + 'T00:00:00.000Z' : new Date(`${now.getFullYear()}-${now.getMonth() + 1}-01`).toISOString().split('T')[0] + 'T00:00:00.000Z';
-                const toDate = month ? new Date(`${now.getFullYear}-${month}-31`).toISOString().split('T')[0] + 'T23:59:59.999Z' : new Date(`${now.getFullYear()}-${now.getMonth() + 1}-31`).toISOString().split('T')[0] + 'T23:59:59.999Z';
+                const fromDate = month ? new Date(`${now.getFullYear()}-${getSaleMonth.getMonth() + 1}-01`).toISOString().split('T')[0] + 'T00:00:00.000Z' : new Date(`${now.getFullYear()}-${now.getMonth() + 1}-01`).toISOString().split('T')[0] + 'T00:00:00.000Z';
+                const toDate = month ? new Date(`${now.getFullYear()}-${getSaleMonth.getMonth() + 1}-31`).toISOString().split('T')[0] + 'T23:59:59.999Z' : new Date(`${now.getFullYear()}-${now.getMonth() + 1}-31`).toISOString().split('T')[0] + 'T23:59:59.999Z';
 
                 const MonthlySalesItems: any = await SaleSchema.find({
                     isSuspend: false,

@@ -35,7 +35,7 @@ const dashboard = gql`
     type Query {
         topDashboard: Dashboard
         annualSalesInDashboard(year: Date): AnnualSales
-        monthlySalesItemsInDashboard(month: Int): MonthlySales
+        monthlySalesItemsInDashboard(month: Date): MonthlySales
     }
 `
 

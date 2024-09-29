@@ -202,9 +202,8 @@ const user = {
         logout: async (parent: any, args: any, context: any) => {
             try {
                 const userToken = await verifyToken(context.user)
-                if (!userToken.status) throw new ApolloError("Unauthorization")
 
-                await UserShcema.findByIdAndUpdate(userToken.data._id, { $set: { sessionId: null } })
+                await UserShcema.findByIdAndUpdate(userToken.data.user._id, { $set: { sessionId: null } })
 
                 return message
             } catch (error: any) {

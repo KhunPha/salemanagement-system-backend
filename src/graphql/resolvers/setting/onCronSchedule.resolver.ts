@@ -101,7 +101,7 @@ cron.schedule('* * * * *', async () => {
 
 
         affectdIdsRemove.map(async (discount_id: any) => {
-            const findStock: any = await StockSchema.updateMany({ discount_id }).populate("product_details")
+            const findStock: any = await StockSchema.findOne({ discount_id }).populate("product_details")
 
             const removeDiscount = { $set: { discount: 0, after_discount: findStock?.product_details?.price, discount_id: null, discount_type: "", isDiscount: false, discount_day: null } }
 

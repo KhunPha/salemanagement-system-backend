@@ -68,7 +68,7 @@ const sales = {
             try {
                 const { sale_id } = args;
 
-                return await SalePaymentSchema.find({ sale_id });
+                return await SalePaymentSchema.find({ sale_id }).populate("bank");
             } catch (error: any) {
                 throw new ApolloError(error)
             }

@@ -19,7 +19,8 @@ const salepayment = new Schema<ISalePayment>({
         type: String,
     },
     bank: {
-        type: mongoose.Schema.Types.ObjectId
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Bank"
     },
     pay: {
         reil: {

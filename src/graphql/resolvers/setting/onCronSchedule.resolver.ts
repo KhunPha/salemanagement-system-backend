@@ -16,7 +16,6 @@ import SaleSchema from "../../../model/sale/sales.model";
 import { exec } from "child_process";
 import path from "path";
 import fs from "fs";
-import { NotificaUser } from "../../../model/mobile/mobile.model";
 import Expo from "expo-server-sdk";
 import UserSchema from "../../../model/user/user.model";
 const cron = require("node-cron")

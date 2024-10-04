@@ -262,7 +262,7 @@ const sales = {
                     payback = args.input.payback.dollar;
                 }
 
-                let due = findSale?.total_amount - (findSale?.total_pay + args.input.pay.dollar + payback);
+                let due = findSale?.total_amount - (findSale?.total_pay + args.input.pay.dollar - payback);
                 let total_pay = findSale?.total_pay + args.input.pay.dollar - payback;
 
                 // Paid
@@ -274,7 +274,7 @@ const sales = {
                 }
 
                 if (args.input.pay.reil > 0) {
-                    due = findSale?.total_amount - (findSale?.total_pay + ((args.input.pay.reil / args.input.exchange_rate) + args.input.pay.dollar) + payback);
+                    due = findSale?.total_amount - (findSale?.total_pay + ((args.input.pay.reil / args.input.exchange_rate) + args.input.pay.dollar) - payback);
                     total_pay = findSale?.total_pay + ((args.input.pay.reil / args.input.exchange_rate) + args.input.pay.dollar) - payback;
                     paid_riel += args.input.pay.reil;
                 }

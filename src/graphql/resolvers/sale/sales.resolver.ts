@@ -68,7 +68,7 @@ const sales = {
             try {
                 const { sale_id } = args;
 
-                return await SalePaymentSchema.find({ sale_id }).populate("bank");
+                return await SalePaymentSchema.find({ sale_id }).populate("bank").sort({ createdAt: -1 });
             } catch (error: any) {
                 throw new ApolloError(error)
             }
@@ -262,7 +262,7 @@ const sales = {
                 }
 
                 let due = findSale?.total_amount - findSale?.total_pay + args.input.pay.dollar + payback;
-                let total_pay = args.input.pay.dollar - payback;
+                let total_pay = findSale?.total_pay + args.input.pay.dollar - payback;
 
                 // Paid
                 let paid_dollar = findSale?.paid_dollar + args.input.pay.dollar;

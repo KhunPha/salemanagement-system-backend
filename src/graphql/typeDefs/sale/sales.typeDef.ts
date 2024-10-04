@@ -79,6 +79,7 @@ const sales = gql`
         remind_status: Boolean
         date_remind: Date
         pay: PayInput
+        payback: PayBackInput
         bank: ID
         total_price: Float
         isSuspend: Boolean

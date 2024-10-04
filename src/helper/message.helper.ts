@@ -12,6 +12,13 @@ const messageLogin = {
     sessionId: null
 }
 
+const messageMobileLogin = {
+    message_kh: "ជោគជ័យ",
+    message_en: "successfully",
+    status: true,
+    user_data: null
+}
+
 const messageError = {
     message_kh: "បរាជ័យ",
     message_en: "failed",
@@ -21,5 +28,6 @@ const messageError = {
 export {
     message,
     messageLogin,
-    messageError
+    messageError,
+    messageMobileLogin
 }

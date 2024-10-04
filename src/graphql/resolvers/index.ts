@@ -26,6 +26,7 @@ import restoreMongoDb from "./restoreDatabase/restoreDatabase.resolver";
 import aboutsystem from "./setting/about_system.resolver";
 import notification from "./notification/notification.resolver";
 import dashboard from "./dashboard/dashborad.resolver";
+import mobile from "./mobile/mobile.resolver";
 
 require("./setting/onCronSchedule.resolver")
 
@@ -57,7 +58,8 @@ const resolvers = [
     restoreMongoDb,
     aboutsystem,
     notification,
-    dashboard
+    dashboard,
+    mobile
 ]
 
 export default resolvers

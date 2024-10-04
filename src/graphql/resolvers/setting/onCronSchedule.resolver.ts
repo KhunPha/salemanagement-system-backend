@@ -16,7 +16,12 @@ import SaleSchema from "../../../model/sale/sales.model";
 import { exec } from "child_process";
 import path from "path";
 import fs from "fs";
+import { NotificaUser } from "../../../model/mobile/mobile.model";
+import Expo from "expo-server-sdk";
+import UserSchema from "../../../model/user/user.model";
 const cron = require("node-cron")
+
+const expo = new Expo();
 
 // Clear Recovery
 cron.schedule('0 12 * * *', async () => {
@@ -79,7 +84,7 @@ cron.schedule('0 12 * * *', async () => {
 
 // Discount Product
 // 0H 1MN
-cron.schedule('* * * * *', async () => {
+cron.schedule('*/1 * * * *', async () => {
     try {
         // Remove Discount
         const affectedDocumentsRemove = await DiscountProductSchema.find({
@@ -165,7 +170,7 @@ cron.schedule('* * * * *', async () => {
 });
 
 // Notification
-cron.schedule('*/1 * * * *', async () => {
+cron.schedule('* * * * *', async () => {
     try {
         const findLowStock: any = await StockSchema.find({
             isNewInsert: { $ne: true },
@@ -183,6 +188,31 @@ cron.schedule('*/1 * * * *', async () => {
                 id_to_notify: data._id,
                 section: "Stock"
             }).save()
+
+            const user: any = await UserSchema.find({ expoPushTokens: { $ne: [] } });
+
+            user?.map((user: any) => {
+                user?.expoPushToken?.map(async (exposToken: any) => {
+                    if (!user || !Expo.isExpoPushToken(exposToken)) {
+                        console.log('Invalid Expo Push Token or user not found')
+                    }
+
+                    const message: any = {
+                        to: exposToken,
+                        sound: 'default',
+                        title: data?.product_details?.pro_name,
+                        body: `Low Stock ${data.stock_on_hand} items`,
+                        data: { extraData: 'Some data' },
+                        icon: "https://icons.iconarchive.com/icons/ampeross/qetto/256/icon-developer-icon.png"
+                    };
+
+                    try {
+                        await expo.sendPushNotificationsAsync([message]);
+                    } catch (error) {
+                        console.error('Error sending notification:', error);
+                    }
+                })
+            })
         })
 
         const findDueSupplier = await PurchaseSchema.find({
@@ -203,6 +233,31 @@ cron.schedule('*/1 * * * *', async () => {
                     section: "Purchase",
                     date_condition: data.remiding_date
                 }).save()
+
+                const user: any = await UserSchema.find({ expoPushTokens: { $ne: [] } });
+
+                user?.map((user: any) => {
+                    user?.expoPushToken?.map(async (exposToken: any) => {
+                        if (!user || !Expo.isExpoPushToken(exposToken)) {
+                            console.log('Invalid Expo Push Token or user not found')
+                        }
+
+                        const message: any = {
+                            to: exposToken,
+                            sound: 'default',
+                            title: data.supplier_details.supplier_name,
+                            body: `We due ${data.supplier_details.supplier_name} ${"$ " + data.due}`,
+                            data: { extraData: 'Some data' },
+                            icon: "https://icons.iconarchive.com/icons/ampeross/qetto/256/icon-developer-icon.png"
+                        };
+
+                        try {
+                            await expo.sendPushNotificationsAsync([message]);
+                        } catch (error) {
+                            console.error('Error sending notification:', error);
+                        }
+                    })
+                })
             }
         })
 
@@ -222,6 +277,31 @@ cron.schedule('*/1 * * * *', async () => {
                 id_to_notify: data._id,
                 section: "Sale",
             }).save()
+
+            const user: any = await UserSchema.find({ expoPushTokens: { $ne: [] } });
+
+            user?.map((user: any) => {
+                user?.expoPushToken?.map(async (exposToken: any) => {
+                    if (!user || !Expo.isExpoPushToken(exposToken)) {
+                        console.log('Invalid Expo Push Token or user not found')
+                    }
+
+                    const message: any = {
+                        to: exposToken,
+                        sound: 'default',
+                        title: data?.customer?.customer_name ? data?.customer?.customer_name : "General",
+                        body: `${data?.customer?.customer_name ? data?.customer?.customer_name : "General"} Due ${"$ " + data?.due}`,
+                        data: { extraData: 'Some data' },
+                        icon: "https://icons.iconarchive.com/icons/ampeross/qetto/256/icon-developer-icon.png"
+                    };
+
+                    try {
+                        await expo.sendPushNotificationsAsync([message]);
+                    } catch (error) {
+                        console.error('Error sending notification:', error);
+                    }
+                })
+            })
         })
     } catch (error: any) {
         throw new ApolloError(error)

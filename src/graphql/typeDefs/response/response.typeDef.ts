@@ -14,6 +14,13 @@ const ResponseMessage = gql`
         token: String
         sessionId: String
     }
+
+    type ResponseMessageMobileLogin {
+        user_data: User
+        message_en: String
+        message_kh: String
+        status: Boolean
+    }
 `
 
 export default ResponseMessage

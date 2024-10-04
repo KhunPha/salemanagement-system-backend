@@ -1,10 +1,10 @@
 import { ApolloError } from "apollo-server-express"
-import UserShcema from "../../../model/user/user.model"
+import UserSchema from "../../../model/user/user.model"
 import bcrypt from "bcrypt"
 import { getToken } from "../../../helper"
 import { FileUpload, GraphQLUpload } from "graphql-upload-ts"
 import { verifyToken } from "../../../middleware/auth.middleware"
-import { message, messageError, messageLogin } from "../../../helper/message.helper"
+import { message, messageError, messageLogin, messageMobileLogin } from "../../../helper/message.helper"
 import UserLogSchema from "../../../model/user/userlog.model"
 import { PubSub } from "graphql-subscriptions"
 import { PaginateOptions } from "mongoose"
@@ -44,7 +44,7 @@ const user = {
                     ],
                     isDelete: { $ne: true }
                 }
-                return await UserShcema.paginate(query, options)
+                return await UserSchema.paginate(query, options)
             } catch (error: any) {
                 throw new ApolloError(error)
             }
@@ -94,7 +94,7 @@ const user = {
                 const userToken: any = await verifyToken(context.user)
                 if (!userToken.status) throw new ApolloError("Unauthorization")
 
-                const findUser = await UserShcema.findOne({ publicId: args.publicId })
+                const findUser = await UserSchema.findOne({ publicId: args.publicId })
 
                 if (!findUser) {
                     const result = await cloudinary.uploader.destroy(args.publicId).then(function (value) { return true }).catch(function (error) { return false });
@@ -114,7 +114,7 @@ const user = {
                 if (!args.input.publicId)
                     args.input.image = "https://res.cloudinary.com/duuux4gv5/image/upload/v1723769658/rv8ojwv6bmlkkvok2nih.png"
 
-                const dupUser = await UserShcema.findOne({ username })
+                const dupUser = await UserSchema.findOne({ username })
 
                 if (dupUser) {
                     messageError.message_kh = "ឈ្មោះអ្នកប្រើប្រាស់នេះមានរួចហើយ!"
@@ -125,7 +125,7 @@ const user = {
                 const salt = await bcrypt.genSalt()
                 const hashpassword = await bcrypt.hash(password, salt)
 
-                const newuser = new UserShcema({
+                const newuser = new UserSchema({
                     ...args.input,
                     password: hashpassword
                 })
@@ -148,7 +148,7 @@ const user = {
             try {
                 const { username, password } = await args.input
 
-                const userfound = await UserShcema.findOne({ username }).select("-sessionId")
+                const userfound = await UserSchema.findOne({ username }).select("-sessionId")
 
                 if (!userfound) {
                     throw new ApolloError("User not found!")
@@ -162,7 +162,7 @@ const user = {
 
                 const newSessionId = uuidv4()
                 messageLogin.sessionId = newSessionId;
-                await UserShcema.updateOne({ _id: userfound._id }, { sessionId: newSessionId });
+                await UserSchema.updateOne({ _id: userfound._id }, { sessionId: newSessionId });
 
                 messageLogin.token = await getToken(userfound, newSessionId)
 
@@ -173,37 +173,39 @@ const user = {
         },
         loginForMobile: async (parent: any, args: any, context: any) => {
             try {
+                const { username, password } = args.input
 
+                const userfound: any = await UserSchema.findOne({ username, roles: "ADMIN" }).select("-sessionId")
+
+                if (!userfound) {
+                    messageError.message_en = "User not found or user does not have admin privileges!";
+                    messageError.message_kh = "រកមិនឃើញអ្នកប្រើប្រាស់ ឬអ្នកប្រើប្រាស់មិនមានសិទ្ធិជា Admin"
+
+                    return messageError;
+                }
+
+                const passTrue = await bcrypt.compare(password, userfound.password)
+
+                if (!passTrue) {
+                    throw new ApolloError("Incorrect password!")
+                }
+
+                // const newSessionId = uuidv4()
+                // messageLogin.sessionId = newSessionId;
+                // messageLogin.token = await getToken(userfound, newSessionId)
+
+                messageMobileLogin.user_data = userfound;
+
+                return messageMobileLogin;
             } catch (error: any) {
                 throw new ApolloError(error)
-            } const { username, password } = await args.input
-
-            const userfound = await UserShcema.findOne({ username, roles: "ADMIN" }).select("-sessionId")
-
-            if (!userfound) {
-                messageError.message_en = "User not found or user does not have admin privileges!";
-                messageError.message_kh = "រកមិនឃើញអ្នកប្រើប្រាស់ ឬអ្នកប្រើប្រាស់មិនមានសិទ្ធិជា Admin"
-
-                return messageError;
             }
-
-            const passTrue = await bcrypt.compare(password, userfound.password)
-
-            if (!passTrue) {
-                throw new ApolloError("Incorrect password!")
-            }
-
-            const newSessionId = uuidv4()
-            messageLogin.sessionId = newSessionId;
-            messageLogin.token = await getToken(userfound, newSessionId)
-
-            return messageLogin
         },
         logout: async (parent: any, args: any, context: any) => {
             try {
                 const userToken = await verifyToken(context.user)
 
-                await UserShcema.findByIdAndUpdate(userToken.data.user._id, { $set: { sessionId: null } })
+                await UserSchema.findByIdAndUpdate(userToken.data.user._id, { $set: { sessionId: null } })
 
                 return message
             } catch (error: any) {
@@ -217,14 +219,14 @@ const user = {
                 const { id } = args
 
                 if (!args.input.publicId) {
-                    const findUser = await UserShcema.findById(id)
+                    const findUser = await UserSchema.findById(id)
                     args.input.image = findUser?.image
                     args.input.publicId = findUser?.publicId
                 }
 
                 const userDoc = { $set: { ...args.input } }
 
-                const updateDoc: any = await UserShcema.findByIdAndUpdate(id, userDoc)
+                const updateDoc: any = await UserSchema.findByIdAndUpdate(id, userDoc)
 
                 if (args.input.publicId) {
                     if (args.input.publicId != updateDoc?.publicId)
@@ -257,7 +259,7 @@ const user = {
 
                 const userDoc = { $set: { password: hastPassword } }
 
-                const updateDoc = await UserShcema.findByIdAndUpdate(id, userDoc)
+                const updateDoc = await UserSchema.findByIdAndUpdate(id, userDoc)
 
                 if (!updateDoc)
                     return messageError
@@ -276,7 +278,7 @@ const user = {
 
                 const updateDoc = { $set: { isDelete: true } }
 
-                const deleteUser: any = await UserShcema.findByIdAndUpdate(id, updateDoc)
+                const deleteUser: any = await UserSchema.findByIdAndUpdate(id, updateDoc)
 
                 if (!deleteUser) {
                     return messageError

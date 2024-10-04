@@ -11,6 +11,7 @@ export interface IUser extends Document {
     publicId: string
     remark: string
     sessionId: string
+    expoPushToken: object
     isDelete: boolean
 }
 
@@ -48,6 +49,10 @@ const user = new Schema<IUser>({
     sessionId: {
         type: String
     },
+    expoPushToken: [{
+        type: String,
+        default: []
+    }],
     isDelete: {
         type: Boolean,
         default: false
@@ -56,5 +61,5 @@ const user = new Schema<IUser>({
 
 user.plugin(paginate)
 
-const UserShcema = mongoose.model<IUser, PaginateModel<IUser>>("User", user, "Users")
-export default UserShcema
+const UserSchema = mongoose.model<IUser, PaginateModel<IUser>>("User", user, "Users")
+export default UserSchema

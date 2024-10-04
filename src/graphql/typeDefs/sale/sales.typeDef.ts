@@ -8,6 +8,11 @@ const sales = gql`
         reil: Float
     }
 
+    type PayBack {
+        dollar: Float
+        reil: Float
+    }
+
     type Sales {
         _id: ID!
         invoice_number: String
@@ -26,6 +31,7 @@ const sales = gql`
         bank: Bank
         total_pay: Float
         total_price: Float
+        payback: Float
         createdBy: User
         modifiedBy: User
         createdAt: Date
@@ -54,6 +60,11 @@ const sales = gql`
         reil: Float
     }
 
+    input PayBackInput {
+        dollar: Float
+        reil: Float
+    }
+
     input SalesInput {
         invoice_number: String
         product_lists: [ProductListInput]
@@ -76,9 +87,8 @@ const sales = gql`
         pay: Pay
         payment_method: String
         bank: Bank
-        remind_status: Boolean
-        date_remind: Date
-        createAt: Date
+        payback: PayBack
+        createdAt: Date
     }
 
     input PaymentTransacSaleInput {
@@ -86,6 +96,7 @@ const sales = gql`
         payment_method: String
         pay: PayInput
         bank: ID
+        payback: PayBackInput
         remind_status: Boolean
         date_remind: Date
     }

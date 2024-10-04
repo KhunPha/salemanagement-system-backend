@@ -1,42 +1,19 @@
-// graphql/schema.ts
-import { gql } from 'apollo-server-express';
+// schema.js
+const { gql } = require('apollo-server-express');
 
-export const typeDefs = gql`
-  type DeviceSession {
-    _id: ID!
-    companyId: ID!
-    employeeId: ID
-    userId: ID
-    expoToken: String!
-    brand: String
-    model: String
-    os: String
-    version: String
-    lastActive: String
-    lastLogin: String
-    isVerify: Boolean
-  }
-
-  type Query {
-    getDeviceSessions(employeeIds: [ID!]): [DeviceSession!]!
+const mobile = gql`
+  type User {
+    id: ID!
+    user_id: User
+    username: String!
+    expoPushToken: String!
   }
 
   type Mutation {
-    saveExpoToken(
-      employeeId: ID!
-      expoToken: String!
-      brand: String
-      model: String
-      os: String
-      version: String
-    ): DeviceSession!
-    
-    sendNotification(
-      employeeIds: [ID!]
-      title: String!
-      body: String!
-      navigateId: String
-      type: String
-    ): String
+    registerPushToken(username: String!, expoPushToken: String!): User
+    sendUserNotification(username: String!, title: String!, body: String!): Boolean
+    logoutMobileUser(user_id: ID!, expoPushToken: String): ResponseMessage!
   }
 `;
+
+export default mobile

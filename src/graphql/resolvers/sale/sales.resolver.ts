@@ -104,9 +104,9 @@ const sales = {
         },
         getInvoiceNumber: async (parent: any, args: any, context: any) => {
             try {
-                const findNum = await Sequence.findOne({})
+                const findNum: any = await Sequence.findOne({})
 
-                return `INV-${1000000 + Number(findNum?.value) + 1}`
+                return `INV-${1000000 + findNum?.value + 1}`
             } catch (error: any) {
                 throw new ApolloError(error)
             }
@@ -120,16 +120,27 @@ const sales = {
 
                 const { invoice_number } = args.input;
 
-                let due = Number(args.input.total_amount) - Number(args.input.pay.dollar);
-                let total_pay = Number(args.input.pay.dollar);
+                let payback = 0;
 
-                if (args.input.pay.reil > 0) {
-                    due = args.input.total_amount - ((args.input.pay.reil / args.input.exchange_rate) + args.input.pay.dollar);
-                    total_pay = ((args.input.pay.reil / args.input.exchange_rate) + args.input.pay.dollar);
+                if(args.input.payback.dollar > 0){
+                    payback = args?.input?.payback?.dollar;
+                }
+
+                let due = args.input.total_amount - args.input.pay.dollar + payback;
+                let total_pay = args.input.pay.dollar - payback;
+
+                if(args?.input?.payback?.reil > 0){
+                    payback = ((args.input.payback.reil / args.input.exchange_rate) + args.input.payback.dollar)
+                }
+
+                if (args?.input?.pay?.reil > 0) {
+                    due = args.input.total_amount - ((args.input.pay.reil / args.input.exchange_rate) + args.input.pay.dollar) + payback;
+                    total_pay = ((args.input.pay.reil / args.input.exchange_rate) + args.input.pay.dollar) - payback;
                 }
 
                 const findSale = await SaleSchema.findOneAndDelete({ invoice_number });
 
+                // Sale After Suspend
                 if (findSale) {
                     const newsales = new SaleSchema({
                         invoice_number: args.input.invoice_number,
@@ -204,7 +215,7 @@ const sales = {
                         }
 
                         await StockSchema.findByIdAndUpdate(findStock?._id, {
-                            $set: { stock_on_hand: findStock?.stock_on_hand - product.qty }
+                            $set: { stock_on_hand: findStock?.stock_on_hand - product?.qty }
                         });
                     }
 
@@ -236,20 +247,29 @@ const sales = {
 
                 const findSale: any = await SaleSchema.findById(sale_id)
 
-                let due = findSale?.total_amount - findSale?.total_pay + Number(args.input.pay.dollar);
-                let total_pay = Number(args.input.pay.dollar);
+                let payback = 0;
 
-                if (args.input.pay.reil > 0) {
-                    due = findSale?.total_amount - findSale?.total_pay + ((args.input.pay.reil / args.input.exchange_rate) + args.input.pay.dollar);
-                    total_pay = findSale?.total_pay + ((args.input.pay.reil / args.input.exchange_rate) + args.input.pay.dollar);
+                if(args.input.payback.dollar > 0){
+                    payback = args.input.payback.dollar;
                 }
 
-                await SaleSchema.findByIdAndUpdate(sale_id, { $set: { remind_status, date_remind, isNotify, due, total_pay } })
+                let due = findSale?.total_amount - findSale?.total_pay + args.input.pay.dollar + payback;
+                let total_pay = args.input.pay.dollar - payback;
+
+                if( args?.input?.payback?.reil > 0){
+                    payback = ((args.input.payback.reil / args.input.exchange_rate) + args.input.payback.dollar)
+                }
+
+                if (args.input.pay.reil > 0) {
+                    due = findSale?.total_amount - findSale?.total_pay + ((args.input.pay.reil / args.input.exchange_rate) + args.input.pay.dollar) + payback;
+                    total_pay = findSale?.total_pay + ((args.input.pay.reil / args.input.exchange_rate) + args.input.pay.dollar) - payback;
+                }
+
+                await SaleSchema.findByIdAndUpdate(sale_id, { $set: { remind_status, date_remind, isNotify, due, total_pay, payback: findSale?.payback + payback } })
 
                 await new SalePaymentSchema({
                     ...args.input,
                     due,
-                    total_pay,
                     createdBy: userToken.data.user._id,
                     modifiedBy: userToken.data.user._id
                 }).save()

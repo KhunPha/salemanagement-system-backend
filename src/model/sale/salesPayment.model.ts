@@ -5,6 +5,7 @@ export interface ISalePayment extends Document {
     payment_method: string
     bank: object
     pay: object
+    payback: object
     isVoid: boolean
     createdBy: object
     modifiedBy: object
@@ -21,6 +22,14 @@ const salepayment = new Schema<ISalePayment>({
         type: mongoose.Schema.Types.ObjectId
     },
     pay: {
+        reil: {
+            type: Number
+        },
+        dollar: {
+            type: Number
+        }
+    },
+    payback: {
         reil: {
             type: Number
         },

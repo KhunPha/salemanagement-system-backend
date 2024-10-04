@@ -9,8 +9,8 @@ const report = {
         dailyReport: async (parent: any, args: any, context: any) => {
             try {
                 const now = new Date()
-                const fromDate = new Date(now.getTime() - (7 * 60 * 60 * 1000)).toISOString().split('T')[0] + 'T00:00:00.000Z';
-                const toDate = new Date(now.getTime() - (7 * 60 * 60 * 1000)).toISOString().split('T')[0] + 'T23:59:59.999Z';
+                const fromDate = new Date(now.getTime()).toISOString().split('T')[0] + 'T00:00:00.000Z';
+                const toDate = new Date(now.getTime()).toISOString().split('T')[0] + 'T23:59:59.999Z';
 
                 const SaleData: any = await SaleSchema.find({
                     isSuspend: { $ne: true },
@@ -68,12 +68,12 @@ const report = {
 
                 // Convert from_date to UTC (subtract 7 hours)
                 const fromDate = from_date
-                    ? new Date(new Date(from_date).getTime() - (7 * 60 * 60 * 1000)).toISOString().split('T')[0] + 'T00:00:00.000Z'
+                    ? new Date(new Date(from_date).getTime()).toISOString().split('T')[0] + 'T00:00:00.000Z'
                     : "";
 
                 // Convert to_date to UTC (subtract 7 hours)
                 const toDate = to_date
-                    ? new Date(new Date(to_date).getTime() - (7 * 60 * 60 * 1000)).toISOString().split('T')[0] + 'T23:59:59.999Z'
+                    ? new Date(new Date(to_date).getTime()).toISOString().split('T')[0] + 'T23:59:59.999Z'
                     : "";
 
                 const SaleData: any = await SaleSchema.find({
@@ -142,12 +142,12 @@ const report = {
 
                 // Convert from_date to UTC (subtract 7 hours)
                 const fromDate = from_date
-                    ? new Date(new Date(from_date).getTime() - (7 * 60 * 60 * 1000)).toISOString().split('T')[0] + 'T00:00:00.000Z'
+                    ? new Date(new Date(from_date).getTime()).toISOString().split('T')[0] + 'T00:00:00.000Z'
                     : "";
 
                 // Convert to_date to UTC (subtract 7 hours)
                 const toDate = to_date
-                    ? new Date(new Date(to_date).getTime() - (7 * 60 * 60 * 1000)).toISOString().split('T')[0] + 'T23:59:59.999Z'
+                    ? new Date(new Date(to_date).getTime()).toISOString().split('T')[0] + 'T23:59:59.999Z'
                     : "";
 
                 const PurchaseData: any = await PurchaseSchema.find({
@@ -235,12 +235,12 @@ const report = {
 
                 // Convert from_date to UTC (subtract 7 hours)
                 const fromDate = from_date
-                    ? new Date(new Date(from_date).getTime() - (7 * 60 * 60 * 1000)).toISOString().split('T')[0] + 'T00:00:00.000Z'
+                    ? new Date(new Date(from_date).getTime()).toISOString().split('T')[0] + 'T00:00:00.000Z'
                     : "";
 
                 // Convert to_date to UTC (subtract 7 hours)
                 const toDate = to_date
-                    ? new Date(new Date(to_date).getTime() - (7 * 60 * 60 * 1000)).toISOString().split('T')[0] + 'T23:59:59.999Z'
+                    ? new Date(new Date(to_date).getTime()).toISOString().split('T')[0] + 'T23:59:59.999Z'
                     : "";
 
 
@@ -270,12 +270,12 @@ const report = {
 
                 // Convert from_date to UTC (subtract 7 hours)
                 const fromDate = from_date
-                    ? new Date(new Date(from_date).getTime() - (7 * 60 * 60 * 1000)).toISOString().split('T')[0] + 'T00:00:00.000Z'
+                    ? new Date(new Date(from_date).getTime()).toISOString().split('T')[0] + 'T00:00:00.000Z'
                     : "";
 
                 // Convert to_date to UTC (subtract 7 hours)
                 const toDate = to_date
-                    ? new Date(new Date(to_date).getTime() - (7 * 60 * 60 * 1000)).toISOString().split('T')[0] + 'T23:59:59.999Z'
+                    ? new Date(new Date(to_date).getTime()).toISOString().split('T')[0] + 'T23:59:59.999Z'
                     : "";
 
                 const RevenueData: any = await SaleSchema.find({
@@ -337,12 +337,12 @@ const report = {
 
                 // Convert from_date to UTC (subtract 7 hours)
                 const fromDate = from_date
-                    ? new Date(new Date(from_date).getTime() - (7 * 60 * 60 * 1000)).toISOString().split('T')[0] + 'T00:00:00.000Z'
+                    ? new Date(new Date(from_date).getTime()).toISOString().split('T')[0] + 'T00:00:00.000Z'
                     : "";
 
                 // Convert to_date to UTC (subtract 7 hours)
                 const toDate = to_date
-                    ? new Date(new Date(to_date).getTime() - (7 * 60 * 60 * 1000)).toISOString().split('T')[0] + 'T23:59:59.999Z'
+                    ? new Date(new Date(to_date).getTime()).toISOString().split('T')[0] + 'T23:59:59.999Z'
                     : "";
 
                 const ExpenseData: any = await PurchaseSchema.find({

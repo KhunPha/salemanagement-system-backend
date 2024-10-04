@@ -30,6 +30,7 @@ import restoreMongoDb from "./restoreDatabase/restoreDatabase.typeDef";
 import aboutsystem from "./setting/about_system.typeDef";
 import notification from "./notification/notification.typeDef";
 import dashboard from "./dashboard/dashboard.typeDef";
+import mobile from "./mobile/mobile.typeDef";
 
 const typeDefs = [
     user,
@@ -63,7 +64,8 @@ const typeDefs = [
     restoreMongoDb,
     aboutsystem,
     notification,
-    dashboard
+    dashboard,
+    mobile
 ]
 
 export default typeDefs

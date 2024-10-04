@@ -42,11 +42,11 @@ const sales = {
                     }
                 } else if (pay_status === "Paid") {
                     pay_stat = {
-                        due: { $eq: 0 }
+                        due: { $lte: 0 }
                     }
                 } else {
                     pay_stat = {
-                        due: { $gte: 0 }
+                        due: { $gte: 0, $lte: 0 }
                     }
                 }
 
@@ -153,7 +153,7 @@ const sales = {
                         ...args.input,
                         due,
                         total_pay,
-                        cashier: userToken.data.user.firstname + userToken.data.user.lastname,
+                        cashier: userToken.data.user.firstname + " " + userToken.data.user.lastname,
                         createdBy: userToken.data.user._id,
                         modifiedBy: userToken.data.user._id
                     });
@@ -178,7 +178,7 @@ const sales = {
                 if (args.input.isSuspend) {
                     const newsales = new SaleSchema({
                         ...args.input,
-                        cashier: userToken.data.user.firstname + userToken.data.user.lastname,
+                        cashier: userToken.data.user.firstname + " " + userToken.data.user.lastname,
                         createdBy: userToken.data.user._id,
                         modifiedBy: userToken.data.user._id
                     });
@@ -199,7 +199,7 @@ const sales = {
                     paid_dollar,
                     paid_riel,
                     payback,
-                    cashier: userToken.data.user.firstname + userToken.data.user.lastname,
+                    cashier: userToken.data.user.firstname + " " + userToken.data.user.lastname,
                     createdBy: userToken.data.user._id,
                     modifiedBy: userToken.data.user._id
                 });
@@ -311,12 +311,27 @@ const sales = {
                 const findSalePayment: any = await SalePaymentSchema.findById(payment_id);
                 const findSale: any = await SaleSchema.findById(findSalePayment?._id);
 
-                let due = findSale?.due + findSalePayment?.pay?.dollar;
-                let total_pay = findSale?.total_pay - findSalePayment?.pay?.dollar;
+                let payback = 0;
 
-                if (args.input.pay.reil > 0) {
+                if (findSalePayment?.payback.dollar > 0) {
+                    payback = findSalePayment?.payback.dollar;
+                }
+
+                let due = findSale?.due + (findSalePayment?.pay?.dollar - payback);
+                let total_pay = findSale?.total_pay - (findSalePayment?.pay?.dollar - findSalePayment?.payback?.dollar);
+
+                // Paid
+                let paid_dollar = findSale?.paid_dollar + findSalePayment?.pay.dollar;
+                let paid_riel = findSale.paid_riel;
+
+                if (findSalePayment?.payback?.reil > 0) {
+                    payback = ((findSalePayment?.payback?.reil / findSale?.exchange_rate) + findSalePayment?.payback.dollar)
+                }
+
+                if (findSalePayment?.pay?.reil > 0) {
                     due = findSale?.due + ((findSalePayment?.pay?.reil / findSale?.exchange_rate) + findSalePayment?.pay?.dollar);
                     total_pay = findSale?.total_pay - ((findSalePayment?.pay?.reil / findSale?.exchange_rate) + findSalePayment?.pay?.dollar);
+                    paid_riel -= findSalePayment?.pay?.reil;
                 }
 
                 const updateDoc = { $set: { due: due, total_pay: total_pay } };

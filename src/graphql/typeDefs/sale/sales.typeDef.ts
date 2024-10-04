@@ -86,6 +86,7 @@ const sales = gql`
     }
 
     type PaymentTransacSale {
+        _id: ID
         sale_id: ID
         pay: Pay
         payment_method: String

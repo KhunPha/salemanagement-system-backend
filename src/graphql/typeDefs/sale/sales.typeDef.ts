@@ -32,6 +32,8 @@ const sales = gql`
         total_pay: Float
         total_price: Float
         payback: Float
+        paid_dollar: Float
+        paid_riel: Float
         createdBy: User
         modifiedBy: User
         createdAt: Date

@@ -19,6 +19,8 @@ export interface ISales extends Document {
     total_pay: number
     total_price: number
     payback: number
+    paid_dollar: number
+    paid_riel: number
     isSuspend: boolean
     createdBy: object
     modifiedBy: object
@@ -78,6 +80,12 @@ const sale = new Schema<ISales>({
         type: Number
     },
     payback: {
+        type: Number
+    },
+    paid_dollar: {
+        type: Number
+    },
+    paid_riel: {
         type: Number
     },
     isSuspend: {

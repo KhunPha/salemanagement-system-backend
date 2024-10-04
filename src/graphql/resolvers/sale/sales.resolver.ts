@@ -122,20 +122,26 @@ const sales = {
 
                 let payback = 0;
 
-                if(args.input.payback.dollar > 0){
+                if (args.input.payback.dollar > 0) {
                     payback = args?.input?.payback?.dollar;
                 }
 
                 let due = args.input.total_amount - args.input.pay.dollar + payback;
                 let total_pay = args.input.pay.dollar - payback;
 
-                if(args?.input?.payback?.reil > 0){
+                // Paid
+                let paid_dollar = args.input.pay.dollar;
+                let paid_riel = 0;
+
+                if (args?.input?.payback?.reil > 0) {
                     payback = ((args.input.payback.reil / args.input.exchange_rate) + args.input.payback.dollar)
                 }
 
                 if (args?.input?.pay?.reil > 0) {
                     due = args.input.total_amount - ((args.input.pay.reil / args.input.exchange_rate) + args.input.pay.dollar) + payback;
                     total_pay = ((args.input.pay.reil / args.input.exchange_rate) + args.input.pay.dollar) - payback;
+
+                    paid_riel = args.input.pay.reil;
                 }
 
                 const findSale = await SaleSchema.findOneAndDelete({ invoice_number });
@@ -190,6 +196,8 @@ const sales = {
                     ...args.input,
                     due,
                     total_pay,
+                    paid_dollar,
+                    paid_riel,
                     cashier: userToken.data.user.firstname + userToken.data.user.lastname,
                     createdBy: userToken.data.user._id,
                     modifiedBy: userToken.data.user._id
@@ -249,23 +257,28 @@ const sales = {
 
                 let payback = 0;
 
-                if(args.input.payback.dollar > 0){
+                if (args.input.payback.dollar > 0) {
                     payback = args.input.payback.dollar;
                 }
 
                 let due = findSale?.total_amount - findSale?.total_pay + args.input.pay.dollar + payback;
                 let total_pay = args.input.pay.dollar - payback;
 
-                if( args?.input?.payback?.reil > 0){
+                // Paid
+                let paid_dollar = findSale?.paid_dollar + args.input.pay.dollar;
+                let paid_riel = findSale.paid_riel;
+
+                if (args?.input?.payback?.reil > 0) {
                     payback = ((args.input.payback.reil / args.input.exchange_rate) + args.input.payback.dollar)
                 }
 
                 if (args.input.pay.reil > 0) {
                     due = findSale?.total_amount - findSale?.total_pay + ((args.input.pay.reil / args.input.exchange_rate) + args.input.pay.dollar) + payback;
                     total_pay = findSale?.total_pay + ((args.input.pay.reil / args.input.exchange_rate) + args.input.pay.dollar) - payback;
+                    paid_riel += args.input.pay.reil;
                 }
 
-                await SaleSchema.findByIdAndUpdate(sale_id, { $set: { remind_status, date_remind, isNotify, due, total_pay, payback: findSale?.payback + payback } })
+                await SaleSchema.findByIdAndUpdate(sale_id, { $set: { remind_status, date_remind, isNotify, due, total_pay, payback: findSale?.payback ? findSale?.payback + payback : payback, paid_dollar, paid_riel } })
 
                 await new SalePaymentSchema({
                     ...args.input,
@@ -292,7 +305,7 @@ const sales = {
         },
         voidSalePayment: async (parent: any, args: any) => {
             try {
-                const {payment_id} = args
+                const { payment_id } = args
 
                 const findSalePayment: any = await SalePaymentSchema.findById(payment_id);
                 const findSale: any = await SaleSchema.findById(findSalePayment?._id);
@@ -305,7 +318,7 @@ const sales = {
                     total_pay = findSale?.total_pay - ((findSalePayment?.pay?.reil / findSale?.exchange_rate) + findSalePayment?.pay?.dollar);
                 }
 
-                const updateDoc = { $set: {due: due, total_pay: total_pay}};
+                const updateDoc = { $set: { due: due, total_pay: total_pay } };
 
                 await SaleSchema.findByIdAndUpdate(findSale?._id, updateDoc);
 

@@ -28,7 +28,7 @@ const shift = gql`
 
     type Mutation {
         openShift(input: ShiftInput): ResponseMessage!
-        closeShift: ResponseMessage
+        closeShift(id: ID): ResponseMessage
     }
 `
 

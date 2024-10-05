@@ -2,6 +2,7 @@ import { ApolloError } from "apollo-server-express"
 import { verifyToken } from "../../../middleware/auth.middleware"
 import ShiftSchema from "../../../model/sale/shift.model"
 import { message } from "../../../helper/message.helper"
+import SaleSchema from "../../../model/sale/sales.model"
 
 const shift = {
     Query: {
@@ -44,28 +45,10 @@ const shift = {
             try {
                 const userToken: any = await verifyToken(context.user)
                 if (!userToken.status) throw new ApolloError("Unauthorization")
-                const today = new Date(), startOfDay = new Date(), endOfDay = new Date()
-                const curHr = today.getHours()
+                const { id } = args
 
-                if (curHr < 12) {
-                    startOfDay.setHours(0, 0, 0, 0); // Set to midnight
-
-                    endOfDay.setHours(11, 59, 59, 999); // Set to the end of the day
-                } else {
-                    startOfDay.setHours(12, 0, 0, 0); // Set to midnight
-
-                    endOfDay.setHours(23, 59, 59, 999);
-                }
-
-                const shiftData: any = await ShiftSchema.findOne({
-                    isOpen: true,
-                    createdAt: {
-                        $gte: startOfDay,
-                        $lt: endOfDay
-                    }
-                })
-
-                await ShiftSchema.findByIdAndUpdate(shiftData?._id, { $set: { isOpen: false } })
+                await ShiftSchema.findByIdAndUpdate(id, { $set: { isOpen: false } });
+                await SaleSchema.updateMany({ shift_id: id }, { shift_is_open: false })
 
                 return message
             } catch (error: any) {

@@ -6,8 +6,8 @@ const dashboard = {
     Query: {
         topDashboard: async () => {
             try {
-                const totalSales = await SaleSchema.countDocuments({ isSuspend: false });
-                const RevenueData: any = await SaleSchema.find({ isSuspend: false }).populate("product_lists.product");
+                const totalSales = await SaleSchema.countDocuments({ isSuspend: false, shift_is_open: { $ne: true } });
+                const RevenueData: any = await SaleSchema.find({ isSuspend: false, shift_is_open: { $ne: true } }).populate("product_lists.product");
                 const ExpenseData: any = await PurchaseSchema.find({ isVoid: false });
 
                 // RevenueData
@@ -42,6 +42,7 @@ const dashboard = {
                 const toDate = year ? new Date(`${year}-12-31`).toISOString().split('T')[0] + 'T23:59:59.999Z' : new Date(`${now.getFullYear()}-12-31`).toISOString().split('T')[0] + 'T23:59:59.999Z';
 
                 const AnnualSaleData: any = await SaleSchema.find({
+                    shift_is_open: { $ne: true },
                     isSuspend: false,
                     createdAt: {
                         $gte: fromDate,
@@ -95,6 +96,7 @@ const dashboard = {
                 const toDate = month ? new Date(`${now.getFullYear()}-${getSaleMonth.getMonth() + 1}-31`).toISOString().split('T')[0] + 'T23:59:59.999Z' : new Date(`${now.getFullYear()}-${now.getMonth() + 1}-31`).toISOString().split('T')[0] + 'T23:59:59.999Z';
 
                 const MonthlySalesItems: any = await SaleSchema.find({
+                    shift_is_open: { $ne: true },
                     isSuspend: false,
                     createdAt: {
                         $gte: fromDate,

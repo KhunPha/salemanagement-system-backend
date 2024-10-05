@@ -22,6 +22,9 @@ export interface ISales extends Document {
     paid_dollar: number
     paid_riel: number
     isSuspend: boolean
+    shift_is_open: boolean
+    shift_id: object
+    shift: string
     createdBy: object
     modifiedBy: object
 }
@@ -91,6 +94,16 @@ const sale = new Schema<ISales>({
     isSuspend: {
         type: Boolean,
         default: false
+    },
+    shift_is_open: {
+        type: Boolean,
+        default: true
+    },
+    shift_id: {
+        type: mongoose.Schema.Types.ObjectId
+    },
+    shift: {
+        type: String
     },
     createdBy: {
         type: mongoose.Schema.Types.ObjectId,

@@ -13,6 +13,7 @@ const report = {
                 const toDate = new Date(now.getTime()).toISOString().split('T')[0] + 'T23:59:59.999Z';
 
                 const SaleData: any = await SaleSchema.find({
+                    shift_is_open: { $ne: true },
                     isSuspend: { $ne: true },
                     createdAt: {
                         $gte: fromDate,
@@ -77,6 +78,7 @@ const report = {
                     : "";
 
                 const SaleData: any = await SaleSchema.find({
+                    shift_is_open: { $ne: true },
                     isSuspend: false,
                     createdAt: {
                         $gte: fromDate,
@@ -246,6 +248,7 @@ const report = {
 
                 const data = await SaleSchema.find({
                     $and: [
+                        { shift_is_open: { $ne: true } },
                         { isSuspend: false },
                         {
                             createdAt: {
@@ -279,6 +282,7 @@ const report = {
                     : "";
 
                 const RevenueData: any = await SaleSchema.find({
+                    shift_is_open: { $ne: true },
                     isSuspend: { $ne: true },
                     createdAt: {
                         $gte: fromDate,
@@ -358,8 +362,8 @@ const report = {
 
                 ExpenseData.map((expenseData: any) => {
                     const expenseId = new Date(new Date(expenseData?.createdAt).getTime() + (7 * 60 * 60 * 1000))
-                    .toISOString()
-                    .split('T')[0] + 'T00:00:00.000Z';
+                        .toISOString()
+                        .split('T')[0] + 'T00:00:00.000Z';
 
                     if (!products[expenseId]) {
                         products[expenseId] = {}; // Initialize object for each expenseId

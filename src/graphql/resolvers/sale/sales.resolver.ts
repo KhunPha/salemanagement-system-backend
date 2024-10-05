@@ -7,6 +7,7 @@ import { customLabels } from "../../../helper/customeLabels.helper"
 import SalePaymentSchema from "../../../model/sale/salesPayment.model"
 import Sequence from "../../../model/sale/sequent.model"
 import StockSchema from "../../../model/stock/stocks.model"
+import ShiftSchema from "../../../model/sale/shift.model"
 
 const sales = {
     Query: {
@@ -118,6 +119,8 @@ const sales = {
                 const userToken: any = await verifyToken(context.user);
                 if (!userToken.status) throw new ApolloError("Unauthorization");
 
+                const findShift = await ShiftSchema.findOne({ isOpen: true })
+
                 const { invoice_number } = args.input;
 
                 let payback = 0;
@@ -153,6 +156,11 @@ const sales = {
                         ...args.input,
                         due,
                         total_pay,
+                        paid_dollar,
+                        paid_riel,
+                        payback,
+                        shift_id: findShift?._id,
+                        shift: findShift?.shift,
                         cashier: userToken.data.user.firstname + " " + userToken.data.user.lastname,
                         createdBy: userToken.data.user._id,
                         modifiedBy: userToken.data.user._id
@@ -178,6 +186,8 @@ const sales = {
                 if (args.input.isSuspend) {
                     const newsales = new SaleSchema({
                         ...args.input,
+                        shift_id: findShift?._id,
+                        shift: findShift?.shift,
                         cashier: userToken.data.user.firstname + " " + userToken.data.user.lastname,
                         createdBy: userToken.data.user._id,
                         modifiedBy: userToken.data.user._id
@@ -199,6 +209,8 @@ const sales = {
                     paid_dollar,
                     paid_riel,
                     payback,
+                    shift_id: findShift?._id,
+                    shift: findShift?.shift,
                     cashier: userToken.data.user.firstname + " " + userToken.data.user.lastname,
                     createdBy: userToken.data.user._id,
                     modifiedBy: userToken.data.user._id

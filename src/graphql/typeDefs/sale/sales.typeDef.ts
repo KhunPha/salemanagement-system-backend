@@ -92,6 +92,7 @@ const sales = gql`
         payment_method: String
         bank: Bank
         payback: PayBack
+        isVoid: Boolean
         createdAt: Date
     }
 

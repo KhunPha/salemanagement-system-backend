@@ -121,6 +121,13 @@ const sales = {
 
                 const findShift = await ShiftSchema.findOne({ isOpen: true })
 
+                if(!findShift){
+                    messageError.message_en = "Please open shift";
+                    messageError.message_kh = "សូមមេត្តាបើកវេនលក់ជាមុនសិន";
+
+                    return messageError
+                }
+
                 const { invoice_number } = args.input;
 
                 let payback = 0;

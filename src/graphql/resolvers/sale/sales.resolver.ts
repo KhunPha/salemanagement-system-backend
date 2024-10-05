@@ -336,7 +336,7 @@ const sales = {
                     payback = findSale?.payback - findSalePayment?.payback?.dollar;
                 }
 
-                let due = findSale?.due + (findSalePayment?.payback?.dollar - findSalePayment?.pay?.dollar);
+                let due = findSale?.due + (findSalePayment?.pay?.dollar - findSalePayment?.payback?.dollar);
                 let total_pay = findSale?.total_pay - (findSalePayment?.pay?.dollar - findSalePayment?.payback?.dollar);
 
                 // Paid

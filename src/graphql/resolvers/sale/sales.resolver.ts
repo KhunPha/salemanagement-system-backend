@@ -15,7 +15,7 @@ const sales = {
             try {
                 const userToken: any = await verifyToken(context.user)
                 if (!userToken.status) throw new ApolloError("Unauthorization")
-                const { page, limit, pagination, keyword, customer, pay_status } = await args
+                const { page, limit, pagination, keyword, customer, pay_status } = args
                 const options: PaginateOptions = {
                     pagination,
                     customLabels,
@@ -37,7 +37,7 @@ const sales = {
 
                 let pay_stat: any = {};
 
-                if (pay_status === "UnPaid") {
+                if (pay_status === "Unpaid") {
                     pay_stat = {
                         due: { $gt: 0 }
                     }
@@ -47,7 +47,7 @@ const sales = {
                     }
                 } else {
                     pay_stat = {
-                        due: { $gte: 0 }
+                        due: { $ne: null }
                     }
                 }
 
@@ -336,7 +336,7 @@ const sales = {
                     payback = findSale?.payback - findSalePayment?.payback?.dollar;
                 }
 
-                let due = findSale?.due + (findSale?.payback - findSalePayment?.pay?.dollar);
+                let due = findSale?.due + (findSalePayment?.payback?.dollar - findSalePayment?.pay?.dollar);
                 let total_pay = findSale?.total_pay - (findSalePayment?.pay?.dollar - findSalePayment?.payback?.dollar);
 
                 // Paid
@@ -348,7 +348,7 @@ const sales = {
                 }
 
                 if (findSalePayment?.pay?.reil > 0) {
-                    due = findSale?.due + ((findSalePayment?.pay?.reil / findSale?.exchange_rate) + findSalePayment?.pay?.dollar);
+                    due = findSale?.due + (((findSalePayment?.pay?.reil - findSalePayment?.payback?.reil) / findSale?.exchange_rate) + (findSalePayment?.pay?.dollar - findSalePayment?.payback?.dollar));
                     total_pay = findSale?.total_pay - ((findSalePayment?.pay?.reil / findSale?.exchange_rate) + findSalePayment?.pay?.dollar);
                     paid_riel -= findSalePayment?.pay?.reil;
                 }

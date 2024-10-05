@@ -10,7 +10,7 @@ const shift = {
                 const userToken: any = await verifyToken(context.user)
                 if (!userToken.status) throw new ApolloError("Unauthorization")
 
-                return await ShiftSchema.find();
+                return await ShiftSchema.findOne({ isOpen: true });
             } catch (error: any) {
                 throw new ApolloError(error.message)
             }

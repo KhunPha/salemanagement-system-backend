@@ -23,7 +23,7 @@ const shift = gql`
     }
 
     type Query {
-        getShifts: [Shift]
+        getShifts: Shift
     }
 
     type Mutation {

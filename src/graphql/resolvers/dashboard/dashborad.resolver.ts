@@ -24,7 +24,7 @@ const dashboard = {
 
                 ExpenseData.map((expenseData: any) => {
                     expenseData.products_lists.map((product: any) => {
-                        total_expense = product?.unit_price * product?.qty;
+                        total_expense += product?.unit_price * product?.qty;
                     })
                 })
 

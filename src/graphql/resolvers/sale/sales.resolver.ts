@@ -46,7 +46,7 @@ const sales = {
                     }
                 } else {
                     pay_stat = {
-                        due: { $gte: 0, $lte: 0 }
+                        due: { $gte: 0 }
                     }
                 }
 
@@ -308,24 +308,24 @@ const sales = {
             try {
                 const { payment_id } = args
 
-                const findSalePayment: any = await SalePaymentSchema.findById(payment_id);
-                const findSale: any = await SaleSchema.findById(findSalePayment?._id);
+                const findSalePayment: any = await SalePaymentSchema.findByIdAndUpdate(payment_id, { $set: { isVoid: true } });
+                const findSale: any = await SaleSchema.findById(findSalePayment?.sale_id);
 
                 let payback = 0;
 
                 if (findSalePayment?.payback.dollar > 0) {
-                    payback = findSalePayment?.payback.dollar;
+                    payback = findSale?.payback - findSalePayment?.payback?.dollar;
                 }
 
-                let due = findSale?.due + (findSalePayment?.pay?.dollar - payback);
+                let due = findSale?.due + (findSale?.payback - findSalePayment?.pay?.dollar);
                 let total_pay = findSale?.total_pay - (findSalePayment?.pay?.dollar - findSalePayment?.payback?.dollar);
 
                 // Paid
-                let paid_dollar = findSale?.paid_dollar + findSalePayment?.pay.dollar;
-                let paid_riel = findSale.paid_riel;
+                let paid_dollar = findSale?.paid_dollar - findSalePayment?.pay.dollar;
+                let paid_riel = findSale?.paid_riel;
 
                 if (findSalePayment?.payback?.reil > 0) {
-                    payback = ((findSalePayment?.payback?.reil / findSale?.exchange_rate) + findSalePayment?.payback.dollar)
+                    payback = findSale?.payback - ((findSalePayment?.payback?.reil / findSale?.exchange_rate) + findSalePayment?.payback.dollar);
                 }
 
                 if (findSalePayment?.pay?.reil > 0) {
@@ -334,7 +334,7 @@ const sales = {
                     paid_riel -= findSalePayment?.pay?.reil;
                 }
 
-                const updateDoc = { $set: { due: due, total_pay: total_pay } };
+                const updateDoc = { $set: { due: due, total_pay: total_pay, paid_dollar, paid_riel, payback } };
 
                 await SaleSchema.findByIdAndUpdate(findSale?._id, updateDoc);
 

@@ -58,6 +58,7 @@ const shift = {
                 }
 
                 const shiftData: any = await ShiftSchema.findOne({
+                    isOpen: true,
                     createdAt: {
                         $gte: startOfDay,
                         $lt: endOfDay

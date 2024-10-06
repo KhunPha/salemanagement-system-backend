@@ -2,7 +2,7 @@
 const { gql } = require('apollo-server-express');
 
 const mobile = gql`
-  type User {
+  type UserExpoPush {
     id: ID!
     user_id: User
     username: String!
@@ -10,7 +10,7 @@ const mobile = gql`
   }
 
   type Mutation {
-    registerPushToken(username: String!, expoPushToken: String!): User
+    registerPushToken(username: String!, expoPushToken: String!): UserExpoPush
     sendUserNotification(username: String!, title: String!, body: String!): Boolean
     logoutMobileUser(user_id: ID!, expoPushToken: String): ResponseMessage!
   }

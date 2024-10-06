@@ -1,5 +1,6 @@
 import { ApolloError } from "apollo-server-express"
 import NotificationSchema from "../../../model/notification/notification.model"
+import { message } from "../../../helper/message.helper"
 
 const notification = {
     Query: {
@@ -33,6 +34,21 @@ const notification = {
                 await NotificationSchema.findByIdAndUpdate(notification_id, { $set: { read: true } })
 
                 return true;
+            } catch (error: any) {
+                throw new ApolloError(error)
+            }
+        },
+        readAllStockNotification: async (parent: any, args: any) => {
+            try {
+                const { closeNotify } = args
+
+                if (closeNotify) {
+                    await NotificationSchema.updateMany({ read: false, section: "Stock" }, { read: true });
+
+                    return message;
+                }
+
+                return message;
             } catch (error: any) {
                 throw new ApolloError(error)
             }

@@ -54,7 +54,7 @@ const user = {
                 const userToken: any = await verifyToken(context.user)
                 if (!userToken.status) throw new ApolloError("Unauthorization")
 
-                return userToken.data.user
+                return userToken?.data?.user
             } catch (error: any) {
                 throw new ApolloError(error.message)
             }
@@ -205,7 +205,9 @@ const user = {
             try {
                 const userToken = await verifyToken(context.user)
 
-                await UserSchema.findByIdAndUpdate(userToken.data.user._id, { $set: { sessionId: null } })
+                const id = userToken?.data?.user?._id;
+
+                await UserSchema.findByIdAndUpdate(id, { $set: { sessionId: null } })
 
                 return message
             } catch (error: any) {

@@ -20,6 +20,7 @@ const notification = gql`
 
     type Mutation {
         readNotification(notification_id: ID): Boolean
+        readAllStockNotification(closeNotify: Boolean): ResponseMessage!
     }
 `
 

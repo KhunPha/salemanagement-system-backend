@@ -2,6 +2,7 @@ import { gql } from "apollo-server-express";
 
 const shift = gql`
     type Shift {
+        _id: ID
         deposit_money: [DepositMoney]
         isOpen: Boolean
         shift: String

@@ -20,8 +20,6 @@ const shift = {
     Mutation: {
         openShift: async (parent: any, args: any, context: any) => {
             try {
-                const userToken: any = await verifyToken(context.user)
-                if (!userToken.status) throw new ApolloError("Unauthorization")
                 const today = new Date()
                 const curHr = today.getHours()
                 args.input.shift = "Afternoon"

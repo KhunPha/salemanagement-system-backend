@@ -14,8 +14,6 @@ const mobile = {
 
             const alreadyExist = user?.expoPushToken?.some((expoPushTokens: any) => expoPushTokens === expoPushToken);
 
-            console.log(alreadyExist)
-
             if (alreadyExist) {
                 return user;
             }

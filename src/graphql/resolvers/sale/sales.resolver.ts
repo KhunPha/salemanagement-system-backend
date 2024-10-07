@@ -302,6 +302,7 @@ const sales = {
 
                 await new SalePaymentSchema({
                     ...args.input,
+                    total_pay: args?.input?.pay,
                     due,
                     createdBy: userToken.data.user._id,
                     modifiedBy: userToken.data.user._id

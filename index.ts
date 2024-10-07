@@ -44,6 +44,7 @@ app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use('/public', express.static(path.join(__dirname, 'public')));
 app.use(cookieParser())
+app.use(express.json({ limit: '10mb' }));
 
 const PORT = process.env.PORT || 3000
 var client: any = null
@@ -108,8 +109,12 @@ const startServer = async () => {
         const apolloServer = new ApolloServer({
             schema,
             context: (req) => {
-                const user = req
-                return { user, client }
+                try {
+                    const user = req
+                    return { user, client }
+                } catch (error: any) {
+                    throw new ApolloServer(error)
+                }
             }
         })
 

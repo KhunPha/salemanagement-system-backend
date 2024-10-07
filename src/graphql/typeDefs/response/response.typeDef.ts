@@ -20,6 +20,7 @@ const ResponseMessage = gql`
         message_en: String
         message_kh: String
         status: Boolean
+        token: String
     }
 `
 

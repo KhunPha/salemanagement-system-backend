@@ -9,8 +9,11 @@ const mobile = gql`
     expoPushToken: String!
   }
 
+  type Query {
+    getMobileUserLogin(username: String!, expoPushToken: String!): User
+  }
+
   type Mutation {
-    registerPushToken(username: String!, expoPushToken: String!): UserExpoPush
     sendUserNotification(username: String!, title: String!, body: String!): Boolean
     logoutMobileUser(user_id: ID!, expoPushToken: String): ResponseMessage!
   }

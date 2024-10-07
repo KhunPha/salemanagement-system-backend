@@ -5,8 +5,8 @@ import { message } from "../../../helper/message.helper";
 const expo = new Expo();
 
 const mobile = {
-    Mutation: {
-        registerPushToken: async (_: any, args: any) => {
+    Query: {
+        getMobileUserLogin: async (_: any, args: any) => {
             const { username, expoPushToken } = args;
 
             // Find the user by username
@@ -24,7 +24,9 @@ const mobile = {
 
             // Return the updated user object
             return user;
-        },
+        }
+    },
+    Mutation: {
         logoutMobileUser: async (_: any, args: any) => {
             const { user_id, expoPushToken } = args
             const user: any = await UserSchema.findById(user_id);

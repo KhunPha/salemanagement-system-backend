@@ -190,6 +190,8 @@ const user = {
                     throw new ApolloError("Incorrect password!")
                 }
 
+                messageMobileLogin.token = await getToken(userfound, null);
+
                 // const newSessionId = uuidv4()
                 // messageLogin.sessionId = newSessionId;
                 // messageLogin.token = await getToken(userfound, newSessionId)

@@ -16,6 +16,7 @@ const messageMobileLogin = {
     message_kh: "ជោគជ័យ",
     message_en: "successfully",
     status: true,
+    token: null,
     user_data: null
 }
 

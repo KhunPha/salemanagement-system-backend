@@ -121,7 +121,7 @@ const sales = {
 
                 const findShift = await ShiftSchema.findOne({ isOpen: true })
 
-                if(!findShift){
+                if (!findShift) {
                     messageError.message_en = "Please open shift";
                     messageError.message_kh = "សូមមេត្តាបើកវេនលក់ជាមុនសិន";
 
@@ -161,11 +161,11 @@ const sales = {
                     const newsales = new SaleSchema({
                         invoice_number: args.input.invoice_number,
                         ...args.input,
-                        due,
-                        total_pay,
-                        paid_dollar,
-                        paid_riel,
-                        payback,
+                        due: due.toFixed(2),
+                        total_pay: total_pay.toFixed(2),
+                        paid_dollar: paid_dollar.toFixed(2),
+                        paid_riel: paid_riel.toFixed(2),
+                        payback: payback.toFixed(2),
                         shift_id: findShift?._id,
                         shift: findShift?.shift,
                         cashier: userToken.data.user.firstname + " " + userToken.data.user.lastname,
@@ -211,11 +211,11 @@ const sales = {
 
                 const newsales = new SaleSchema({
                     ...args.input,
-                    due,
-                    total_pay,
-                    paid_dollar,
-                    paid_riel,
-                    payback,
+                    due: due.toFixed(2),
+                    total_pay: total_pay.toFixed(2),
+                    paid_dollar: paid_dollar.toFixed(2),
+                    paid_riel: paid_riel.toFixed(2),
+                    payback: payback.toFixed(2),
                     shift_id: findShift?._id,
                     shift: findShift?.shift,
                     cashier: userToken.data.user.firstname + " " + userToken.data.user.lastname,
@@ -289,12 +289,12 @@ const sales = {
                 let paid_riel = findSale.paid_riel;
 
                 if (args?.input?.payback?.reil > 0) {
-                    payback = ((args.input.payback.reil / args.input.exchange_rate) + args.input.payback.dollar)
+                    payback = ((args.input.payback.reil / findSale?.exchange_rate) + args.input.payback.dollar)
                 }
 
                 if (args.input.pay.reil > 0) {
-                    due = findSale?.total_amount - (findSale?.total_pay + ((args.input.pay.reil / args.input.exchange_rate) + args.input.pay.dollar) - payback);
-                    total_pay = findSale?.total_pay + ((args.input.pay.reil / args.input.exchange_rate) + args.input.pay.dollar) - payback;
+                    due = findSale?.total_amount - (findSale?.total_pay + ((args.input.pay.reil / findSale?.exchange_rate) + args.input.pay.dollar) - payback);
+                    total_pay = findSale?.total_pay + ((args.input.pay.reil / findSale?.exchange_rate) + args.input.pay.dollar) - payback;
                     paid_riel += args.input.pay.reil;
                 }
 
@@ -302,7 +302,7 @@ const sales = {
 
                 await new SalePaymentSchema({
                     ...args.input,
-                    total_pay: args?.input?.pay,
+                    pay: args?.input?.pay,
                     due,
                     createdBy: userToken.data.user._id,
                     modifiedBy: userToken.data.user._id

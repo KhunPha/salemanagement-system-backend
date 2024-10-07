@@ -17,6 +17,8 @@ const cookieParser = require('cookie-parser');
 const os = require("os")
 const app: any = express()
 
+import("./src/util/db")
+
 var ip_address: any;
 
 if (os.networkInterfaces()['Ethernet']) {

@@ -6,7 +6,7 @@ const expo = new Expo();
 
 const mobile = {
     Query: {
-        getMobileUserLogin: async (_: any, args: any) => {
+        getUserMobileLogin: async (_: any, args: any) => {
             const { username, expoPushToken } = args;
 
             // Find the user by username

@@ -10,7 +10,7 @@ const mobile = gql`
   }
 
   type Query {
-    getMobileUserLogin(username: String!, expoPushToken: String!): User
+    getUserMobileLogin(username: String!, expoPushToken: String!): User
   }
 
   type Mutation {

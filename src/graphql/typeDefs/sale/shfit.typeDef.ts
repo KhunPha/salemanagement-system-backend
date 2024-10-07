@@ -4,8 +4,8 @@ const shift = gql`
     type Shift {
         deposit_money: [DepositMoney]
         isOpen: Boolean
-        shfit: String
-        date: Int
+        shift: String
+        createdAt: Date
     }
 
     type DepositMoney {

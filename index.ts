@@ -125,22 +125,22 @@ const startServer = async () => {
             })
         })
 
-        SubscriptionServer.create(
-            {
-                schema,
-                execute,
-                subscribe
-            },
-            {
-                server: httpServer,
-                path: apolloServer.graphqlPath
-            }
-        )
+        // SubscriptionServer.create(
+        //     {
+        //         schema,
+        //         execute,
+        //         subscribe
+        //     },
+        //     {
+        //         server: httpServer,
+        //         path: apolloServer.graphqlPath
+        //     }
+        // )
 
-        success({
-            badge: true,
-            message: `WebSocket subscriptions ready at ws://${ip_address}:${PORT}${apolloServer.graphqlPath}`
-        })
+        // success({
+        //     badge: true,
+        //     message: `WebSocket subscriptions ready at ws://${ip_address}:${PORT}${apolloServer.graphqlPath}`
+        // })
 
     } catch (err: any) {
         error({

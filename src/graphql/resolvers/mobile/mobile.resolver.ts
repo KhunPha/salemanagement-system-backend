@@ -42,25 +42,34 @@ const mobile = {
             const user: any = await UserSchema.findOne({ username });
 
             try {
-                user?.expoPushToken?.map(async (exposToken: any) => {
-                    if (!user || !Expo.isExpoPushToken(exposToken) || exposToken === "") {
-                        console.log('Invalid Expo Push Token or user not found');
-                    } else {
-                        const message: any = {
-                            to: exposToken,
-                            sound: 'default',
-                            title,
-                            body,
-                            data: { extraData: 'Some data' },
-                            icon: "https://icons.iconarchive.com/icons/ampeross/qetto/256/icon-developer-icon.png"
-                        };
-                        await expo.sendPushNotificationsAsync([message]);
-                    }
-                })
+                // Filter valid Expo push tokens
+                const validTokens: any[] = user?.expoPushToken?.filter((token: any) => {
+                    return Expo.isExpoPushToken(token) && token !== ""; // Check if token is valid
+                });
+
+                if (!user || validTokens.length === 0) {
+                    console.log('Invalid Expo Push Token or user not found');
+                    return false;
+                }
+
+                // Prepare the notification message
+                const message: any = {
+                    sound: 'default',
+                    title,
+                    body,
+                    data: { extraData: 'Some data' },
+                    icon: "https://icons.iconarchive.com/icons/ampeross/qetto/256/icon-developer-icon.png"
+                };
+
+                // Send notifications for each valid token using forEach and await each notification
+                await Promise.all(validTokens.map(async (token: any) => {
+                    await expo.sendPushNotificationsAsync([{ ...message, to: token }]);
+                }));
 
                 return true;
             } catch (error) {
                 console.error('Error sending notification:', error);
+                return false;
             }
         },
     },

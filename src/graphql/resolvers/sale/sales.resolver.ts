@@ -193,6 +193,7 @@ const sales = {
                 if (args.input.isSuspend) {
                     const newsales = new SaleSchema({
                         ...args.input,
+                        payback: payback.toFixed(2),
                         shift_id: findShift?._id,
                         shift: findShift?.shift,
                         cashier: userToken.data.user.firstname + " " + userToken.data.user.lastname,

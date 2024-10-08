@@ -193,10 +193,6 @@ const sales = {
                 if (args.input.isSuspend) {
                     const newsales = new SaleSchema({
                         ...args.input,
-                        due: due.toFixed(2),
-                        total_pay: total_pay.toFixed(2),
-                        paid_dollar: paid_dollar.toFixed(2),
-                        paid_riel: paid_riel.toFixed(2),
                         payback: payback.toFixed(2),
                         shift_id: findShift?._id,
                         shift: findShift?.shift,

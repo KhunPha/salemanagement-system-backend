@@ -90,7 +90,7 @@ const startServer = async () => {
                 }
             },
             formatError: (error) => {
-                console.error('GraphQL Error:', error);
+                // console.error('GraphQL Error:', error);
                 return error;
             },
         });

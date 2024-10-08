@@ -43,25 +43,24 @@ const mobile = {
 
             try {
                 user?.expoPushToken?.map(async (exposToken: any) => {
-                    if (!user || !Expo.isExpoPushToken(exposToken)) {
-                        throw new Error('Invalid Expo Push Token or user not found');
+                    if (!user || !Expo.isExpoPushToken(exposToken) || exposToken === "") {
+                        console.log('Invalid Expo Push Token or user not found');
+                    } else {
+                        const message: any = {
+                            to: exposToken,
+                            sound: 'default',
+                            title,
+                            body,
+                            data: { extraData: 'Some data' },
+                            icon: "https://icons.iconarchive.com/icons/ampeross/qetto/256/icon-developer-icon.png"
+                        };
+                        await expo.sendPushNotificationsAsync([message]);
                     }
-
-                    const message: any = {
-                        to: exposToken,
-                        sound: 'default',
-                        title,
-                        body,
-                        data: { extraData: 'Some data' },
-                        icon: "https://icons.iconarchive.com/icons/ampeross/qetto/256/icon-developer-icon.png"
-                    };
-                    await expo.sendPushNotificationsAsync([message]);
                 })
 
                 return true;
             } catch (error) {
                 console.error('Error sending notification:', error);
-                return false;
             }
         },
     },

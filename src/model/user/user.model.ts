@@ -10,6 +10,7 @@ export interface IUser extends Document {
     image: string,
     publicId: string
     remark: string
+    status: boolean
     sessionId: string
     expoPushToken: object
     isDelete: boolean
@@ -48,6 +49,9 @@ const user = new Schema<IUser>({
     },
     sessionId: {
         type: String
+    },
+    status: {
+        type: Boolean
     },
     expoPushToken: [{
         type: String,

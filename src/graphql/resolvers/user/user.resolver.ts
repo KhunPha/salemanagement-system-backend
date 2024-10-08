@@ -280,7 +280,7 @@ const user = {
 
                 const { id } = await args
 
-                const updateDoc = { $set: { isDelete: true } }
+                const updateDoc = { $set: { status: false } }
 
                 const deleteUser: any = await UserSchema.findByIdAndUpdate(id, updateDoc)
 

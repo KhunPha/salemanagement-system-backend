@@ -169,7 +169,7 @@ cron.schedule('*/1 * * * *', async () => {
 });
 
 // Notification
-cron.schedule('* * * * *', async () => {
+cron.schedule('*/1 * * * * *', async () => {
     try {
         const findLowStock: any = await StockSchema.find({
             isNewInsert: { $ne: true },
@@ -192,23 +192,23 @@ cron.schedule('* * * * *', async () => {
 
             user?.map((user: any) => {
                 user?.expoPushToken?.map(async (exposToken: any) => {
-                    if (!user || !Expo.isExpoPushToken(exposToken)) {
+                    if (!user || !Expo.isExpoPushToken(exposToken) || exposToken === "") {
                         console.log('Invalid Expo Push Token or user not found')
-                    }
+                    } else {
+                        const message: any = {
+                            to: exposToken,
+                            sound: 'default',
+                            title: data?.product_details?.pro_name,
+                            body: `Low Stock ${data.stock_on_hand} items`,
+                            data: { extraData: 'Some data' },
+                            icon: "https://icons.iconarchive.com/icons/ampeross/qetto/256/icon-developer-icon.png"
+                        };
 
-                    const message: any = {
-                        to: exposToken,
-                        sound: 'default',
-                        title: data?.product_details?.pro_name,
-                        body: `Low Stock ${data.stock_on_hand} items`,
-                        data: { extraData: 'Some data' },
-                        icon: "https://icons.iconarchive.com/icons/ampeross/qetto/256/icon-developer-icon.png"
-                    };
-
-                    try {
-                        await expo.sendPushNotificationsAsync([message]);
-                    } catch (error) {
-                        console.error('Error sending notification:', error);
+                        try {
+                            await expo.sendPushNotificationsAsync([message]);
+                        } catch (error) {
+                            console.error('Error sending notification:', error);
+                        }
                     }
                 })
             })
@@ -237,23 +237,23 @@ cron.schedule('* * * * *', async () => {
 
                 user?.map((user: any) => {
                     user?.expoPushToken?.map(async (exposToken: any) => {
-                        if (!user || !Expo.isExpoPushToken(exposToken)) {
+                        if (!user || !Expo.isExpoPushToken(exposToken) || exposToken === "") {
                             console.log('Invalid Expo Push Token or user not found')
-                        }
+                        } else {
+                            const message: any = {
+                                to: exposToken,
+                                sound: 'default',
+                                title: data.supplier_details.supplier_name,
+                                body: `We due ${data.supplier_details.supplier_name} ${"$ " + data.due}`,
+                                data: { extraData: 'Some data' },
+                                icon: "https://icons.iconarchive.com/icons/ampeross/qetto/256/icon-developer-icon.png"
+                            };
 
-                        const message: any = {
-                            to: exposToken,
-                            sound: 'default',
-                            title: data.supplier_details.supplier_name,
-                            body: `We due ${data.supplier_details.supplier_name} ${"$ " + data.due}`,
-                            data: { extraData: 'Some data' },
-                            icon: "https://icons.iconarchive.com/icons/ampeross/qetto/256/icon-developer-icon.png"
-                        };
-
-                        try {
-                            await expo.sendPushNotificationsAsync([message]);
-                        } catch (error) {
-                            console.error('Error sending notification:', error);
+                            try {
+                                await expo.sendPushNotificationsAsync([message]);
+                            } catch (error) {
+                                console.error('Error sending notification:', error);
+                            }
                         }
                     })
                 })
@@ -281,23 +281,23 @@ cron.schedule('* * * * *', async () => {
 
             user?.map((user: any) => {
                 user?.expoPushToken?.map(async (exposToken: any) => {
-                    if (!user || !Expo.isExpoPushToken(exposToken)) {
+                    if (!user || !Expo.isExpoPushToken(exposToken) || exposToken === "") {
                         console.log('Invalid Expo Push Token or user not found')
-                    }
+                    } else {
+                        const message: any = {
+                            to: exposToken,
+                            sound: 'default',
+                            title: data?.customer?.customer_name ? data?.customer?.customer_name : "General",
+                            body: `${data?.customer?.customer_name ? data?.customer?.customer_name : "General"} Due ${"$ " + data?.due}`,
+                            data: { extraData: 'Some data' },
+                            icon: "https://icons.iconarchive.com/icons/ampeross/qetto/256/icon-developer-icon.png"
+                        };
 
-                    const message: any = {
-                        to: exposToken,
-                        sound: 'default',
-                        title: data?.customer?.customer_name ? data?.customer?.customer_name : "General",
-                        body: `${data?.customer?.customer_name ? data?.customer?.customer_name : "General"} Due ${"$ " + data?.due}`,
-                        data: { extraData: 'Some data' },
-                        icon: "https://icons.iconarchive.com/icons/ampeross/qetto/256/icon-developer-icon.png"
-                    };
-
-                    try {
-                        await expo.sendPushNotificationsAsync([message]);
-                    } catch (error) {
-                        console.error('Error sending notification:', error);
+                        try {
+                            await expo.sendPushNotificationsAsync([message]);
+                        } catch (error) {
+                            console.error('Error sending notification:', error);
+                        }
                     }
                 })
             })

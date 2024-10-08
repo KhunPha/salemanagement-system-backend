@@ -13,6 +13,7 @@ const user = gql`
         image: String,
         publicId: String
         remark: String
+        status: Boolean
     }
 
     type Paginator {

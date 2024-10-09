@@ -1,7 +1,7 @@
 import { ApolloError } from "apollo-server-express"
 import PaymentTransacPurSchema from "../../../model/stock/paymentTransacPur.model"
 import PurchaseSchema from "../../../model/stock/purchases.model";
-import { message } from "telegram/client";
+import { message } from "../../../helper/message.helper";
 
 const paymentTransacPur = {
     Query: {
@@ -30,7 +30,7 @@ const paymentTransacPur = {
                     ...args.input
                 }).save();
 
-                return message;
+                return message
             } catch (error: any) {
                 throw new ApolloError(error)
             }

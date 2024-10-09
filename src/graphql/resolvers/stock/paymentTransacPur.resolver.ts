@@ -41,7 +41,7 @@ const paymentTransacPur = {
                 const { payment_id } = args
 
                 const findPurPayment: any = await PaymentTransacPurSchema.findById(payment_id);
-                const findPurchase: any = await PurchaseSchema.findById(findPurPayment?._id);
+                const findPurchase: any = await PurchaseSchema.findById(findPurPayment?.purchase_id);
 
                 const updateDoc = { $set: { due: findPurPayment?.dollar + findPurchase?.due, total_pay: findPurchase?.total_pay - findPurPayment?.dollar } };
 

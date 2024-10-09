@@ -16,6 +16,25 @@ const paymentTransacPur = {
         }
     },
     Mutation: {
+        purchasePayment: async (parent: any, args: any, context: any) => {
+            try {
+                const { payment_id, dollar } = args
+
+                const findPurchase: any = await PurchaseSchema.findById(payment_id);
+
+                const total_pay = findPurchase?.total_pay + dollar;
+
+                await PurchaseSchema.findByIdAndUpdate(payment_id, { $set: { total_pay } });
+
+                await new PaymentTransacPurSchema({
+                    ...args.input
+                }).save();
+
+                return message;
+            } catch (error: any) {
+                throw new ApolloError(error)
+            }
+        },
         voidPurchasePayment: async (parent: any, args: any, context: any) => {
             try {
                 const { payment_id } = args

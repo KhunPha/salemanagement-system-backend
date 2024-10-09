@@ -70,7 +70,7 @@ const user = gql`
         logout: ResponseMessage!
         updateUser(id: ID!, input: UserInput): ResponseMessage!
         resetPassword(id: ID!, newPassword: String): ResponseMessage!
-        deleteUser(id: ID!): ResponseMessage!
+        changeUserStatus(id: ID!, status: Boolean): ResponseMessage!
     }
 
     type Subscription {

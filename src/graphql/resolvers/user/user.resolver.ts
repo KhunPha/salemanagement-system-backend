@@ -273,14 +273,19 @@ const user = {
                 throw new ApolloError(error.message)
             }
         },
-        deleteUser: async (parent: any, args: any, context: any) => {
+        changeUserStatus: async (parent: any, args: any, context: any) => {
             try {
                 const userToken: any = await verifyToken(context.user)
                 if (!userToken.status) throw new ApolloError("Unauthorization")
 
-                const { id } = await args
+                const { id, status } = await args
 
-                const updateDoc = { $set: { status: false } }
+                let updateDoc = { $set: { status: false } };
+
+                if (status) {
+                    updateDoc = { $set: { status: true } };
+                }
+
 
                 const deleteUser: any = await UserSchema.findByIdAndUpdate(id, updateDoc)
 

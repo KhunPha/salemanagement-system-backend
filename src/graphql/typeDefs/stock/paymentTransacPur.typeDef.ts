@@ -6,6 +6,7 @@ const paymentTransacPur = gql`
         purchase_id: ID
         reil: Float
         dollar: Float
+        isVoid: Boolean
         createdAt: Date
     }
 

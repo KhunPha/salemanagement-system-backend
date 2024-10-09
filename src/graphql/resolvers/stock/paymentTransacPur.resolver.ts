@@ -9,7 +9,7 @@ const paymentTransacPur = {
             try {
                 const { purchase_id } = args;
 
-                return await PaymentTransacPurSchema.find({ purchase_id });
+                return await PaymentTransacPurSchema.find({ purchase_id }).sort({ createdAt: -1 });
             } catch (error: any) {
                 throw new ApolloError(error)
             }

@@ -23,8 +23,9 @@ const paymentTransacPur = {
                 const findPurchase: any = await PurchaseSchema.findById(purchase_id);
 
                 const total_pay = findPurchase?.total_pay + dollar;
+                const due = findPurchase?.amounts - total_pay;
 
-                await PurchaseSchema.findByIdAndUpdate(purchase_id, { $set: { total_pay, remiding_date, isNotify } });
+                await PurchaseSchema.findByIdAndUpdate(purchase_id, { $set: { total_pay, remiding_date, isNotify, due } });
 
                 await new PaymentTransacPurSchema({
                     ...args.input

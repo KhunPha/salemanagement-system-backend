@@ -82,17 +82,14 @@ const startServer = async () => {
     try {
         const apolloServer = new ApolloServer({
             schema,
-            context: ({ req, res }) => {
+            context: (req) => {
                 try {
-                    return { req, res, client };
+                    const user = req
+                    return { user, client }
                 } catch (error: any) {
-                    throw new Error("Context initialization failed: " + error.message);
+                    throw new ApolloServer(error)
                 }
-            },
-            formatError: (error) => {
-                // console.error('GraphQL Error:', error);
-                return error;
-            },
+            }
         });
 
         app.use(graphqlUploadExpress({ maxFieldSize: 10000000, maxFiles: 10 }));

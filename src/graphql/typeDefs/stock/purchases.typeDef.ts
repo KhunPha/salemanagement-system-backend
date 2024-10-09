@@ -10,6 +10,7 @@ const purchase = gql`
         date: Date
         product_type: String
         amounts: Float
+        total_pay: Float
         isVoid: Boolean
         total_qty: Int
         due: Float

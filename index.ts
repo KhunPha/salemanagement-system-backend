@@ -133,7 +133,6 @@ app.use((err: any, req: Request, res: Response, next: NextFunction) => {
         console.error('Unhandled Error:', err);
         res.status(500).send('Something broke!');
     }
-    process.exit(1); // Optional: This forces a restart, but use with caution
 });
 
 startServer();

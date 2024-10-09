@@ -9,7 +9,7 @@ const paymentTransacPur = {
             try {
                 const { purchase_id } = args;
 
-                return await PaymentTransacPurSchema.find({ purchase_id, isVoid: { $ne: true } });
+                return await PaymentTransacPurSchema.find({ purchase_id });
             } catch (error: any) {
                 throw new ApolloError(error)
             }

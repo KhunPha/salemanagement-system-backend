@@ -18,13 +18,13 @@ const paymentTransacPur = {
     Mutation: {
         purchasePayment: async (parent: any, args: any, context: any) => {
             try {
-                const { payment_id, dollar } = args
+                const { purchase_id, dollar, remiding_date, isNotify } = args.input
 
-                const findPurchase: any = await PurchaseSchema.findById(payment_id);
+                const findPurchase: any = await PurchaseSchema.findById(purchase_id);
 
                 const total_pay = findPurchase?.total_pay + dollar;
 
-                await PurchaseSchema.findByIdAndUpdate(payment_id, { $set: { total_pay } });
+                await PurchaseSchema.findByIdAndUpdate(purchase_id, { $set: { total_pay, remiding_date, isNotify } });
 
                 await new PaymentTransacPurSchema({
                     ...args.input

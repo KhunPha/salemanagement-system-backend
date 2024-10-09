@@ -5,12 +5,15 @@ const paymentTransacPur = gql`
         purchase_id: ID
         reil: Float
         dollar: Float
+        createdAt: Date
     }
 
     input PaymentTransacPurInput {
         purchase_id: ID
         reil: Float
         dollar: Float
+        remiding_date: Date
+        isNotify: Boolean
     }
 
     type Query {

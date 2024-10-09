@@ -221,6 +221,7 @@ cron.schedule('* * * * *', async () => {
         })
 
         const findDueSupplier = await PurchaseSchema.find({
+            isNotify: { $ne: false },
             remiding_date: { $lte: new Date() },
             isVoid: { $ne: true },
             due: { $ne: 0 }

@@ -13,6 +13,7 @@ export interface IPurchase extends Document {
     due: number,
     total_pay: number,
     remiding_date: Date
+    isNotify: boolean
     remark: string
     createdBy: object
     modifiedBy: object 
@@ -77,6 +78,9 @@ const purchase = new Schema<IPurchase>({
         type: mongoose.Schema.Types.ObjectId,
         ref: "User"
     },
+    isNotify: {
+        type: Boolean
+    }
 }, { timestamps: true })
 
 purchase.plugin(paginate)

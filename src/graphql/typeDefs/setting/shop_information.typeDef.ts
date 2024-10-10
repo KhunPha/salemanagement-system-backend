@@ -12,7 +12,6 @@ const shop_information = gql`
     }
 
     input ShopInformationInput {
-        logo: String
         store_name: String
         phone_number: String
         email: String
@@ -25,7 +24,7 @@ const shop_information = gql`
     }
 
     type Mutation {
-        shopInformation(input: ShopInformationInput): ResponseMessage!
+        shopInformation(input: ShopInformationInput, file: Upload): ResponseMessage!
     }
 `
 

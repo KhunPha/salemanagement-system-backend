@@ -52,7 +52,7 @@ const user = new Schema<IUser>({
     },
     status: {
         type: Boolean,
-        default: false
+        default: true
     },
     expoPushToken: [{
         type: String,

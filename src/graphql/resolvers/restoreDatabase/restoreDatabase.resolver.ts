@@ -7,8 +7,6 @@ const restoreMongoDb = {
     Mutation: {
         backupDatabase: async (parent: any, args: any, context: any) => {
             try {
-                const userToken: any = await verifyToken(context.user)
-                if (!userToken.status) throw new ApolloError("Unauthorization")
                 const command = `mongodump --uri="mongodb+srv://khunpha:Sopha3305@salemanagement.qbm94iq.mongodb.net/salemanagement?retryWrites=true&w=majority&appName=salemanagement" --out=D:/Backup`;
 
                 // Execute the command
@@ -30,8 +28,6 @@ const restoreMongoDb = {
         },
         restoreDatabase: async (parent: any, args: any, context: any) => {
             try {
-                const userToken: any = await verifyToken(context.user)
-                if (!userToken.status) throw new ApolloError("Unauthorization")
                 const directory = 'D:/Backup/salemanagement'
 
                 const command = `mongorestore --uri="mongodb://localhost:27017/salemanagement" --drop ${directory}`;

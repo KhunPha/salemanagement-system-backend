@@ -26,7 +26,7 @@ const shop_information = {
                             }));
                     });
 
-                    if (!getInformation._id) {
+                    if (!getInformation?._id) {
 
                         const insert = new ShopInformationSchema({
                             logo: result?.url,
@@ -39,6 +39,24 @@ const shop_information = {
                     }
 
                     const shopDoc = { $set: { ...args.input, logo: result?.url } }
+
+                    await ShopInformationSchema.findByIdAndUpdate(getInformation._id, shopDoc, { new: true })
+
+                    return message
+                } else {
+                    if (!getInformation?._id) {
+
+                        const insert = new ShopInformationSchema({
+                            logo: null,
+                            ...args
+                        })
+
+                        await insert.save()
+
+                        return message
+                    }
+
+                    const shopDoc = { $set: { ...args.input, logo: null } }
 
                     await ShopInformationSchema.findByIdAndUpdate(getInformation._id, shopDoc, { new: true })
 

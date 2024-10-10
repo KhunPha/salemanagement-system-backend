@@ -30,7 +30,7 @@ const shop_information = {
 
                         const insert = new ShopInformationSchema({
                             logo: result?.url,
-                            ...args
+                            ...args.input
                         })
 
                         await insert.save()
@@ -48,7 +48,7 @@ const shop_information = {
 
                         const insert = new ShopInformationSchema({
                             logo: null,
-                            ...args
+                            ...args.input
                         })
 
                         await insert.save()

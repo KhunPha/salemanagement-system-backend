@@ -52,7 +52,6 @@ const user = {
         getUserLogin: async (parent: any, args: any, context: any) => {
             try {
                 const userToken: any = await verifyToken(context.user)
-                if (!userToken.status) throw new ApolloError("Unauthorization")
 
                 return userToken?.data?.user
             } catch (error: any) {

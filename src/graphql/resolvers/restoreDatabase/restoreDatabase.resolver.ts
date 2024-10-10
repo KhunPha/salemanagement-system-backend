@@ -1,6 +1,5 @@
 import { ApolloError } from "apollo-server-express";
 import { exec } from "child_process";
-import { verifyToken } from "../../../middleware/auth.middleware";
 import { message } from "../../../helper/message.helper";
 
 const restoreMongoDb = {
